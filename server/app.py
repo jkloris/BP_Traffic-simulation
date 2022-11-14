@@ -72,7 +72,7 @@ async def run(websocket):
     while traci.simulation.getMinExpectedNumber() > 0:
 
         await traciSimStep(websocket, vehicleData)
-        await asyncio.sleep(10 / 1000)
+        await asyncio.sleep(50 / 1000)
     traci.close()
     sys.stdout.flush()
     print("Simulation ended!")

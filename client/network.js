@@ -44,7 +44,8 @@ class Network {
                     Two.Commands.line
                 )
             );
-            this.two.makePath(anchors, true, false, true);
+            var path = this.two.makePath(anchors, true, false, true);
+            path.linewidth = 3;
             // something.stroke = "red";
         }
         this.two.update();

@@ -2,7 +2,7 @@ function showMessage(message) {
     window.setTimeout(() => window.alert(message), 50);
 }
 
-function receiveMoves(board, websocket) {
+function receiveMoves(websocket) {
     websocket.addEventListener("message", ({ data }) => {
         const event = JSON.parse(data);
         switch (event.type) {
@@ -23,9 +23,9 @@ function receiveMoves(board, websocket) {
     });
 }
 
-function sendMoves(board, websocket) {
+function sendMoves(startButton, websocket) {
     // When clicking a column, send a "play" event for a move in that column.
-    board.addEventListener("click", ({ target }) => {
+    startButton.addEventListener("click", ({ target }) => {
         const column = target.dataset.column;
         console.log("Click");
 
@@ -48,10 +48,10 @@ function sendMoves(board, websocket) {
 
 window.addEventListener("DOMContentLoaded", () => {
     // Initialize the UI.
-    const board = document.querySelector(".board");
+    const startButton = document.querySelector(".startButton");
 
     // Open the WebSocket connection and register event handlers.
     const websocket = new WebSocket("ws://localhost:8001/");
-    receiveMoves(board, websocket);
-    sendMoves(board, websocket);
+    receiveMoves(websocket);
+    sendMoves(startButton, websocket);
 });
