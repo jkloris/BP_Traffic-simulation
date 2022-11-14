@@ -1,0 +1,32 @@
+<additionals>
+     <!-- <rerouter id="rer0" edges="E17" probability="1">
+        <interval begin="0" end="10000">
+            <destProbReroute id="E18"/>
+        </interval>
+    </rerouter>
+
+     <rerouter id="rer1" edges="E18" probability="1">
+        <interval begin="0" end="10000">
+            <destProbReroute id="E17"/>
+        </interval>
+    </rerouter>
+
+    <rerouter id="rer0" edges="-E17" probability="1">
+        <interval begin="0" end="10000">
+            <destProbReroute id="-E18"/>
+        </interval>
+     </rerouter> 
+
+    <rerouter id="rer1" edges="E1" probability="1">
+        <interval begin="0" end="10000">
+            <destProbReroute id="-E19"/>
+        </interval>
+    </rerouter>
+
+    <rerouter id="rer2" edges="-E19" probability="1">
+        <interval begin="0" end="10000">
+            <destProbReroute id="E1"/>
+        </interval>
+    </rerouter> --> 
+
+</additionals>
