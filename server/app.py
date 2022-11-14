@@ -9,6 +9,7 @@ import sumolib
 from sumolib import checkBinary
 import traci
 import websockets
+import xml.etree.ElementTree as ET
 
 
 import os
@@ -22,6 +23,19 @@ if 'SUMO_HOME' in os.environ:
     sys.path.append(tools)
 else:
     sys.exit("please declare environment variable 'SUMO_HOME'")
+
+
+def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
+    tree = ET.parse(path)
+    root = tree.getroot()
+    network = {}
+
+    for ch in root.findall("edge"):
+        lane = ch.find("lane")
+        network[lane.attrib["id"]] = []
+        for p in lane.attrib["shape"].split(" "):
+            network[lane.attrib["id"]].append(p.split(","))
+    return network
 
 
 async def handler(websocket):
@@ -42,8 +56,11 @@ async def traciStart(websocket):
     traci.start([sumoBinary, "-c", "..\sumo\demoAAA.sumocfg",
                 "--tripinfo-output", "..\sumo\_tripinfo.xml"])
 
-    print(traci)
+    network = xmlnetToNetwork("../sumo/demoAAA.net.xml")
+    msg = {"type": "network", "data": network}
+    await websocket.send(json.dumps(msg))
 
+    print(traci.simulation.getNetBoundary())
     await run(websocket)
 
 
@@ -55,9 +72,10 @@ async def run(websocket):
     while traci.simulation.getMinExpectedNumber() > 0:
 
         await traciSimStep(websocket, vehicleData)
-        await asyncio.sleep(30 / 1000)
+        await asyncio.sleep(10 / 1000)
     traci.close()
     sys.stdout.flush()
+    print("Simulation ended!")
 
 
 def getVehicles():
@@ -96,11 +114,13 @@ async def traciSimStep(websocket, vehicleData):
     traci.simulationStep()
 
     time = traci.simulation.getTime()
-    print("_______________________\n", time)
-    await websocket.send(json.dumps(vehicleData))
+    # print("_______________________\n", time)
+    msg = {"type": "step", "data": vehicleData}
+    await websocket.send(json.dumps(msg))
 
 
 async def main():
+
     async with websockets.serve(handler, "", 8001):
         await asyncio.Future()  # run forever
 

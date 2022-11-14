@@ -1,7 +1,7 @@
 <configuration>
     <input>
         <net-file value="demoAAA.net.xml"/>
-        <route-files value="demoAAA.rou.xml"/>
+        <route-files value="trips.trips.xml"/>
         <additional-files value="demoAAA.add.xml"/>
     </input>
 </configuration>
