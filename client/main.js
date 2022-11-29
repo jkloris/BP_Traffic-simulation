@@ -61,6 +61,17 @@ function sendMoves(buttons, websocket) {
         await websocket.send(JSON.stringify(event));
     });
 
+    // setSpeed button
+    buttons[3].onclick = async () => {
+        var sliderVal = document.getElementById("speedSlider").value;
+        console.log(sliderVal);
+        const event = {
+            type: "setSpeed",
+            value: sliderVal,
+        };
+        await websocket.send(JSON.stringify(event));
+    };
+
     document.addEventListener("keypress", ({}) => {
         console.log("Key press!");
         const event = {
@@ -75,7 +86,8 @@ window.addEventListener("DOMContentLoaded", () => {
     const startButton = document.querySelector(".startButton");
     const pauseButton = document.getElementById("pauseButton");
     const playButton = document.getElementById("playButton");
-    const buttons = [startButton, pauseButton, playButton];
+    const setSpeedButton = document.getElementById("setSpeedButton");
+    const buttons = [startButton, pauseButton, playButton, setSpeedButton];
     // Open the WebSocket connection and register event handlers.
     const websocket = new WebSocket("ws://localhost:8001/");
     receiveMoves(websocket);

@@ -1,7 +1,7 @@
 var elem = document.getElementById("board");
 
 var centerX = window.innerWidth / 2;
-var centerY = window.innerHeight / 2;
+var centerY = window.innerHeight / 2 - 200;
 
 var two = new Two({ width: 0.95 * window.innerWidth, height: 1000 }).appendTo(elem);
 

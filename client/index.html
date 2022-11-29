@@ -12,6 +12,13 @@
     <div id="pauseButton" class="button" style="margin: 5px; background-color: rgb(176, 102, 12); visibility: inherit; width: 5em; text-align: center; color: wheat;"> Pause </div>
     <div id="playButton" class="button" style="margin: 5px; background-color: rgb(15, 176, 12); visibility: inherit; width: 5em; text-align: center; color: wheat;"> Play </div>
     
+    <div class="slidecontainer">
+      <input id="speedSlider" type="range" value="30" min="1" max="100" oninput="this.nextElementSibling.value = this.value">
+      <output>30</output>
+      <button id="setSpeedButton"> Set Speed</button>
+    </div>
+
+
     <div style=" height: 100vh; width: 95vw;">
       <div id="board" class="board" style="background-color: white; height: 100%; width: 100%;"></div>
     </div>

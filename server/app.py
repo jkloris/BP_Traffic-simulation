@@ -24,6 +24,8 @@ STATUS = 'finished'  # TODO premenovat
 
 VEHICLES = None
 
+SIMULATION_SPEED = 30  # lower means faster
+
 # we need to import some python modules from the $SUMO_HOME/tools directory
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
@@ -48,7 +50,7 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
 async def handler(websocket):
 
     # asyncio.create_task(send(websocket))
-    global RUNNING, STATUS, VEHICLES
+    global RUNNING, STATUS, VEHICLES, SIMULATION_SPEED
     # while True:
 
     async for message in websocket:
@@ -74,6 +76,8 @@ async def handler(websocket):
                     STATUS = "played"
                     RUNNING = True
                     loop.create_task(run(websocket))
+            elif event["type"] == "setSpeed":
+                SIMULATION_SPEED = int(event["value"])
 
         except websockets.ConnectionClosedOK:
             break
@@ -117,7 +121,7 @@ async def run(websocket):
         except websockets.ConnectionClosedOK:
             break
 
-        await asyncio.sleep(30 / 1000)
+        await asyncio.sleep(SIMULATION_SPEED / 1000)
 
     if STATUS == "paused":
         VEHICLES = vehicleData
