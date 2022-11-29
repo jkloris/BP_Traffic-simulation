@@ -247,7 +247,7 @@
     <trip id="337" depart="337.00" from="E21" to="E21"/>
     <trip id="338" depart="338.00" from="E28" to="E7"/>
     <trip id="339" depart="339.00" from="-E22" to="-E23"/>
-    <trip id="340" depart="340.00" from="E23" to="-E20"/>
+    <!-- <trip id="340" depart="340.00" from="E23" to="-E20"/>
     <trip id="341" depart="341.00" from="-E21" to="-E11"/>
     <trip id="342" depart="342.00" from="-E0" to="E10"/>
     <trip id="343" depart="343.00" from="E20" to="-E3"/>
@@ -790,7 +790,7 @@
     <trip id="907" depart="907.00" from="-E22" to="E8"/>
     <trip id="908" depart="908.00" from="-E32" to="E23"/>
     <trip id="909" depart="909.00" from="E5" to="-E12"/>
-    <trip id="910" depart="910.00" from="E18" to="E15"/>
+    <trip id="910" depart="910.00" from="E18" to="E15"/> -->
     <!-- <trip id="911" depart="911.00" from="E27" to="E6"/>
     <trip id="912" depart="912.00" from="E5" to="-E21"/>
     <trip id="913" depart="913.00" from="E4" to="-E21"/>

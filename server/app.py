@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+import optparse
+import sys
+import os
 import asyncio
 import itertools
 import json
@@ -10,12 +13,16 @@ from sumolib import checkBinary
 import traci
 import websockets
 import xml.etree.ElementTree as ET
+from aiohttp import web
+import threading
 
+RUNNING = False
 
-import os
-import sys
-import optparse
+#STATUS = 'running'
+#STATUS = 'paused'
+STATUS = 'finished'  # TODO premenovat
 
+VEHICLES = None
 
 # we need to import some python modules from the $SUMO_HOME/tools directory
 if 'SUMO_HOME' in os.environ:
@@ -39,16 +46,40 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
 
 
 async def handler(websocket):
-    async for message in websocket:
-        # Parse a "play" event from the UI.
-        event = json.loads(message)
-        if event["type"] == "start":
-            await traciStart(websocket)
-        if event["type"] == "play":
-            await traciSimStep(websocket)
 
+    # asyncio.create_task(send(websocket))
+    global RUNNING, STATUS, VEHICLES
+    # while True:
+
+    async for message in websocket:
+        # message = await websocket.recv()
+        event = json.loads(message)
+        print(event)
+        try:
+
+            if event["type"] == "start":
+                RUNNING = True
+                STATUS = "running"
+                VEHICLES = None
+                loop = asyncio.get_event_loop()
+                loop.create_task(traciStart(websocket))
+
+            elif event["type"] == "pause":
+                STATUS = "paused"
+                RUNNING = False
+                print(RUNNING)
+
+            elif event["type"] == "play":
+                if STATUS == "paused":
+                    STATUS = "played"
+                    RUNNING = True
+                    loop.create_task(run(websocket))
+
+        except websockets.ConnectionClosedOK:
+            break
 
 # contains TraCI control loop
+
 
 async def traciStart(websocket):
     sumoBinary = checkBinary('sumo')
@@ -66,16 +97,35 @@ async def traciStart(websocket):
 
 async def run(websocket):
     step = 0
+    global VEHICLES, STATUS
     print("::::::::::::RUN TRACI\n")
-    vehicleData = getVehicles()
+    vehicleData = None
+    if (STATUS == 'running'):
+        vehicleData = getVehicles()
+    elif (STATUS == "played"):
+        STATUS == "running"
+        vehicleData = updateVehicles(VEHICLES)
 
-    while traci.simulation.getMinExpectedNumber() > 0:
+    if vehicleData == None:
+        print("Neosetrena udalost!")
+        return
 
-        await traciSimStep(websocket, vehicleData)
-        await asyncio.sleep(50 / 1000)
-    traci.close()
-    sys.stdout.flush()
-    print("Simulation ended!")
+    while RUNNING and traci.simulation.getMinExpectedNumber() > 0:
+
+        try:
+            await traciSimStep(websocket, vehicleData)
+        except websockets.ConnectionClosedOK:
+            break
+
+        await asyncio.sleep(30 / 1000)
+
+    if STATUS == "paused":
+        VEHICLES = vehicleData
+        print("Simulation paused!")
+    else:
+        traci.close()
+        sys.stdout.flush()
+        print("Simulation ended!")
 
 
 def getVehicles():
@@ -121,9 +171,12 @@ async def traciSimStep(websocket, vehicleData):
 
 async def main():
 
+    # FUNKCNE -->
     async with websockets.serve(handler, "", 8001):
         await asyncio.Future()  # run forever
 
-
 if __name__ == "__main__":
     asyncio.run(main())
+    # Test -->
+    # server = threading.Thread(target=main, daemon=True)
+    # server.start()

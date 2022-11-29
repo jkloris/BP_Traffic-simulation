@@ -8,7 +8,6 @@ class Network {
     async draw() {
         for (const [id, l] of Object.entries(this.lanes)) {
             // await new Promise((r) => setTimeout(r, 500));
-            console.log(id);
             var anchors = [
                 new Two.Anchor(
                     parseFloat(l[0][0]) + centerX,

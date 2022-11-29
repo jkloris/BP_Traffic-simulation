@@ -23,9 +23,9 @@ function receiveMoves(websocket) {
     });
 }
 
-function sendMoves(startButton, websocket) {
+function sendMoves(buttons, websocket) {
     // When clicking a column, send a "play" event for a move in that column.
-    startButton.addEventListener("click", ({ target }) => {
+    buttons[0].addEventListener("click", ({ target }) => {
         const column = target.dataset.column;
         console.log("Click");
 
@@ -35,6 +35,30 @@ function sendMoves(startButton, websocket) {
             type: "start",
         };
         websocket.send(JSON.stringify(event));
+    });
+
+    buttons[1].addEventListener("click", async ({ target }) => {
+        const column = target.dataset.column;
+        console.log("Click pause");
+
+        // Ignore clicks outside a column.
+
+        const event = {
+            type: "pause",
+        };
+        await websocket.send(JSON.stringify(event));
+    });
+
+    buttons[2].addEventListener("click", async ({ target }) => {
+        const column = target.dataset.column;
+        console.log("Click play");
+
+        // Ignore clicks outside a column.
+
+        const event = {
+            type: "play",
+        };
+        await websocket.send(JSON.stringify(event));
     });
 
     document.addEventListener("keypress", ({}) => {
@@ -49,9 +73,11 @@ function sendMoves(startButton, websocket) {
 window.addEventListener("DOMContentLoaded", () => {
     // Initialize the UI.
     const startButton = document.querySelector(".startButton");
-
+    const pauseButton = document.getElementById("pauseButton");
+    const playButton = document.getElementById("playButton");
+    const buttons = [startButton, pauseButton, playButton];
     // Open the WebSocket connection and register event handlers.
     const websocket = new WebSocket("ws://localhost:8001/");
     receiveMoves(websocket);
-    sendMoves(startButton, websocket);
+    sendMoves(buttons, websocket);
 });
