@@ -1,3 +1,4 @@
 .vscode/
 sumo/randomTrips.py
 sumo/_tripinfo.xml
+node_modules
