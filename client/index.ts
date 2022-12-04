@@ -1,3 +1,8 @@
+import { Network } from "./network";
+import { updateVehicleObjects } from "./twot";
+import { drawVehicles } from "./twot";
+import { two } from "./twot";
+
 function showMessage(message) {
     window.setTimeout(() => window.alert(message), 50);
 }
@@ -5,6 +10,7 @@ function showMessage(message) {
 function receiveMoves(websocket) {
     websocket.addEventListener("message", ({ data }) => {
         const event = JSON.parse(data);
+
         switch (event.type) {
             case "step":
                 updateVehicleObjects(event.data);
@@ -18,58 +24,53 @@ function receiveMoves(websocket) {
                 break;
         }
 
-        // console.log(event.positions);
-        // window.globals.changePos(event.positions);
     });
 }
 
 function sendMoves(buttons, websocket) {
-    // When clicking a column, send a "play" event for a move in that column.
-    buttons[0].addEventListener("click", ({ target }) => {
-        const column = target.dataset.column;
-        console.log("Click");
 
-        // Ignore clicks outside a column.
+    buttons[0].onclick =  () => {
+
+        console.log("Click start");
 
         const event = {
             type: "start",
         };
         websocket.send(JSON.stringify(event));
-    });
+    };
 
-    buttons[1].addEventListener("click", async ({ target }) => {
-        const column = target.dataset.column;
+    buttons[1].onclick =  async () => {
+
         console.log("Click pause");
-
-        // Ignore clicks outside a column.
 
         const event = {
             type: "pause",
         };
         await websocket.send(JSON.stringify(event));
-    });
+    };
 
-    buttons[2].addEventListener("click", async ({ target }) => {
-        const column = target.dataset.column;
+    buttons[2].onclick = async () => {
+
         console.log("Click play");
-
-        // Ignore clicks outside a column.
 
         const event = {
             type: "play",
         };
         await websocket.send(JSON.stringify(event));
-    });
+    };
 
     // setSpeed button
     buttons[3].onclick = async () => {
-        var sliderVal = document.getElementById("speedSlider").value;
-        console.log(sliderVal);
-        const event = {
-            type: "setSpeed",
-            value: sliderVal,
-        };
-        await websocket.send(JSON.stringify(event));
+        const slider = <HTMLInputElement>document.getElementById("speedSlider");
+
+        if(slider != null){
+            console.log(slider.value);
+            const event = {
+                type: "setSpeed",
+                value: slider.value,
+            };
+            await websocket.send(JSON.stringify(event));
+        }
     };
 
     document.addEventListener("keypress", ({}) => {
@@ -83,7 +84,7 @@ function sendMoves(buttons, websocket) {
 
 window.addEventListener("DOMContentLoaded", () => {
     // Initialize the UI.
-    const startButton = document.querySelector(".startButton");
+    const startButton = document.getElementById("startButton");
     const pauseButton = document.getElementById("pauseButton");
     const playButton = document.getElementById("playButton");
     const setSpeedButton = document.getElementById("setSpeedButton");
