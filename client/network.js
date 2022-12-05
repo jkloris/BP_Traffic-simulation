@@ -3,6 +3,14 @@ class Network {
         // console.log(lanes);
         this.lanes = lanes;
         this.two = two;
+        this.paths = [];
+    }
+
+    addPathToStage(_stage) {
+        for (var p in this.paths) {
+            _stage.add(this.paths[p]);
+        }
+        two.update();
     }
 
     async draw() {
@@ -45,8 +53,10 @@ class Network {
             );
             var path = this.two.makePath(anchors, true, false, true);
             path.linewidth = 3;
+            this.paths.push(path);
             // something.stroke = "red";
         }
+        this.addPathToStage(stage);
         this.two.update();
     }
 }

@@ -12,6 +12,7 @@ function receiveMoves(websocket) {
                 break;
             case "network":
                 var network = new Network(event.data, two);
+                // network.addPathToStage(stage);
                 network.draw();
 
             default:
