@@ -1,0 +1,113 @@
+{
+  "_from": "two.js@latest",
+  "_id": "two.js@0.8.10",
+  "_inBundle": false,
+  "_integrity": "sha512-Rg0jn1n/0MWdDBrW47L245GWlWpbWlJ3Cv8xFlP05pSFqUT0Wn6w4yaOcxUCzAJQGRGdtmXOW3UI2W0LEEUD9Q==",
+  "_location": "/two.js",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "two.js@latest",
+    "name": "two.js",
+    "escapedName": "two.js",
+    "rawSpec": "latest",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/two.js/-/two.js-0.8.10.tgz",
+  "_shasum": "d01f8bb1c9401f850730a79abb9784b900ccde0b",
+  "_spec": "two.js@latest",
+  "_where": "C:\\Users\\Lenovo T470\\Documents\\skola\\Bakalarka\\hrajkanie sa",
+  "author": {
+    "name": "jonobr1",
+    "url": "http://jonobr1.com/"
+  },
+  "autoupdate": {
+    "source": "git",
+    "target": "git://github.com/jonobr1/two.js.git",
+    "fileMap": [
+      {
+        "basePath": "build",
+        "files": [
+          "two*.js"
+        ]
+      }
+    ]
+  },
+  "bugs": {
+    "url": "https://github.com/jonobr1/two.js/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "A renderer agnostic two-dimensional drawing api for the web.",
+  "devDependencies": {
+    "@vuepress/plugin-google-analytics": "^1.8.2",
+    "@vuepress/plugin-nprogress": "^1.5.4",
+    "babel-eslint": "^10.1.0",
+    "chalk": "^2.4.2",
+    "commander": "^2.20.3",
+    "esbuild": "^0.14.6",
+    "eslint": "^7.8.1",
+    "esm": "^3.2.25",
+    "gzip-size": "^5.1.1",
+    "jsdoc": "^3.6.6",
+    "jsdoc-api": "^6.0.0",
+    "typescript": "^4.5.4",
+    "vuepress": "^1.9.5",
+    "vuepress-plugin-sitemap": "^2.3.1"
+  },
+  "directories": {
+    "docs": "wiki/docs",
+    "test": "tests",
+    "example": "wiki/examples"
+  },
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "build",
+    "extras",
+    "src",
+    "types.d.ts"
+  ],
+  "homepage": "https://two.js.org/",
+  "keywords": [
+    "svg",
+    "canvas2d",
+    "webgl",
+    "animation",
+    "rendering",
+    "scenegraph",
+    "motiongraphics",
+    "visualization",
+    "dom",
+    "w3c",
+    "bitmap",
+    "vector"
+  ],
+  "license": "MIT",
+  "main": "build/two.js",
+  "module": "build/two.module.js",
+  "name": "two.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonobr1/two.js.git"
+  },
+  "scripts": {
+    "build": "node ./utils/build",
+    "dev": "esbuild --servedir=. --serve=8080",
+    "docs:build": "vuepress build wiki",
+    "docs:dev": "vuepress dev wiki",
+    "docs:generate": "node ./utils/document",
+    "docs:publish": "./deploy.sh",
+    "lint": "eslint . --fix",
+    "types": "tsc --outFile types.d.ts"
+  },
+  "types": "types.d.ts",
+  "version": "0.8.10"
+}
