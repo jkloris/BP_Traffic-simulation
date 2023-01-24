@@ -52,7 +52,8 @@ websocketClients = []
 
 async def handler(websocket):
     websocketClients.append(websocket)
-    print(f'New connection from: {websocket.remote_address} ({len(websocketClients)} total)')
+    print(
+        f'New connection from: {websocket.remote_address} ({len(websocketClients)} total)')
 
     # asyncio.create_task(send(websocket))
     global RUNNING, STATUS, VEHICLES, SIMULATION_SPEED
@@ -81,11 +82,13 @@ async def handler(websocket):
                     STATUS = "played"
                     RUNNING = True
                     loop.create_task(run(websocket))
-           
+
             elif event["type"] == "restart":
-                RUNNING = False
-                STATUS = "finished"
-                traci.close()
+                if STATUS != "finished":
+                    RUNNING = False
+                    STATUS = "finished"
+                    traci.close()
+                    await confirmRestart(websocket)
 
             elif event["type"] == "setSpeed":
                 SIMULATION_SPEED = int(event["value"])
@@ -100,6 +103,11 @@ async def handler(websocket):
         websocketClients.remove(websocket)
 
 # contains TraCI control loop
+
+
+async def confirmRestart(websocket):
+    msg = {"type": "restart"}
+    await websocket.send(json.dumps(msg))
 
 
 async def traciStart(websocket):
@@ -127,12 +135,6 @@ async def run(websocket):
         STATUS = "running"
         vehicleData = updateVehicles(VEHICLES)
 
-    elif (STATUS == "finished"):
-        traci.close()
-        # sys.stdout.flush()
-        print("Simulation ended!")
-        return
-
     if vehicleData == None:
         print("Neosetrena udalost!")
         return
@@ -149,6 +151,10 @@ async def run(websocket):
     if STATUS == "paused":
         VEHICLES = vehicleData
         print("Simulation paused!")
+
+    elif STATUS == "finished":
+        print("Simulation ended!")
+        return
     else:
         STATUS = "finished"
         traci.close()

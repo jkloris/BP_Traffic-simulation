@@ -51,6 +51,15 @@ function drawVehicles(vehicleData) {
     two.update();
 }
 
+function clearNetwork() {
+    for (id in vehicles) {
+        stage.remove(vehicles[id].obj);
+        two.remove(vehicles[id].obj);
+        delete vehicles[id];
+    }
+    two.update();
+}
+
 // two
 //   .bind("update", function (frameCount) {
 //     for (i in cars) {

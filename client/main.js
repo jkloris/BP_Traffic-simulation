@@ -16,7 +16,9 @@ function receiveMoves(websocket) {
                 var network = new Network(event.data, two);
                 // network.addPathToStage(stage);
                 network.draw();
-
+            case "restart":
+                clearNetwork();
+                break;
             default:
                 break;
         }
@@ -45,7 +47,7 @@ function sendMoves(buttons, websocket) {
 
     buttons["play"].onclick = async () => {
         console.log("Click play");
-        //tmp play
+
         const event = {
             type: "play",
         };
@@ -54,7 +56,7 @@ function sendMoves(buttons, websocket) {
     //restart button
     buttons["restart"].onclick = async () => {
         console.log("Click restart");
-        //tmp play
+
         const event = {
             type: "restart",
         };
