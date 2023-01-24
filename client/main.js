@@ -5,6 +5,8 @@ function showMessage(message) {
 function receiveMoves(websocket) {
     websocket.addEventListener("message", ({ data }) => {
         const event = JSON.parse(data);
+
+        console.log(event);
         switch (event.type) {
             case "step":
                 updateVehicleObjects(event.data);
@@ -25,45 +27,42 @@ function receiveMoves(websocket) {
 }
 
 function sendMoves(buttons, websocket) {
-    // When clicking a column, send a "play" event for a move in that column.
-    buttons[0].addEventListener("click", ({ target }) => {
-        const column = target.dataset.column;
-        console.log("Click");
-
-        // Ignore clicks outside a column.
-
+    buttons["start"].onclick = async () => {
         const event = {
             type: "start",
         };
         websocket.send(JSON.stringify(event));
-    });
+    };
 
-    buttons[1].addEventListener("click", async ({ target }) => {
-        const column = target.dataset.column;
+    buttons["pause"].onclick = async () => {
         console.log("Click pause");
-
-        // Ignore clicks outside a column.
 
         const event = {
             type: "pause",
         };
         await websocket.send(JSON.stringify(event));
-    });
+    };
 
-    buttons[2].addEventListener("click", async ({ target }) => {
-        const column = target.dataset.column;
+    buttons["play"].onclick = async () => {
         console.log("Click play");
-
-        // Ignore clicks outside a column.
-
+        //tmp play
         const event = {
             type: "play",
         };
         await websocket.send(JSON.stringify(event));
-    });
+    };
+    //restart button
+    buttons["restart"].onclick = async () => {
+        console.log("Click restart");
+        //tmp play
+        const event = {
+            type: "restart",
+        };
+        await websocket.send(JSON.stringify(event));
+    };
 
     // setSpeed button
-    buttons[3].onclick = async () => {
+    buttons["setSpeed"].onclick = async () => {
         var sliderVal = document.getElementById("speedSlider").value;
         console.log(sliderVal);
         const event = {
@@ -78,17 +77,24 @@ function sendMoves(buttons, websocket) {
         const event = {
             type: "play",
         };
-        websocket.send(JSON.stringify(event));
+        // websocket.send(JSON.stringify(event));
     });
 }
 
 window.addEventListener("DOMContentLoaded", () => {
     // Initialize the UI.
-    const startButton = document.querySelector(".startButton");
+    const startButton = document.getElementById("startButton");
     const pauseButton = document.getElementById("pauseButton");
     const playButton = document.getElementById("playButton");
+    const restartButton = document.getElementById("restartButton");
     const setSpeedButton = document.getElementById("setSpeedButton");
-    const buttons = [startButton, pauseButton, playButton, setSpeedButton];
+    const buttons = {
+        start: startButton,
+        pause: pauseButton,
+        play: playButton,
+        setSpeed: setSpeedButton,
+        restart: restartButton,
+    };
     // Open the WebSocket connection and register event handlers.
     const websocket = new WebSocket("ws://localhost:8001/");
     receiveMoves(websocket);

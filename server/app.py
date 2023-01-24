@@ -47,40 +47,57 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
     return network
 
 
+websocketClients = []
+
+
 async def handler(websocket):
+    websocketClients.append(websocket)
+    print(f'New connection from: {websocket.remote_address} ({len(websocketClients)} total)')
 
     # asyncio.create_task(send(websocket))
     global RUNNING, STATUS, VEHICLES, SIMULATION_SPEED
     # while True:
-
-    async for message in websocket:
-        # message = await websocket.recv()
-        event = json.loads(message)
-        print(event)
-        try:
+    try:
+        async for message in websocket:
+            # message = await websocket.recv()
+            event = json.loads(message)
+            print(event)
 
             if event["type"] == "start":
-                RUNNING = True
-                STATUS = "running"
-                VEHICLES = None
-                loop = asyncio.get_event_loop()
-                loop.create_task(traciStart(websocket))
+                if STATUS == "finished":
+                    RUNNING = True
+                    STATUS = "running"
+                    VEHICLES = None
+                    loop = asyncio.get_event_loop()
+                    loop.create_task(traciStart(websocket))
 
             elif event["type"] == "pause":
-                STATUS = "paused"
-                RUNNING = False
-                print(RUNNING)
+                if STATUS == "running":
+                    STATUS = "paused"
+                    RUNNING = False
 
             elif event["type"] == "play":
                 if STATUS == "paused":
                     STATUS = "played"
                     RUNNING = True
                     loop.create_task(run(websocket))
+           
+            elif event["type"] == "restart":
+                RUNNING = False
+                STATUS = "finished"
+                traci.close()
+
             elif event["type"] == "setSpeed":
                 SIMULATION_SPEED = int(event["value"])
 
-        except websockets.ConnectionClosedOK:
-            break
+    except websockets.ConnectionClosedOK:
+        pass
+    finally:
+        print(f'Disconnected from socket [{id(websocket)}]...')
+        RUNNING = False
+        STATUS = "finished"
+        traci.close()
+        websocketClients.remove(websocket)
 
 # contains TraCI control loop
 
@@ -107,8 +124,14 @@ async def run(websocket):
     if (STATUS == 'running'):
         vehicleData = getVehicles()
     elif (STATUS == "played"):
-        STATUS == "running"
+        STATUS = "running"
         vehicleData = updateVehicles(VEHICLES)
+
+    elif (STATUS == "finished"):
+        traci.close()
+        # sys.stdout.flush()
+        print("Simulation ended!")
+        return
 
     if vehicleData == None:
         print("Neosetrena udalost!")
@@ -127,8 +150,9 @@ async def run(websocket):
         VEHICLES = vehicleData
         print("Simulation paused!")
     else:
+        STATUS = "finished"
         traci.close()
-        sys.stdout.flush()
+        # sys.stdout.flush()
         print("Simulation ended!")
 
 
