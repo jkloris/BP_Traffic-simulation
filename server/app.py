@@ -15,6 +15,8 @@ import websockets
 import xml.etree.ElementTree as ET
 from aiohttp import web
 import threading
+from multiprocessing import Process
+from socketSim import SocketSim
 
 RUNNING = False
 
@@ -47,17 +49,19 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
     return network
 
 
-websocketClients = []
+webClients = {}
 
 
 async def handler(websocket):
-    websocketClients.append(websocket)
+    # TODO mozno pouzit id(websocket) miesto portu
+    port = websocket.remote_address[1]
+    webClients[port] = SocketSim()
     print(
-        f'New connection from: {websocket.remote_address} ({len(websocketClients)} total)')
-
+        f'\nNew connection from: {websocket.remote_address} ({len(webClients)} total)\n')
     # asyncio.create_task(send(websocket))
+
     global RUNNING, STATUS, VEHICLES, SIMULATION_SPEED
-    # while True:
+
     try:
         async for message in websocket:
             # message = await websocket.recv()
@@ -65,42 +69,59 @@ async def handler(websocket):
             print(event)
 
             if event["type"] == "start":
-                if STATUS == "finished":
+                webClients[port].print()
+                if webClients[port].STATUS == "finished":
                     RUNNING = True
+                    webClients[port].RUNNING = True
                     STATUS = "running"
+                    webClients[port].STATUS = "running"
                     VEHICLES = None
+                    webClients[port].VEHICLES = None
+
                     loop = asyncio.get_event_loop()
                     loop.create_task(traciStart(websocket))
 
             elif event["type"] == "pause":
-                if STATUS == "running":
-                    STATUS = "paused"
-                    RUNNING = False
+
+                if webClients[port].STATUS == "running":
+                    webClients[port].STATUS = "paused"
+                    webClients[port].RUNNING = False
 
             elif event["type"] == "play":
-                if STATUS == "paused":
-                    STATUS = "played"
-                    RUNNING = True
-                    loop.create_task(run(websocket))
+                if webClients[port].STATUS == "paused":
+                    webClients[port].STATUS = "played"
+                    webClients[port].RUNNING = True
+                    loop.create_task(run(websocket, traci.getConnection(port)))
 
             elif event["type"] == "restart":
-                if STATUS != "finished":
-                    RUNNING = False
-                    STATUS = "finished"
-                    traci.close()
+                if webClients[port].STATUS != "finished":
+                    webClients[port].RUNNING = False
+                    webClients[port].STATUS = "finished"
+
+                    conn = traci.getConnection(port)
+                    conn.close(False)
                     await confirmRestart(websocket)
 
             elif event["type"] == "setSpeed":
-                SIMULATION_SPEED = int(event["value"])
+                webClients[port].SIMULATION_SPEED = int(event["value"])
 
     except websockets.ConnectionClosedOK:
-        pass
+        print(f"{websocket} ConnectionClosed OK\n")
+    except websockets.ConnectionClosedError:
+        print(f"{websocket} ConnectionClosed Error\n")
     finally:
         print(f'Disconnected from socket [{id(websocket)}]...')
         RUNNING = False
         STATUS = "finished"
-        traci.close()
-        websocketClients.remove(websocket)
+        try:
+            conn = traci.getConnection(port)
+            conn.close(False)
+        except:
+            pass
+
+        webClients.pop(port)
+        print(webClients, "\n")
+        # websocketClients.remove(websocket)
 
 # contains TraCI control loop
 
@@ -113,71 +134,81 @@ async def confirmRestart(websocket):
 async def traciStart(websocket):
     sumoBinary = checkBinary('sumo')
 
-    traci.start([sumoBinary, "-c", "..\sumo\demoAAA.sumocfg",
-                "--tripinfo-output", "..\sumo\_tripinfo.xml"])
+    try:
+        traci.start([sumoBinary, "-c", "..\sumo\demoAAA.sumocfg",
+                     "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=websocket.remote_address[1])
+    except:
+        conn = traci.getConnection(websocket.remote_address[1])
+        print(f"\n {conn.simulation.getNetBoundary()}\n")
+        print(conn, "jsdklsjdklsjdlksajdsalkdjsalkdjslk\n")
 
     network = xmlnetToNetwork("../sumo/demoAAA.net.xml")
     msg = {"type": "network", "data": network}
     await websocket.send(json.dumps(msg))
 
-    print(traci.simulation.getNetBoundary())
-    await run(websocket)
+    # conn is client connection to traci
+    conn = traci.getConnection(websocket.remote_address[1])
+    print(f"\n {conn.simulation.getNetBoundary()}\n")
+
+    await run(websocket, conn)
 
 
-async def run(websocket):
+async def run(websocket, conn):
     step = 0
     global VEHICLES, STATUS
+    port = websocket.remote_address[1]
+
     print("::::::::::::RUN TRACI\n")
     vehicleData = None
-    if (STATUS == 'running'):
-        vehicleData = getVehicles()
-    elif (STATUS == "played"):
-        STATUS = "running"
-        vehicleData = updateVehicles(VEHICLES)
+    if (webClients[port].STATUS == 'running'):
+        vehicleData = getVehicles(conn)
+    elif (webClients[port].STATUS == "played"):
+        webClients[port].STATUS = "running"
+        vehicleData = updateVehicles(webClients[port].VEHICLES, conn)
 
     if vehicleData == None:
         print("Neosetrena udalost!")
         return
 
-    while RUNNING and traci.simulation.getMinExpectedNumber() > 0:
+    while webClients[port].RUNNING and conn.simulation.getMinExpectedNumber() > 0:
 
         try:
             await traciSimStep(websocket, vehicleData)
         except websockets.ConnectionClosedOK:
             break
 
-        await asyncio.sleep(SIMULATION_SPEED / 1000)
+        await asyncio.sleep(webClients[port].SIMULATION_SPEED / 1000)
 
-    if STATUS == "paused":
-        VEHICLES = vehicleData
-        print("Simulation paused!")
+    if webClients[port].STATUS == "paused":
+        webClients[port].VEHICLES = vehicleData
+        print(f"Simulation {port} paused!")
 
-    elif STATUS == "finished":
-        print("Simulation ended!")
+    elif webClients[port].STATUS == "finished":
+        print(f"Simulation {port} ended!")
         return
     else:
-        STATUS = "finished"
-        traci.close()
+        webClients[port].STATUS = "finished"
+        conn.close(False)
         # sys.stdout.flush()
-        print("Simulation ended!")
+        print(f"Simulation {port} ended!")
 
 
-def getVehicles():
-    vehicleIDs = traci.vehicle.getIDList()
+def getVehicles(conn):
+    vehicleIDs = conn.vehicle.getIDList()
     vehicleData = {"removed": [], "added": vehicleIDs,
                    "data": {}, "all": vehicleIDs}
 
     for id in vehicleIDs:
-        pos = traci.vehicle.getPosition(id)
-        angle = traci.vehicle.getAngle(id)
+        pos = conn.vehicle.getPosition(id)
+        angle = conn.vehicle.getAngle(id)
         vehicleData["added"][id] = {"position": pos, "angle": angle}
     return vehicleData
 
 
-def updateVehicles(vehicleData):
-    vehicleIDs = traci.vehicle.getIDList()
-    vehicleData["removed"] = traci.simulation.getArrivedIDList()
-    vehicleData["added"] = traci.simulation.getDepartedIDList()
+def updateVehicles(vehicleData, conn):
+    vehicleIDs = conn.vehicle.getIDList()
+    vehicleData["removed"] = conn.simulation.getArrivedIDList()
+    vehicleData["added"] = conn.simulation.getDepartedIDList()
 
     for i in vehicleData["removed"]:
         vehicleData["all"] = [item for item in vehicleData["all"] if item != i]
@@ -185,8 +216,8 @@ def updateVehicles(vehicleData):
     vehicleData["all"] += vehicleData["added"]
 
     for id in vehicleIDs:
-        pos = traci.vehicle.getPosition(id)
-        angle = traci.vehicle.getAngle(id)
+        pos = conn.vehicle.getPosition(id)
+        angle = conn.vehicle.getAngle(id)
         vehicleData["data"][id] = {"position": pos, "angle": angle}
 
     return vehicleData
@@ -194,10 +225,11 @@ def updateVehicles(vehicleData):
 
 async def traciSimStep(websocket, vehicleData):
 
-    vehicleData = updateVehicles(vehicleData)
-    traci.simulationStep()
+    conn = traci.getConnection(websocket.remote_address[1])
+    vehicleData = updateVehicles(vehicleData, conn)
+    conn.simulationStep()
 
-    time = traci.simulation.getTime()
+    # time = traci.simulation.getTime()
     # print("_______________________\n", time)
     msg = {"type": "step", "data": vehicleData}
     await websocket.send(json.dumps(msg))
