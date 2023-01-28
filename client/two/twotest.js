@@ -2,7 +2,8 @@ var elem = document.getElementById("board");
 var centerX = window.innerWidth / 2;
 var centerY = window.innerHeight / 2 - 200;
 
-var two = new Two({ width: 0.95 * window.innerWidth, height: 1000 }).appendTo(elem);
+
+var two = new Two({ width: elem.style.width, height:elem.style.height }).appendTo(elem);
 var stage = new Two.Group();
 
 class Vehicle {

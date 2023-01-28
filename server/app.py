@@ -95,12 +95,17 @@ async def handler(websocket):
 
             elif event["type"] == "restart":
                 if webClients[port].STATUS != "finished":
+
                     webClients[port].RUNNING = False
                     webClients[port].STATUS = "finished"
 
-                    conn = traci.getConnection(port)
-                    conn.close(False)
                     await confirmRestart(websocket)
+                    
+                    conn = traci.getConnection(port)
+                    conn.close()
+                    # print(conn.getVersion())
+                    # conn.close(False)
+                    # traci.close()
 
             elif event["type"] == "setSpeed":
                 webClients[port].SIMULATION_SPEED = int(event["value"])
@@ -115,7 +120,7 @@ async def handler(websocket):
         STATUS = "finished"
         try:
             conn = traci.getConnection(port)
-            conn.close(False)
+            conn.close()
         except:
             pass
 
@@ -134,13 +139,21 @@ async def confirmRestart(websocket):
 async def traciStart(websocket):
     sumoBinary = checkBinary('sumo')
 
-    try:
-        traci.start([sumoBinary, "-c", "..\sumo\demoAAA.sumocfg",
-                     "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=websocket.remote_address[1])
-    except:
-        conn = traci.getConnection(websocket.remote_address[1])
-        print(f"\n {conn.simulation.getNetBoundary()}\n")
-        print(conn, "jsdklsjdklsjdlksajdsalkdjsalkdjslk\n")
+    # TODO Zleeeeeeeeee
+
+    traci.start([sumoBinary, "-c", "..\sumo\demoAAA.sumocfg", "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=websocket.remote_address[1]) # tmp label
+
+    conn = traci.getConnection(websocket.remote_address[1])
+    print(f"\n {conn.simulation.getNetBoundary()}\n")
+    print(conn, "jsdklsjdklsjdlksajdsalkdjsalkdjslk\n")
+    # try:
+    #     traci.start([sumoBinary, "-c", "..\sumo\demoAAA.sumocfg",
+    #                  "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=websocket.remote_address[1])
+    # except:
+    #     conn = traci.getConnection(websocket.remote_address[1])
+    #     print(f"\n {conn.simulation.getNetBoundary()}\n")
+    #     print(conn, "jsdklsjdklsjdlksajdsalkdjsalkdjslk\n")
+    # -------------------
 
     network = xmlnetToNetwork("../sumo/demoAAA.net.xml")
     msg = {"type": "network", "data": network}
@@ -184,13 +197,13 @@ async def run(websocket, conn):
         print(f"Simulation {port} paused!")
 
     elif webClients[port].STATUS == "finished":
-        print(f"Simulation {port} ended!")
+        print(f"Simulation {port} ended!-1")
         return
     else:
         webClients[port].STATUS = "finished"
-        conn.close(False)
+        conn.close()
         # sys.stdout.flush()
-        print(f"Simulation {port} ended!")
+        print(f"Simulation {port} ended!-2")
 
 
 def getVehicles(conn):
