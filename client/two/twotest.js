@@ -105,8 +105,8 @@ function addZUI() {
         var dx = e.clientX - mouse.x;
         var dy = e.clientY - mouse.y;
         if (dragging) {
-            stage.position.x += dx / zui.scale;
-            stage.position.y += dy / zui.scale;
+            stage.position.x += dx // / zui.scale;
+            stage.position.y += dy // / zui.scale;
         } else {
             zui.translateSurface(dx, dy);
         }
