@@ -119,7 +119,7 @@ function addZUI() {
         window.removeEventListener("mouseup", mouseup, false);
     }
 
-    function mousewheel(e) {
+    function mousewheel(e) { //TODO zoom to center
         var dy = (e.wheelDeltaY || -e.deltaY) / 2000;
         zui.zoomBy(dy, e.clientX, e.clientY);
         two.update();

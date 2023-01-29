@@ -41,11 +41,19 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
     root = tree.getroot()
     network = {}
 
-    for ch in root.findall("edge"):
-        lane = ch.find("lane")
-        network[lane.attrib["id"]] = []
-        for p in lane.attrib["shape"].split(" "):
-            network[lane.attrib["id"]].append(p.split(","))
+    for e in root.findall("edge"):
+        type = "road"
+        if "type" in e.attrib:
+            if "rail" in e.attrib["type"]:
+                type = "rail"
+            elif "path" in e.attrib["type"] or "footway" in e.attrib["type"]:
+                type = "pathway"
+
+        lanes = e.findall("lane")
+        for lane in lanes:
+            network[lane.attrib["id"]] = {"type": type, "points": []}
+            for p in lane.attrib["shape"].split(" "):
+                network[lane.attrib["id"]]["points"].append(p.split(","))
     return network
 
 
@@ -100,7 +108,7 @@ async def handler(websocket):
                     webClients[port].STATUS = "finished"
 
                     await confirmRestart(websocket)
-                    
+
                     conn = traci.getConnection(port)
                     conn.close()
                     # print(conn.getVersion())
@@ -141,11 +149,11 @@ async def traciStart(websocket):
 
     # TODO Zleeeeeeeeee
 
-    traci.start([sumoBinary, "-c", "..\sumo\demoAAA.sumocfg", "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=websocket.remote_address[1]) # tmp label
+    traci.start([sumoBinary, "-c", "..\sumo\demoAAA.sumocfg", "--tripinfo-output",
+                "..\sumo\_tripinfo.xml"], label=websocket.remote_address[1])  # tmp label
 
     conn = traci.getConnection(websocket.remote_address[1])
     print(f"\n {conn.simulation.getNetBoundary()}\n")
-    print(conn, "jsdklsjdklsjdlksajdsalkdjsalkdjslk\n")
     # try:
     #     traci.start([sumoBinary, "-c", "..\sumo\demoAAA.sumocfg",
     #                  "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=websocket.remote_address[1])
@@ -155,7 +163,7 @@ async def traciStart(websocket):
     #     print(conn, "jsdklsjdklsjdlksajdsalkdjsalkdjslk\n")
     # -------------------
 
-    network = xmlnetToNetwork("../sumo/demoAAA.net.xml")
+    network = xmlnetToNetwork("../sumo/osm.net.xml")
     msg = {"type": "network", "data": network}
     await websocket.send(json.dumps(msg))
 
