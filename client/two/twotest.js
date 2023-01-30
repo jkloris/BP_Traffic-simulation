@@ -1,10 +1,12 @@
 var elem = document.getElementById("board");
 var centerX = window.innerWidth / 2;
-var centerY = window.innerHeight / 2 - 200;
+var centerY = window.innerHeight / 2;
 
 
 var two = new Two({ width: elem.style.width, height:elem.style.height }).appendTo(elem);
 var stage = new Two.Group();
+
+let network = null
 
 class Vehicle {
     constructor(id, x, y) {
@@ -14,9 +16,9 @@ class Vehicle {
         this.obj = two.makeEllipse(x, y, this.width, this.height);
         this.obj.fill = "#" + ((Math.random() * 0xffffff) << 0).toString(16);
     }
-    move(x, y, angle) {
-        this.obj.translation.x = centerX + x;
-        this.obj.translation.y = centerY + y;
+    move(x, y, angle, offset = {"x" : 0, "y" : 0}) {
+        this.obj.translation.x = x + offset.x;
+        this.obj.translation.y = y + offset.y;
         this.obj.rotation = -(Math.PI * angle) / 180;
     }
 }
@@ -47,7 +49,7 @@ function drawVehicles(vehicleData) {
     for (i in vehicleData.all) {
         id = vehicleData.all[i];
         data = vehicleData.data[id];
-        vehicles[id].move(data.position[0], data.position[1], data.angle);
+        vehicles[id].move(data.position[0], data.position[1], data.angle, network.offset);
     }
     two.update();
 }
@@ -74,7 +76,6 @@ function clearNetwork() {
 
 two.add(stage);
 var zui = new Two.ZUI(stage);
-console.log(zui);
 addZUI();
 
 function addZUI() {
@@ -121,7 +122,7 @@ function addZUI() {
 
     function mousewheel(e) { //TODO zoom to center
         var dy = (e.wheelDeltaY || -e.deltaY) / 2000;
-        zui.zoomBy(dy, e.clientX, e.clientY);
+        zui.zoomBy(dy,  e.clientX,  e.clientY);
         two.update();
     }
 }

@@ -41,6 +41,12 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
     root = tree.getroot()
     network = {}
 
+    boundList = root.find("location").attrib["convBoundary"].split(" ")[
+        0].split(",")
+    convBoundary = {
+        "x0": boundList[0], "y0": boundList[1], "x1": boundList[2], "y1": boundList[3]}
+
+    print(convBoundary)
     for e in root.findall("edge"):
         type = "road"
         if "type" in e.attrib:
@@ -54,7 +60,8 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
             network[lane.attrib["id"]] = {"type": type, "points": []}
             for p in lane.attrib["shape"].split(" "):
                 network[lane.attrib["id"]]["points"].append(p.split(","))
-    return network
+
+    return {"type": "network", "data": network, "boundary": convBoundary}
 
 
 webClients = {}
@@ -149,7 +156,7 @@ async def traciStart(websocket):
 
     # TODO Zleeeeeeeeee
 
-    traci.start([sumoBinary, "-c", "..\sumo\demoAAA.sumocfg", "--tripinfo-output",
+    traci.start([sumoBinary, "-c", "..\sumo\osm.sumocfg", "--tripinfo-output",
                 "..\sumo\_tripinfo.xml"], label=websocket.remote_address[1])  # tmp label
 
     conn = traci.getConnection(websocket.remote_address[1])
@@ -163,13 +170,11 @@ async def traciStart(websocket):
     #     print(conn, "jsdklsjdklsjdlksajdsalkdjsalkdjslk\n")
     # -------------------
 
-    network = xmlnetToNetwork("../sumo/osm.net.xml")
-    msg = {"type": "network", "data": network}
+    msg = xmlnetToNetwork("../sumo/osm.net.xml")
     await websocket.send(json.dumps(msg))
 
     # conn is client connection to traci
-    conn = traci.getConnection(websocket.remote_address[1])
-    print(f"\n {conn.simulation.getNetBoundary()}\n")
+    # print(f"\n {conn.simulation.getNetBoundary()}\n")
 
     await run(websocket, conn)
 

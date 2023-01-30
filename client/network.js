@@ -1,6 +1,10 @@
 class Network {
-    constructor(lanes, two) {
-        // console.log(lanes);
+    constructor(lanes, boundary, two) {
+        this.offset = {
+            x : centerX - boundary.x0 - Math.abs(boundary.x0 - boundary.x1) / 2,
+            y : centerY - boundary.y0 - Math.abs(boundary.y0 - boundary.y1) / 2
+        }
+        console.log(centerX, centerY, this.offset)
         this.lanes = lanes;
         this.two = two;
         this.paths = [];
@@ -19,8 +23,8 @@ class Network {
             // await new Promise((r) => setTimeout(r, 500));
             var anchors = [
                 new Two.Anchor(
-                    parseFloat(l["points"][0][0]) + centerX,
-                    parseFloat(l["points"][0][1]) + centerY,
+                    parseFloat(l["points"][0][0]) + this.offset.x,
+                    parseFloat(l["points"][0][1]) + this.offset.y,
                     0,
                     0,
                     0,
@@ -31,8 +35,8 @@ class Network {
             for (var a = 1; a < l["points"].length; a++) {
                 anchors.push(
                     new Two.Anchor(
-                        parseFloat(l["points"][a][0]) + centerX,
-                        parseFloat(l["points"][a][1]) + centerY,
+                        parseFloat(l["points"][a][0]) + this.offset.x,
+                        parseFloat(l["points"][a][1]) + this.offset.y,
                         0,
                         0,
                         0,

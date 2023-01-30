@@ -13,7 +13,7 @@ function receiveMoves(websocket) {
                 drawVehicles(event.data);
                 break;
             case "network":
-                var network = new Network(event.data, two);
+                network = new Network(event.data, event.boundary, two);
                 // network.addPathToStage(stage);
                 network.draw();
             case "restart":
