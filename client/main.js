@@ -98,7 +98,7 @@ window.addEventListener("DOMContentLoaded", () => {
         restart: restartButton,
     };
     // Open the WebSocket connection and register event handlers.
-    const websocket = new WebSocket("ws://localhost:8001/");
+    const websocket = new WebSocket("ws://192.168.1.12:8001/");
     receiveMoves(websocket);
     sendMoves(buttons, websocket);
 });

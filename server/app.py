@@ -18,15 +18,15 @@ import threading
 from multiprocessing import Process
 from socketSim import SocketSim
 
-RUNNING = False
+# RUNNING = False
 
 #STATUS = 'running'
 #STATUS = 'paused'
-STATUS = 'finished'  # TODO premenovat
+# STATUS = 'finished'  # TODO premenovat
 
-VEHICLES = None
+# VEHICLES = None
 
-SIMULATION_SPEED = 30  # lower means faster
+# SIMULATION_SPEED = 30  # lower means faster
 
 # we need to import some python modules from the $SUMO_HOME/tools directory
 if 'SUMO_HOME' in os.environ:
@@ -46,7 +46,6 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
     convBoundary = {
         "x0": boundList[0], "y0": boundList[1], "x1": boundList[2], "y1": boundList[3]}
 
-    print(convBoundary)
     for e in root.findall("edge"):
         type = "road"
         if "type" in e.attrib:
@@ -75,7 +74,7 @@ async def handler(websocket):
         f'\nNew connection from: {websocket.remote_address} ({len(webClients)} total)\n')
     # asyncio.create_task(send(websocket))
 
-    global RUNNING, STATUS, VEHICLES, SIMULATION_SPEED
+    # global RUNNING, STATUS, VEHICLES, SIMULATION_SPEED
 
     try:
         async for message in websocket:
@@ -84,13 +83,9 @@ async def handler(websocket):
             print(event)
 
             if event["type"] == "start":
-                webClients[port].print()
                 if webClients[port].STATUS == "finished":
-                    RUNNING = True
                     webClients[port].RUNNING = True
-                    STATUS = "running"
                     webClients[port].STATUS = "running"
-                    VEHICLES = None
                     webClients[port].VEHICLES = None
 
                     loop = asyncio.get_event_loop()
@@ -131,8 +126,8 @@ async def handler(websocket):
         print(f"{websocket} ConnectionClosed Error\n")
     finally:
         print(f'Disconnected from socket [{id(websocket)}]...')
-        RUNNING = False
-        STATUS = "finished"
+        webClients[port].RUNNING = False
+        webClients[port].STATUS = "finished"
         try:
             conn = traci.getConnection(port)
             conn.close()
@@ -140,7 +135,6 @@ async def handler(websocket):
             pass
 
         webClients.pop(port)
-        print(webClients, "\n")
         # websocketClients.remove(websocket)
 
 # contains TraCI control loop
@@ -154,21 +148,10 @@ async def confirmRestart(websocket):
 async def traciStart(websocket):
     sumoBinary = checkBinary('sumo')
 
-    # TODO Zleeeeeeeeee
-
-    traci.start([sumoBinary, "-c", "..\sumo\osm.sumocfg", "--tripinfo-output",
-                "..\sumo\_tripinfo.xml"], label=websocket.remote_address[1])  # tmp label
-
+    traci.start([sumoBinary, "-c", "..\sumo\osm.sumocfg",
+                 "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=websocket.remote_address[1])
     conn = traci.getConnection(websocket.remote_address[1])
-    print(f"\n {conn.simulation.getNetBoundary()}\n")
-    # try:
-    #     traci.start([sumoBinary, "-c", "..\sumo\demoAAA.sumocfg",
-    #                  "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=websocket.remote_address[1])
-    # except:
-    #     conn = traci.getConnection(websocket.remote_address[1])
-    #     print(f"\n {conn.simulation.getNetBoundary()}\n")
-    #     print(conn, "jsdklsjdklsjdlksajdsalkdjsalkdjslk\n")
-    # -------------------
+#     -------------------
 
     msg = xmlnetToNetwork("../sumo/osm.net.xml")
     await websocket.send(json.dumps(msg))
@@ -180,7 +163,6 @@ async def traciStart(websocket):
 
 
 async def run(websocket, conn):
-    step = 0
     global VEHICLES, STATUS
     port = websocket.remote_address[1]
 
