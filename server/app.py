@@ -41,11 +41,11 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
     root = tree.getroot()
     network = {}
 
-    boundList = root.find("location").attrib["convBoundary"].split(" ")[
-        0].split(",")
-    convBoundary = {
-        "x0": boundList[0], "y0": boundList[1], "x1": boundList[2], "y1": boundList[3]}
+    # boundaries of network map
+    boundList = root.find("location").attrib["convBoundary"].split(" ")[0].split(",")
+    convBoundary = {"x0": boundList[0], "y0": boundList[1], "x1": boundList[2], "y1": boundList[3]}
 
+    # formating roads, lanes, paths, etc.
     for e in root.findall("edge"):
         type = "road"
         if "type" in e.attrib:
@@ -60,7 +60,15 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
             for p in lane.attrib["shape"].split(" "):
                 network[lane.attrib["id"]]["points"].append(p.split(","))
 
-    return {"type": "network", "data": network, "boundary": convBoundary}
+    # traffic lights
+    tl = {}
+
+    for j in root.findall("junction"):
+        if "type" in j.attrib and j.attrib["type"] == "traffic_light":
+            for id in j.attrib["incLanes"].split(" "):
+                tl[id] = network[id]["points"][-1]
+            
+    return {"type": "network", "data": network, "boundary": convBoundary, "trafficLights"  : tl}
 
 
 webClients = {}
