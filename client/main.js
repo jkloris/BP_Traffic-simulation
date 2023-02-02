@@ -6,11 +6,12 @@ function receiveMoves(websocket) {
     websocket.addEventListener("message", ({ data }) => {
         const event = JSON.parse(data);
 
-        console.log(event);
+        // console.log(event);
         switch (event.type) {
             case "step":
                 updateVehicleObjects(event.data);
                 drawVehicles(event.data);
+                network.drawTrafficLights(event.trafficLights)
                 break;
             case "network":
                 network = new Network(event.data, event.trafficLights, event.boundary, two);

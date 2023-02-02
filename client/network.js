@@ -11,12 +11,6 @@ class Network {
         this.paths = [];
     }
 
-    addToStage(_stage, list) {
-        for (var p in list) {
-            _stage.add(list[p]);
-        }
-        // two.update();
-    }
 
     async draw() {
         for (const [id, l] of Object.entries(this.lanes)) {
@@ -69,20 +63,39 @@ class Network {
             }
             
             this.paths.push(path);
+            stage.add(path)
 
         }
         
-        
-        // traffic lights drawing
-        let tlights = []
+        // traffic lights drawable objects creating
+        let tlights =  {}
         for(const [id, pos] of Object.entries(this.trafficLights)){
             let dot = new Two.Circle(parseFloat(pos[0]) + this.offset.x, parseFloat(pos[1]) + this.offset.y, 3,2)
             dot.fill = "green"
-            dot.stroke = "red"
-            tlights.push(dot)
+            dot.stroke = "white"
+            dot.linewidth = 0.3
+            tlights[id] = dot
+            stage.add(dot)
         }
-        this.addToStage(stage, this.paths);
-        this.addToStage(stage, tlights);
+        this.trafficLights = tlights
         this.two.update();
+    }
+
+    drawTrafficLights(tlightsColors){
+        for(const [id, col] of Object.entries(tlightsColors)){
+            switch (col.toLowerCase()) {
+                case "r":
+                    this.trafficLights[id].fill = "red"
+                    break;
+                case "g":
+                    this.trafficLights[id].fill = "green"
+                    break;
+                case "y":
+                    this.trafficLights[id].fill = "yellow"
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

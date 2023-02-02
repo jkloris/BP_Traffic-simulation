@@ -239,15 +239,26 @@ def updateVehicles(vehicleData, conn):
     return vehicleData
 
 
+def getTrafficLights(conn):
+    tlights = {}
+    for id in conn.trafficlight.getIDList():
+        signal = conn.trafficlight.getRedYellowGreenState(id)
+        lanes = conn.trafficlight.getControlledLanes(id)
+        for i in range(len(lanes)):
+            tlights[lanes[i]] =  signal[i]
+    return tlights
+
 async def traciSimStep(websocket, vehicleData):
 
     conn = traci.getConnection(websocket.remote_address[1])
     vehicleData = updateVehicles(vehicleData, conn)
+    tlights = getTrafficLights(conn)
+
     conn.simulationStep()
 
     # time = traci.simulation.getTime()
     # print("_______________________\n", time)
-    msg = {"type": "step", "data": vehicleData}
+    msg = {"type": "step", "data": vehicleData, "trafficLights" : tlights}
     await websocket.send(json.dumps(msg))
 
 
