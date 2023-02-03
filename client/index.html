@@ -27,11 +27,19 @@
       Play </button>
 
     <div class="slidecontainer">
-      <input id="speedSlider" type="range" value="30" min="1" max="100"
+      <input id="speedSlider" type="range" value="30" min="1" max="200"
         oninput="this.nextElementSibling.value = this.value">
       <output>30</output> ms/frame
       <button id="setSpeedButton"> Set Speed</button>
+      
+      <div style="width: 20px; display: inline-block;"></div>
+
+      <input id="scaleSlider" type="range" value="1" min="1" max="5"
+        oninput="this.nextElementSibling.value = this.value">
+      <output>1</output>x
+      <button id="setScaleButton"> Set Traffic scale</button>
     </div>
+    
 
   </div>
 

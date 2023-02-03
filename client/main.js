@@ -14,9 +14,10 @@ function receiveMoves(websocket) {
                 network.drawTrafficLights(event.trafficLights)
                 break;
             case "network":
-                network = new Network(event.data, event.trafficLights, event.boundary, two);
-                // network.addPathToStage(stage);
-                network.draw();
+                if(network  == null){
+                    network = new Network(event.data, event.trafficLights, event.boundary, two);
+                    network.draw();
+                }
             case "restart":
                 clearNetwork();
                 break;
@@ -74,14 +75,24 @@ function sendMoves(buttons, websocket) {
         };
         await websocket.send(JSON.stringify(event));
     };
-
-    document.addEventListener("keypress", ({}) => {
-        console.log("Key press!");
+    // setScale button
+    buttons["setScale"].onclick = async () => {
+        var sliderVal = document.getElementById("scaleSlider").value;
         const event = {
-            type: "play",
+            type: "setScale",
+            value: sliderVal,
         };
-        // websocket.send(JSON.stringify(event));
-    });
+        console.log("scale")
+        await websocket.send(JSON.stringify(event));
+    };
+
+    // document.addEventListener("keypress", ({}) => {
+    //     console.log("Key press!");
+    //     const event = {
+    //         type: "play",
+    //     };
+    //     // websocket.send(JSON.stringify(event));
+    // });
 }
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -91,11 +102,13 @@ window.addEventListener("DOMContentLoaded", () => {
     const playButton = document.getElementById("playButton");
     const restartButton = document.getElementById("restartButton");
     const setSpeedButton = document.getElementById("setSpeedButton");
+    const setScaleButton = document.getElementById("setScaleButton");
     const buttons = {
         start: startButton,
         pause: pauseButton,
         play: playButton,
         setSpeed: setSpeedButton,
+        setScale: setScaleButton,
         restart: restartButton,
     };
     // Open the WebSocket connection and register event handlers.

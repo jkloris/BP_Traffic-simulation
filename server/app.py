@@ -78,12 +78,10 @@ async def handler(websocket):
     # TODO mozno pouzit id(websocket) miesto portu
     port = websocket.remote_address[1]
     webClients[port] = SocketSim()
-    print(
-        f'\nNew connection from: {websocket.remote_address} ({len(webClients)} total)\n')
+    print( f'\nNew connection from: {websocket.remote_address} ({len(webClients)} total)\n')
     # asyncio.create_task(send(websocket))
 
     # global RUNNING, STATUS, VEHICLES, SIMULATION_SPEED
-
     try:
         async for message in websocket:
             # message = await websocket.recv()
@@ -95,9 +93,9 @@ async def handler(websocket):
                     webClients[port].RUNNING = True
                     webClients[port].STATUS = "running"
                     webClients[port].VEHICLES = None
-
                     loop = asyncio.get_event_loop()
                     loop.create_task(traciStart(websocket))
+
 
             elif event["type"] == "pause":
 
@@ -128,6 +126,11 @@ async def handler(websocket):
             elif event["type"] == "setSpeed":
                 webClients[port].SIMULATION_SPEED = int(event["value"])
 
+            elif event["type"] == "setScale" :
+                if webClients[port].STATUS != "finished":
+                    traci.getConnection(port).simulation.setScale(int(event["value"]))
+                    webClients[port].TRAFFIC_SCALE = int(event["value"])
+
     except websockets.ConnectionClosedOK:
         print(f"{websocket} ConnectionClosed OK\n")
     except websockets.ConnectionClosedError:
@@ -156,14 +159,16 @@ async def confirmRestart(websocket):
 async def traciStart(websocket):
     sumoBinary = checkBinary('sumo')
 
+    label = websocket.remote_address[1]
     traci.start([sumoBinary, "-c", "..\sumo\osm.sumocfg",
-                 "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=websocket.remote_address[1])
-    conn = traci.getConnection(websocket.remote_address[1])
+                 "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=label)
+    conn = traci.getConnection(label)
 #     -------------------
 
     msg = xmlnetToNetwork("../sumo/osm.net.xml")
     await websocket.send(json.dumps(msg))
-
+                        
+    conn.simulation.setScale(webClients[label].TRAFFIC_SCALE)
     # conn is client connection to traci
     # print(f"\n {conn.simulation.getNetBoundary()}\n")
 
@@ -171,7 +176,6 @@ async def traciStart(websocket):
 
 
 async def run(websocket, conn):
-    global VEHICLES, STATUS
     port = websocket.remote_address[1]
 
     print("::::::::::::RUN TRACI\n")
@@ -185,13 +189,13 @@ async def run(websocket, conn):
     if vehicleData == None:
         print("Neosetrena udalost!")
         return
-
     while webClients[port].RUNNING and conn.simulation.getMinExpectedNumber() > 0:
-
+        
         try:
             await traciSimStep(websocket, vehicleData)
         except websockets.ConnectionClosedOK:
             break
+        
 
         await asyncio.sleep(webClients[port].SIMULATION_SPEED / 1000)
 
