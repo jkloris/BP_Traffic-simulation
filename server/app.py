@@ -18,15 +18,6 @@ import threading
 from multiprocessing import Process
 from socketSim import SocketSim
 
-# RUNNING = False
-
-#STATUS = 'running'
-#STATUS = 'paused'
-# STATUS = 'finished'  # TODO premenovat
-
-# VEHICLES = None
-
-# SIMULATION_SPEED = 30  # lower means faster
 
 # we need to import some python modules from the $SUMO_HOME/tools directory
 if 'SUMO_HOME' in os.environ:
@@ -81,7 +72,6 @@ async def handler(websocket):
     print( f'\nNew connection from: {websocket.remote_address} ({len(webClients)} total)\n')
     # asyncio.create_task(send(websocket))
 
-    # global RUNNING, STATUS, VEHICLES, SIMULATION_SPEED
     try:
         async for message in websocket:
             # message = await websocket.recv()
@@ -119,9 +109,6 @@ async def handler(websocket):
 
                     conn = traci.getConnection(port)
                     conn.close()
-                    # print(conn.getVersion())
-                    # conn.close(False)
-                    # traci.close()
 
             elif event["type"] == "setSpeed":
                 webClients[port].SIMULATION_SPEED = int(event["value"])
@@ -146,9 +133,6 @@ async def handler(websocket):
             pass
 
         webClients.pop(port)
-        # websocketClients.remove(websocket)
-
-# contains TraCI control loop
 
 
 async def confirmRestart(websocket):
@@ -165,10 +149,9 @@ async def traciStart(websocket, sumocfgFile):
     msg = xmlnetToNetwork("../sumo/"+sumocfgFile+".net.xml")
     await websocket.send(json.dumps(msg))
                         
+    # conn is client connection to traci
     conn = traci.getConnection(label)
     conn.simulation.setScale(webClients[label].TRAFFIC_SCALE)
-    # conn is client connection to traci
-    # print(f"\n {conn.simulation.getNetBoundary()}\n")
 
     await run(websocket, conn)
 
@@ -213,8 +196,7 @@ async def run(websocket, conn):
 
 def getVehicles(conn):
     vehicleIDs = conn.vehicle.getIDList()
-    vehicleData = {"removed": [], "added": vehicleIDs,
-                   "data": {}, "all": vehicleIDs}
+    vehicleData = {"removed": [], "added": vehicleIDs, "data": {}, "all": vehicleIDs}
 
     for id in vehicleIDs:
         pos = conn.vehicle.getPosition(id)

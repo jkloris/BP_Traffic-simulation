@@ -25,8 +25,6 @@ function receiveMoves(websocket) {
                 break;
         }
 
-        // console.log(event.positions);
-        // window.globals.changePos(event.positions);
     });
 }
 
@@ -88,13 +86,6 @@ function sendMoves(buttons, websocket) {
         await websocket.send(JSON.stringify(event));
     };
 
-    // document.addEventListener("keypress", ({}) => {
-    //     console.log("Key press!");
-    //     const event = {
-    //         type: "play",
-    //     };
-    //     // websocket.send(JSON.stringify(event));
-    // });
 }
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -114,7 +105,7 @@ window.addEventListener("DOMContentLoaded", () => {
         restart: restartButton,
     };
     // Open the WebSocket connection and register event handlers.
-    const websocket = new WebSocket("ws://192.168.1.12:8001/");
+    const websocket = new WebSocket("localhost:8001/");
     receiveMoves(websocket);
     sendMoves(buttons, websocket);
 });
