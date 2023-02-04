@@ -94,7 +94,7 @@ async def handler(websocket):
                     webClients[port].STATUS = "running"
                     webClients[port].VEHICLES = None
                     loop = asyncio.get_event_loop()
-                    loop.create_task(traciStart(websocket))
+                    loop.create_task(traciStart(websocket, event["scenario"]))
 
 
             elif event["type"] == "pause":
@@ -136,7 +136,7 @@ async def handler(websocket):
     except websockets.ConnectionClosedError:
         print(f"{websocket} ConnectionClosed Error\n")
     finally:
-        print(f'Disconnected from socket [{id(websocket)}]...')
+        print(f'\nDisconnected from socket [{id(websocket)}]...')
         webClients[port].RUNNING = False
         webClients[port].STATUS = "finished"
         try:
@@ -156,18 +156,16 @@ async def confirmRestart(websocket):
     await websocket.send(json.dumps(msg))
 
 
-async def traciStart(websocket):
+async def traciStart(websocket, sumocfgFile):
     sumoBinary = checkBinary('sumo')
 
     label = websocket.remote_address[1]
-    traci.start([sumoBinary, "-c", "..\sumo\osm.sumocfg",
-                 "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=label)
-    conn = traci.getConnection(label)
-#     -------------------
+    traci.start([sumoBinary, "-c",  "..\sumo\\"+sumocfgFile+".sumocfg", "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=label)
 
-    msg = xmlnetToNetwork("../sumo/osm.net.xml")
+    msg = xmlnetToNetwork("../sumo/"+sumocfgFile+".net.xml")
     await websocket.send(json.dumps(msg))
                         
+    conn = traci.getConnection(label)
     conn.simulation.setScale(webClients[label].TRAFFIC_SCALE)
     # conn is client connection to traci
     # print(f"\n {conn.simulation.getNetBoundary()}\n")
@@ -269,6 +267,7 @@ async def traciSimStep(websocket, vehicleData):
 async def main():
 
     # FUNKCNE -->
+    
     async with websockets.serve(handler, "", 8001):
         await asyncio.Future()  # run forever
 

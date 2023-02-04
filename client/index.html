@@ -26,7 +26,10 @@
       style="margin: 5px; background-color: rgb(15, 176, 12); visibility: inherit; width: 5em; text-align: center; color: wheat;">
       Play </button>
 
-    <div class="slidecontainer">
+      
+     
+
+    <!-- <div class="slidecontainer"> -->
       <input id="speedSlider" type="range" value="30" min="1" max="200"
         oninput="this.nextElementSibling.value = this.value">
       <output>30</output> ms/frame
@@ -38,9 +41,15 @@
         oninput="this.nextElementSibling.value = this.value">
       <output>1</output>x
       <button id="setScaleButton"> Set Traffic scale</button>
-    </div>
-    
+    <!-- </div> -->
+    <div>
 
+      <select name="" id="scenarios">
+        <option value="demoAAA">demoAAA</option>
+        <option value="pezinok">pezinok</option>
+      </select>
+    </div>
+      
   </div>
 
   <div id="board" class="board" style="background-color: rgb(194, 194, 194);  width: 100%; height:85vh;"></div>

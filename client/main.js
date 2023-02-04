@@ -32,8 +32,10 @@ function receiveMoves(websocket) {
 
 function sendMoves(buttons, websocket) {
     buttons["start"].onclick = async () => {
+        document.querySelector("#scenarios").style.display = "none"
         const event = {
             type: "start",
+            scenario: document.querySelector("#scenarios").selectedOptions[0].value
         };
         websocket.send(JSON.stringify(event));
     };
