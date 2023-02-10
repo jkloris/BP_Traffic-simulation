@@ -1,3 +1,5 @@
+from trafficLight import TrafficLight
+
 
 class SocketSim:
     def __init__(self):
@@ -8,6 +10,8 @@ class SocketSim:
         self.VEHICLES = None
         self.SIMULATION_SPEED = 30  # lower means faster
         self.TRAFFIC_SCALE = 1
+        self.trafficLight = TrafficLight()
+        self.scenario = None
         # self.thread = None
 
     # tmp debug

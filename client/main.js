@@ -2,7 +2,15 @@ class Main {
 	constructor(websocket, buttons) {
 		this.websocket = websocket;
 		this.receiveMsgs(websocket);
-		this.sendMsgs(buttons, websocket);
+		this.sendButtonMsgs(buttons, websocket);
+	}
+
+	sendTLightMsg(id) {
+		const event = {
+			type: 'traffic_light',
+			id: id,
+		};
+		this.websocket.send(JSON.stringify(event));
 	}
 
 	receiveMsgs(websocket) {
@@ -30,7 +38,7 @@ class Main {
 		});
 	}
 
-	sendMsgs(buttons, websocket) {
+	sendButtonMsgs(buttons, websocket) {
 		buttons['start'].onclick = async () => {
 			document.querySelector('#scenarios').style.display = 'none';
 			const event = {
@@ -89,6 +97,7 @@ class Main {
 		};
 	}
 }
+// let main = null;
 
 window.addEventListener('DOMContentLoaded', () => {
 	// Initialize the UI.
@@ -110,5 +119,5 @@ window.addEventListener('DOMContentLoaded', () => {
 	const websocket = new WebSocket('ws://localhost:8001/');
 	// receiveMsgs(websocket);
 	// sendMsgs(buttons, websocket);
-	const main = new Main(websocket, buttons);
+	main = new Main(websocket, buttons);
 });

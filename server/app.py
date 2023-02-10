@@ -86,6 +86,7 @@ async def handler(websocket):
                     webClients[port].RUNNING = True
                     webClients[port].STATUS = "running"
                     webClients[port].VEHICLES = None
+                    webClients[port].scenario = event["scenario"]
                     loop = asyncio.get_event_loop()
                     loop.create_task(traciStart(websocket, event["scenario"]))
 
@@ -119,7 +120,22 @@ async def handler(websocket):
                 if webClients[port].STATUS != "finished":
                     traci.getConnection(port).simulation.setScale(
                         int(event["value"]))
-                    webClients[port].TRAFFIC_SCALE = int(event["value"])
+                    if webClients[port].STATUS != "finished":
+                        TRAFFIC_SCALE = int(event["value"])
+
+            elif event["type"] == "traffic_light":
+                if webClients[port].STATUS != "finished":
+                    conn = traci.getConnection(port)
+
+                    webClients[port].trafficLight.findIDs(conn)
+                    if event["id"] in webClients[port].trafficLight.ids.keys():
+                        tlightId = webClients[port].trafficLight.ids[event["id"]]
+
+                        webClients[port].trafficLight.statePlusOne(tlightId)
+                        conn.trafficlight.setPhase(
+                            tlightId, webClients[port].trafficLight.getState(tlightId))
+                        # print(conn.trafficlight.getAllProgramLogics(tlightId), '\n')
+                        # print(traci.getConnection(port).trafficlight.getIDList())
 
     except websockets.ConnectionClosedOK:
         print(f"{websocket} ConnectionClosed OK\n")
@@ -227,10 +243,13 @@ def updateVehicles(vehicleData, conn):
     return vehicleData
 
 
-def getTrafficLights(conn):
+def getTrafficLights(conn, label):
     tlights = {}
     for id in conn.trafficlight.getIDList():
-        # conn.trafficlight.setPhase(id, 4)
+        state = webClients[label].trafficLight.getState(id)
+        if state is not None:
+            conn.trafficlight.setPhase(id, state)
+
         # conn.trafficlight.setRedYellowGreenState(id, len(signal)*'G')
         signal = conn.trafficlight.getRedYellowGreenState(id)
         # print(conn.trafficlight.getAllProgramLogics(id), '\n')
@@ -245,7 +264,7 @@ async def traciSimStep(websocket, vehicleData):
 
     conn = traci.getConnection(websocket.remote_address[1])
     vehicleData = updateVehicles(vehicleData, conn)
-    tlights = getTrafficLights(conn)
+    tlights = getTrafficLights(conn, websocket.remote_address[1])
 
     conn.simulationStep()
 
