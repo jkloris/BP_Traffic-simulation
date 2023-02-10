@@ -33,8 +33,10 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
     network = {}
 
     # boundaries of network map
-    boundList = root.find("location").attrib["convBoundary"].split(" ")[0].split(",")
-    convBoundary = {"x0": boundList[0], "y0": boundList[1], "x1": boundList[2], "y1": boundList[3]}
+    boundList = root.find("location").attrib["convBoundary"].split(" ")[
+        0].split(",")
+    convBoundary = {
+        "x0": boundList[0], "y0": boundList[1], "x1": boundList[2], "y1": boundList[3]}
 
     # formating roads, lanes, paths, etc.
     for e in root.findall("edge"):
@@ -58,8 +60,8 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
         if "type" in j.attrib and j.attrib["type"] == "traffic_light":
             for id in j.attrib["incLanes"].split(" "):
                 tl[id] = network[id]["points"][-1]
-            
-    return {"type": "network", "data": network, "boundary": convBoundary, "trafficLights"  : tl}
+
+    return {"type": "network", "data": network, "boundary": convBoundary, "trafficLights": tl}
 
 
 webClients = {}
@@ -69,7 +71,8 @@ async def handler(websocket):
     # TODO mozno pouzit id(websocket) miesto portu
     port = websocket.remote_address[1]
     webClients[port] = SocketSim()
-    print( f'\nNew connection from: {websocket.remote_address} ({len(webClients)} total)\n')
+    print(
+        f'\nNew connection from: {websocket.remote_address} ({len(webClients)} total)\n')
     # asyncio.create_task(send(websocket))
 
     try:
@@ -85,7 +88,6 @@ async def handler(websocket):
                     webClients[port].VEHICLES = None
                     loop = asyncio.get_event_loop()
                     loop.create_task(traciStart(websocket, event["scenario"]))
-
 
             elif event["type"] == "pause":
 
@@ -113,9 +115,10 @@ async def handler(websocket):
             elif event["type"] == "setSpeed":
                 webClients[port].SIMULATION_SPEED = int(event["value"])
 
-            elif event["type"] == "setScale" :
+            elif event["type"] == "setScale":
                 if webClients[port].STATUS != "finished":
-                    traci.getConnection(port).simulation.setScale(int(event["value"]))
+                    traci.getConnection(port).simulation.setScale(
+                        int(event["value"]))
                     webClients[port].TRAFFIC_SCALE = int(event["value"])
 
     except websockets.ConnectionClosedOK:
@@ -144,11 +147,12 @@ async def traciStart(websocket, sumocfgFile):
     sumoBinary = checkBinary('sumo')
 
     label = websocket.remote_address[1]
-    traci.start([sumoBinary, "-c",  "..\sumo\\"+sumocfgFile+".sumocfg", "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=label)
+    traci.start([sumoBinary, "-c",  "..\sumo\\"+sumocfgFile+".sumocfg",
+                "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=label)
 
     msg = xmlnetToNetwork("../sumo/"+sumocfgFile+".net.xml")
     await websocket.send(json.dumps(msg))
-                        
+
     # conn is client connection to traci
     conn = traci.getConnection(label)
     conn.simulation.setScale(webClients[label].TRAFFIC_SCALE)
@@ -171,12 +175,11 @@ async def run(websocket, conn):
         print("Neosetrena udalost!")
         return
     while webClients[port].RUNNING and conn.simulation.getMinExpectedNumber() > 0:
-        
+
         try:
             await traciSimStep(websocket, vehicleData)
         except websockets.ConnectionClosedOK:
             break
-        
 
         await asyncio.sleep(webClients[port].SIMULATION_SPEED / 1000)
 
@@ -196,7 +199,8 @@ async def run(websocket, conn):
 
 def getVehicles(conn):
     vehicleIDs = conn.vehicle.getIDList()
-    vehicleData = {"removed": [], "added": vehicleIDs, "data": {}, "all": vehicleIDs}
+    vehicleData = {"removed": [], "added": vehicleIDs,
+                   "data": {}, "all": vehicleIDs}
 
     for id in vehicleIDs:
         pos = conn.vehicle.getPosition(id)
@@ -226,11 +230,16 @@ def updateVehicles(vehicleData, conn):
 def getTrafficLights(conn):
     tlights = {}
     for id in conn.trafficlight.getIDList():
+        # conn.trafficlight.setPhase(id, 4)
+        # conn.trafficlight.setRedYellowGreenState(id, len(signal)*'G')
         signal = conn.trafficlight.getRedYellowGreenState(id)
+        # print(conn.trafficlight.getAllProgramLogics(id), '\n')
         lanes = conn.trafficlight.getControlledLanes(id)
         for i in range(len(lanes)):
-            tlights[lanes[i]] =  signal[i]
+            tlights[lanes[i]] = signal[i]
+
     return tlights
+
 
 async def traciSimStep(websocket, vehicleData):
 
@@ -242,14 +251,14 @@ async def traciSimStep(websocket, vehicleData):
 
     # time = traci.simulation.getTime()
     # print("_______________________\n", time)
-    msg = {"type": "step", "data": vehicleData, "trafficLights" : tlights}
+    msg = {"type": "step", "data": vehicleData, "trafficLights": tlights}
     await websocket.send(json.dumps(msg))
 
 
 async def main():
 
     # FUNKCNE -->
-    
+
     async with websockets.serve(handler, "", 8001):
         await asyncio.Future()  # run forever
 
