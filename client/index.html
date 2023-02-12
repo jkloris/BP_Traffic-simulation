@@ -8,58 +8,60 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/two.js/0.6.0/two.clean.js" integrity="sha512-JM6XffVbM+wuepAehrD72xhZy6YhOcacUrLD6sJCGg9oknROkI/+NN+zsqNg1cnllkvFlqFC5QXbMHEZfynywQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
   <script src="two.js/build/two.min.js"></script>
   <script src="two.js/extras/js/zui.js"></script>
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+<link rel="stylesheet" href="./styles/style.css">
 </head>
 
-<body style="margin: 0;">
-  <div id="optionMenu" style="height: 10vh;">
+<body>
+    <div id="optionMenu">
+        <div class="inlineBlock">
 
-    <button id="startButton"
-      style="margin: 5px; background-color: rgb(98, 0, 255);  width: 5em; text-align: center; color: wheat;"> Start
-    </button>
-    <button id="restartButton"
-      style="margin: 5px; background-color: rgb(176, 12, 39); visibility: inherit; width: 5em; text-align: center; color: wheat;">
-      Restart </button>
-    <button id="pauseButton"
-      style="margin: 5px; background-color: rgb(176, 102, 12); visibility: inherit; width: 5em; text-align: center; color: wheat;">
-      Pause </button>
-    <button id="playButton"
-      style="margin: 5px; background-color: rgb(15, 176, 12); visibility: inherit; width: 5em; text-align: center; color: wheat;">
-      Play </button>
+                    <button id="startButton"> Start</button>
+                    <div class="inlineBlock">
+                        <select name="" id="scenarios">
+                            <option value="demoAAA">demoAAA</option>
+                            <option value="pezinok">pezinok</option>
+                        </select>
+                    </div>
+                    <button id="restartButton"> Restart </button>
+                    <button id="pauseButton"> Pause </button>
+                    <button id="playButton"> Play </button>
+                    </div>
 
-      
-     
+        <div class="slider">
+            <div class="verticalCenter">
 
-    <!-- <div class="slidecontainer"> -->
-      <input id="speedSlider" type="range" value="30" min="1" max="200"
-        oninput="this.nextElementSibling.value = this.value">
-      <output>30</output> ms/frame
-      <button id="setSpeedButton"> Set Speed</button>
-      
-      <div style="width: 20px; display: inline-block;"></div>
+                <div class="block"> Simulation Speed</div>
+                <input id="speedSlider" type="range" value="30" min="1" max="200"
+                oninput="document.getElementById('speedSliderOut').value = this.value">
+                <button id="setSpeedButton" class="material-symbols-outlined"> check </button>
+                <div>
+                    <output id="speedSliderOut">30</output> ms/frame
+                </div>
+            </div>
+        </div>
 
-      <input id="scaleSlider" type="range" value="1" min="1" max="5"
-        oninput="this.nextElementSibling.value = this.value">
-      <output>1</output>x
-      <button id="setScaleButton"> Set Traffic scale</button>
-    <!-- </div> -->
-    <div>
+        <!-- <div class="slider">
 
-      <select name="" id="scenarios" style="margin-left: 5px;">
-        <option value="demoAAA">demoAAA</option>
-        <option value="pezinok">pezinok</option>
-      </select>
-    </div>
-      
-  </div>
+            <div class="block"> Traffic scaling</div>
+            <input id="scaleSlider" type="range" value="1" min="1" max="5"
+                oninput="document.getElementById('scaleSliderOut').value = this.value">
+            <span id="setScaleButton" class="material-symbols-outlined">check</span>
+            <div>
+                <output id="scaleSliderOut">1</output>X
+                </div>
+</div> -->
+        </div>
 
-  <div id="board" class="board" style="background-color: rgb(194, 194, 194);  width: 100%; height:85vh;"></div>
-  <!-- <canvas id="myCanvas" style="background-color: gray; height: 90vh; width: 90vw;;" resize></canvas> -->
+    <div id="board"></div>
 
-  <script> let main = null</script>
-  <script src="view.js"></script>
-  <script src="vehicles.js"></script>
-  <script src="network.js"></script>
-  <script src="main.js" type="module"></script>
+    <script> let main = null</script>
+    <script src="view.js"></script>
+    <script src="vehicles.js"></script>
+    <script src="network.js"></script>
+    <script src="main.js" type="module"></script>
 </body>
 
 </html>
