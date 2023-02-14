@@ -13,6 +13,11 @@ class Main {
 		this.websocket.send(JSON.stringify(event));
 	}
 
+	setVisibility(item, visible) {
+		if (visible) item.style.visibility = 'visible';
+		else item.style.visibility = 'hidden';
+	}
+
 	receiveMsgs(websocket) {
 		websocket.addEventListener('message', ({ data }) => {
 			const event = JSON.parse(data);
@@ -40,7 +45,11 @@ class Main {
 
 	sendButtonMsgs(buttons, websocket) {
 		buttons['start'].onclick = async () => {
-			document.querySelector('#scenarios').style.display = 'none';
+			document.querySelector('#scenarioBlock').style.display = 'none';
+			[...document.querySelectorAll('.menuButton, .slider')].map((e) => {
+				this.setVisibility(e, true);
+			});
+
 			const event = {
 				type: 'start',
 				scenario: document.querySelector('#scenarios').selectedOptions[0].value,
