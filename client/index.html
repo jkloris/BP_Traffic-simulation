@@ -18,42 +18,43 @@
     <div id="optionMenu">
         <div class="inlineBlock">
 
-                    <button id="startButton"> Start</button>
+                    <button class="menuButton" id="startButton"> Start</button>
                     <div class="inlineBlock">
                         <select name="" id="scenarios">
                             <option value="demoAAA">demoAAA</option>
                             <option value="pezinok">pezinok</option>
                         </select>
                     </div>
-                    <button id="restartButton"> Restart </button>
-                    <button id="pauseButton"> Pause </button>
-                    <button id="playButton"> Play </button>
+                    <button class="menuButton" id="restartButton"> Restart </button>
+                    <button class="menuButton" id="pauseButton"> Pause </button>
+                    <button class="menuButton" id="playButton"> Play </button>
                     </div>
 
         <div class="slider">
             <div class="verticalCenter">
 
                 <div class="block"> Simulation Speed</div>
-                <input id="speedSlider" type="range" value="30" min="1" max="200"
-                oninput="document.getElementById('speedSliderOut').value = this.value">
-                <button id="setSpeedButton" class="material-symbols-outlined"> check </button>
+                <input id="speedSlider" type="range" value="30" min="1" max="200">
+                <!-- <button title="Set simulation speed. Higher number mean simulation is slower." id="setSpeedButton"><span
+                        class="material-symbols-outlined"> check</span> </button> -->
                 <div>
                     <output id="speedSliderOut">30</output> ms/frame
                 </div>
             </div>
         </div>
 
-        <!-- <div class="slider">
-
-            <div class="block"> Traffic scaling</div>
-            <input id="scaleSlider" type="range" value="1" min="1" max="5"
-                oninput="document.getElementById('scaleSliderOut').value = this.value">
-            <span id="setScaleButton" class="material-symbols-outlined">check</span>
-            <div>
-                <output id="scaleSliderOut">1</output>X
+        <div class="slider">
+            <div class="verticalCenter">
+                <div class="block"> Traffic scaling</div>
+                <input id="scaleSlider" type="range" value="1" min="1" max="5">
+                <!-- <button title="Scale traffic density in the network." id="setScaleButton"><span
+                                        class="material-symbols-outlined">check</span></button> -->
+                <div>
+                    <output id="scaleSliderOut">1</output>X
                 </div>
-</div> -->
-        </div>
+            </div>
+            </div>
+            </div>
 
     <div id="board"></div>
 

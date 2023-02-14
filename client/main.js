@@ -76,8 +76,9 @@ class Main {
 		};
 
 		// setSpeed button
-		buttons['setSpeed'].onclick = async () => {
-			var sliderVal = document.getElementById('speedSlider').value;
+		buttons['setSpeed'].oninput = async () => {
+			var sliderVal = buttons['setSpeed'].value;
+			document.getElementById('speedSliderOut').value = sliderVal;
 			console.log(sliderVal);
 			const event = {
 				type: 'setSpeed',
@@ -85,15 +86,16 @@ class Main {
 			};
 			await websocket.send(JSON.stringify(event));
 		};
+
 		// setScale button
-		buttons['setScale'].onclick = async () => {
-			var sliderVal = document.getElementById('scaleSlider').value;
+		buttons['setScale'].oninput = async () => {
+			var sliderVal = buttons['setScale'].value;
+			document.getElementById('scaleSliderOut').value = sliderVal;
 			const event = {
 				type: 'setScale',
 				value: sliderVal,
 			};
-			console.log('scale');
-			await websocket.send(JSON.stringify(event));
+			await this.websocket.send(JSON.stringify(event));
 		};
 	}
 }
@@ -105,18 +107,18 @@ window.addEventListener('DOMContentLoaded', () => {
 	const pauseButton = document.getElementById('pauseButton');
 	const playButton = document.getElementById('playButton');
 	const restartButton = document.getElementById('restartButton');
-	const setSpeedButton = document.getElementById('setSpeedButton');
-	const setScaleButton = document.getElementById('setScaleButton');
+	const setSpeedSlider = document.getElementById('speedSlider');
+	const setScaleSlider = document.getElementById('scaleSlider');
 	const buttons = {
 		start: startButton,
 		pause: pauseButton,
 		play: playButton,
-		setSpeed: setSpeedButton,
-		setScale: setScaleButton,
+		setSpeed: setSpeedSlider,
+		setScale: setScaleSlider,
 		restart: restartButton,
 	};
 	// Open the WebSocket connection and register event handlers.
-	const websocket = new WebSocket('ws://localhost:8001/');
+	const websocket = new WebSocket('ws://147.175.161.197:8001/');
 	// receiveMsgs(websocket);
 	// sendMsgs(buttons, websocket);
 	main = new Main(websocket, buttons);

@@ -15,7 +15,7 @@ body {
 }
 
 #optionMenu {
-	height: 10vh;
+	height: 5em;
     position: relative;
 }
 
@@ -26,16 +26,17 @@ body {
 }
 
 
-#optionMenu button {
-    height: 10vh;
-	/* padding: 1em; */
+.menuButton {
+    height: 100%;
 	background-color: var(--primaryColor);
 	width: 7em;
 	text-align: center;
 	color: var(--primaryTextColor);
+    transform: translateY(-45%);
+    padding: 0;
 }
 
-#optionMenu button:hover{
+.menuButton:hover{
     background-color: var(--primaryLightColor)
 }
 
@@ -50,8 +51,8 @@ body {
 }
 
 .slider {
-    height: 10vh;
-    aspect-ratio: 5/2;
+    height: 100%;
+    width: 13em;
    
     background-color: var(--primaryColor);
     color: var(--primaryTextColor);
@@ -67,14 +68,13 @@ body {
 } */
 
 
-#speedSlider {
-    /* display: block; */
-}
+
 
 #setSpeedButton, #setScaleButton{
-    width: 1em;
+    width: 2em;
+    height: 2em;
     background-color: var(--secondaryColor);
-    aspect-ratio: 1 / 1;
+    /* aspect-ratio: 1 / 1; */
     
 }
 #setSpeedButton:hover,  #setScaleButton:hover{
@@ -87,7 +87,8 @@ body {
   'FILL' 0,
   'wght' 700,
   'GRAD' 200,
-  'opsz' 24
+  'opsz' 24;
+  transform: translateX(-25%)
 }
 
 .block{
@@ -96,5 +97,6 @@ body {
 
 .inlineBlock{
     display: inline-block;
+    height: 100%;
     
 }
