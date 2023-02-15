@@ -99,7 +99,7 @@ function addZUI() {
 		console.log(e.wheelDeltaY, -e.deltaY);
 		var dy = (e.wheelDeltaY || -e.deltaY) / 2000;
 		zui.zoomBy(dy, e.clientX, e.clientY);
-		// two.update();
+		two.update();
 	}
 
 	function touchstart(e) {
