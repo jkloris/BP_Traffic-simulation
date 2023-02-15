@@ -149,28 +149,25 @@
     }
 
     zoomSet(zoom, clientX, clientY) {
+		const newScale = this.fitToLimits(zoom);
+		this.zoom = ZUI.ScaleToPosition(newScale);
+		if (newScale === this.scale) {
+			return this;
+		}
 
-      const newScale = this.fitToLimits(zoom);
-      this.zoom = ZUI.ScaleToPosition(newScale);
+		const sf = this.clientToSurface(clientX, clientY);
+		const scaleBy = newScale / this.scale;
+		this.surfaceMatrix.scale(scaleBy);
+		this.scale = newScale;
 
-      if (newScale === this.scale) {
-        return this;
-      }
+		const c = this.surfaceToClient(sf);
+		const dx = clientX - c.x;
+		const dy = clientY - c.y;
 
-      const sf = this.clientToSurface(clientX, clientY);
-      const scaleBy = newScale / this.scale;
+		this.translateSurface(dx, dy);
 
-      this.surfaceMatrix.scale(scaleBy);
-      this.scale = newScale;
-
-      const c = this.surfaceToClient(sf);
-      const dx = clientX - c.x;
-      const dy = clientY - c.y;
-      this.translateSurface(dx, dy);
-
-      return this;
-
-    }
+		return this;
+	}
 
     translateSurface(x, y) {
       ZUI.TranslateMatrix(this.surfaceMatrix, x, y);

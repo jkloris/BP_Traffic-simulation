@@ -63,7 +63,6 @@ function addZUI() {
 	var mouse = new Two.Vector();
 	var touches = {};
 	var distance = 0;
-	var dragging = false;
 
 	zui.addLimits(0.06, 8);
 
@@ -79,9 +78,6 @@ function addZUI() {
 	function mousedown(e) {
 		mouse.x = e.clientX;
 		mouse.y = e.clientY;
-		var rect = stage.getBoundingClientRect();
-		dragging = mouse.x > rect.left && mouse.x < rect.right && mouse.y > rect.top && mouse.y < rect.bottom;
-		dragging = true;
 		window.addEventListener('mousemove', mousemove, false);
 		window.addEventListener('mouseup', mouseup, false);
 	}
@@ -89,12 +85,7 @@ function addZUI() {
 	function mousemove(e) {
 		var dx = e.clientX - mouse.x;
 		var dy = e.clientY - mouse.y;
-		if (dragging) {
-			stage.position.x += dx; // / zui.scale;
-			stage.position.y += dy; // / zui.scale;
-		} else {
-			zui.translateSurface(dx, dy);
-		}
+		zui.translateSurface(dx, dy);
 		mouse.set(e.clientX, e.clientY);
 		two.update();
 	}
@@ -105,10 +96,10 @@ function addZUI() {
 	}
 
 	function mousewheel(e) {
-		//TODO zoom to center
+		console.log(e.wheelDeltaY, -e.deltaY);
 		var dy = (e.wheelDeltaY || -e.deltaY) / 2000;
 		zui.zoomBy(dy, e.clientX, e.clientY);
-		two.update();
+		// two.update();
 	}
 
 	function touchstart(e) {
