@@ -9,16 +9,7 @@ let network = null;
 
 var vehicles = {};
 
-document.addEventListener(
-	'pin',
-	(e) => {
-		console.log(e.touches.length);
-		if (e.touches.length > 1) {
-			e.preventDefault();
-		}
-	},
-	false
-);
+
 
 function updateVehicleObjects(vehicleData) {
 	for (i in vehicleData.added) {
@@ -96,7 +87,6 @@ function addZUI() {
 	}
 
 	function mousewheel(e) {
-		console.log(e.wheelDeltaY, -e.deltaY);
 		var dy = (e.wheelDeltaY || -e.deltaY) / 2000;
 		zui.zoomBy(dy, e.clientX, e.clientY);
 		two.update();

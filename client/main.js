@@ -49,7 +49,7 @@ class Main {
 			[...document.querySelectorAll('.menuButton, .slider')].map((e) => {
 				this.setVisibility(e, true);
 			});
-
+		
 			const event = {
 				type: 'start',
 				scenario: document.querySelector('#scenarios').selectedOptions[0].value,
@@ -88,7 +88,6 @@ class Main {
 		buttons['setSpeed'].oninput = async () => {
 			var sliderVal = buttons['setSpeed'].value;
 			document.getElementById('speedSliderOut').value = sliderVal;
-			console.log(sliderVal);
 			const event = {
 				type: 'setSpeed',
 				value: sliderVal,

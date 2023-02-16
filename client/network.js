@@ -86,9 +86,6 @@ class Network {
 		this.two.update();
 	}
 
-	handle(e) {
-		console.log(e);
-	}
 
 	drawTrafficLights(tlightsColors) {
 		for (const [id, col] of Object.entries(tlightsColors)) {

@@ -95,11 +95,13 @@ async def handler(websocket):
                 if webClients[port].STATUS == "running":
                     webClients[port].STATUS = "paused"
                     webClients[port].RUNNING = False
+                    print(traci.getConnection(port).simulation.getSubscriptionResults())
 
             elif event["type"] == "play":
                 if webClients[port].STATUS == "paused":
                     webClients[port].STATUS = "played"
                     webClients[port].RUNNING = True
+                    traci.getConnection(port).simulation.subscribe()
                     loop.create_task(run(websocket, traci.getConnection(port)))
 
             elif event["type"] == "restart":
@@ -109,8 +111,8 @@ async def handler(websocket):
                     webClients[port].STATUS = "finished"
                     webClients[port].trafficLight.clearState()
                     await confirmRestart(websocket)
-
                     conn = traci.getConnection(port)
+
                     conn.close()
 
             elif event["type"] == "setSpeed":
@@ -132,18 +134,19 @@ async def handler(websocket):
                     if event["id"] in tlightObj.ids.keys():
                         tlightId = tlightObj.ids[event["id"]]
 
-                        if tlightObj.getCurrentState( tlightId) == None:
+                        if tlightObj.getCurrentState(tlightId) == None:
                             tlightObj.extractStates(conn, tlightId)
-                            
-                        tlightObj.statePlusOne(tlightId)
-                        state = tlightObj.getCurrentState( tlightId)
 
-                        traci.trafficlight.setRedYellowGreenState(tlightId, state)
+                        tlightObj.statePlusOne(tlightId)
+                        state = tlightObj.getCurrentState(tlightId)
+
+                        traci.trafficlight.setRedYellowGreenState(
+                            tlightId, state)
                         # webClients[port].trafficLight.statePlusOne(tlightId)
                         # conn.trafficlight.setPhase(tlightId, webClients[port].trafficLight.getState(tlightId))
 
                         # webClients[port].trafficLight.saveProgram(conn, tlightId)
-                        
+
                         # print(conn.trafficlight.getAllProgramLogics(tlightId), '\n')
                         # print(traci.getConnection(port).trafficlight.getIDList())
 
@@ -174,7 +177,7 @@ async def traciStart(websocket, sumocfgFile):
 
     label = websocket.remote_address[1]
     traci.start([sumoBinary, "-c",  "..\sumo\\"+sumocfgFile+".sumocfg",
-                "--tripinfo-output", "..\sumo\_tripinfo.xml"], label=label)
+                "--statistic-output", "..\sumo\_statsinfo.xml"], label=label)
 
     msg = xmlnetToNetwork("../sumo/"+sumocfgFile+".net.xml")
     await websocket.send(json.dumps(msg))
@@ -232,6 +235,7 @@ def getVehicles(conn):
         pos = conn.vehicle.getPosition(id)
         angle = conn.vehicle.getAngle(id)
         vehicleData["added"][id] = {"position": pos, "angle": angle}
+
     return vehicleData
 
 

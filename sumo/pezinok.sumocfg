@@ -21,7 +21,7 @@
     </routing>
 
     <report>
-        <verbose value="true"/>
+        <verbose value="false"/>
         <duration-log.statistics value="true"/>
         <no-step-log value="true"/>
     </report>
