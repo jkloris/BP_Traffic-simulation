@@ -218,12 +218,33 @@ async def run(websocket, conn):
 
     elif webClients[port].STATUS == "finished":
         print(f"Simulation {port} ended!-1")
+        await simulationFinished(websocket)
         return
     else:
         webClients[port].STATUS = "finished"
+        await simulationFinished(websocket)
         conn.close()
         # sys.stdout.flush()
         print(f"Simulation {port} ended!-2")
+
+
+async def simulationFinished(websocket):
+    stats = {'Vehicle statistics': {"loaded": 112, "inserted": 43, "running": 23},
+             'Vehicle Trips statistics': {
+        'Route length': 1990.31,
+        "Speed": 10.57,
+        "Duration": 187.67,
+        'Waiting Time': 0.27,
+        'Time Loss': 41.2,
+        'Depart Delay': 6.68,
+        'Total Travel Time': 45229.0,
+        'Total Depart Delay': 1610.0,
+    },
+    }
+
+    msg = {"type": "finish", "data": stats}
+    await websocket.send(json.dumps(msg))
+
 
 
 def getVehicles(conn):
@@ -287,6 +308,9 @@ async def traciSimStep(websocket, vehicleData):
     # print("_______________________\n", time)
     msg = {"type": "step", "data": vehicleData, "trafficLights": tlights}
     await websocket.send(json.dumps(msg))
+
+
+
 
 
 async def main():

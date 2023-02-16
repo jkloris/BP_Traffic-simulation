@@ -37,6 +37,9 @@ class Main {
 				case 'restart':
 					clearNetwork();
 					break;
+				case 'finish':
+					createStatPopup(event['data']);
+					break;
 				default:
 					break;
 			}

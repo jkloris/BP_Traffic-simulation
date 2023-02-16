@@ -1,6 +1,9 @@
 
 
 function createStatPopup(stats) {
+    oldmodal = document.querySelector('#modal');
+	if (oldmodal) document.querySelector('body').removeChild(oldmodal);
+
 	const modal = document.createElement('div');
 	modal.className = 'modal';
 	modal.id = 'modal';
@@ -44,18 +47,6 @@ function createStatPopup(stats) {
 }
 
 //tmp just formating
-const stats = {
-	'Vehicle statistics': { loaded: 112, inserted: 43, running: 23 },
-	'Vehicle Trips statistics': {
-		'Route length': 1990.31,
-		Speed: 10.57,
-		Duration: 187.67,
-		'Waiting Time': 0.27,
-		'Time Loss': 41.2,
-		'Depart Delay': 6.68,
-		'Total Travel Time': 45229.0,
-		'Total Depart Delay': 1610.0,
-	},
-};
 
-createStatPopup(stats);
+
+
