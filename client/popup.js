@@ -18,15 +18,20 @@ function createStatPopup(stats) {
 		modal.style.display = 'none';
 	};
 	popup.appendChild(close);
+    let h1 = document.createElement('h1');
+	h1.innerHTML = 'Simulation Statistics';
+    
 
+
+	popup.appendChild(h1);
 	for (const [header, vals] of Object.entries(stats)) {
-		let h2 = document.createElement('h2');
+		let h3 = document.createElement('h3');
 		let table = document.createElement('table');
 		table.className = 'popupTable';
 		let thead = document.createElement('thead');
 		let tbody = document.createElement('tbody');
 
-		h2.innerHTML = header;
+		h3.innerHTML = header;
 
 		for (const [head, val] of Object.entries(vals)) {
 			let th = document.createElement('th');
@@ -38,7 +43,7 @@ function createStatPopup(stats) {
 		}
 		table.appendChild(thead);
 		table.appendChild(tbody);
-		popup.appendChild(h2);
+		popup.appendChild(h3);
 		popup.appendChild(table);
 	}
 

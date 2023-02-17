@@ -95,7 +95,8 @@ async def handler(websocket):
                 if webClients[port].STATUS == "running":
                     webClients[port].STATUS = "paused"
                     webClients[port].RUNNING = False
-                    print(traci.getConnection(port).simulation.getSubscriptionResults())
+                    print(traci.getConnection(
+                        port).simulation.getSubscriptionResults())
 
             elif event["type"] == "play":
                 if webClients[port].STATUS == "paused":
@@ -110,8 +111,11 @@ async def handler(websocket):
                     webClients[port].RUNNING = False
                     webClients[port].STATUS = "finished"
                     webClients[port].trafficLight.clearState()
+
                     await confirmRestart(websocket)
+
                     conn = traci.getConnection(port)
+                    await simulationFinished(websocket, conn)
 
                     conn.close()
 
@@ -142,13 +146,6 @@ async def handler(websocket):
 
                         traci.trafficlight.setRedYellowGreenState(
                             tlightId, state)
-                        # webClients[port].trafficLight.statePlusOne(tlightId)
-                        # conn.trafficlight.setPhase(tlightId, webClients[port].trafficLight.getState(tlightId))
-
-                        # webClients[port].trafficLight.saveProgram(conn, tlightId)
-
-                        # print(conn.trafficlight.getAllProgramLogics(tlightId), '\n')
-                        # print(traci.getConnection(port).trafficlight.getIDList())
 
     except websockets.ConnectionClosedOK:
         print(f"{websocket} ConnectionClosed OK\n")
@@ -175,11 +172,12 @@ async def confirmRestart(websocket):
 async def traciStart(websocket, sumocfgFile):
     sumoBinary = checkBinary('sumo')
 
+    sumocmd = [sumoBinary, "-c",  "..\sumo\\" + sumocfgFile + ".sumocfg"]
     label = websocket.remote_address[1]
-    traci.start([sumoBinary, "-c",  "..\sumo\\"+sumocfgFile+".sumocfg",
-                "--statistic-output", "..\sumo\_statsinfo.xml"], label=label)
+    traci.start(sumocmd, label=label)
 
-    msg = xmlnetToNetwork("../sumo/"+sumocfgFile+".net.xml")
+    msg = xmlnetToNetwork("../sumo/"+sumocfgFile + ".net.xml")
+
     await websocket.send(json.dumps(msg))
 
     # conn is client connection to traci
@@ -203,6 +201,7 @@ async def run(websocket, conn):
     if vehicleData == None:
         print("Neosetrena udalost!")
         return
+
     while webClients[port].RUNNING and conn.simulation.getMinExpectedNumber() > 0:
 
         try:
@@ -216,35 +215,35 @@ async def run(websocket, conn):
         webClients[port].VEHICLES = vehicleData
         print(f"Simulation {port} paused!")
 
+    # finished via restart
     elif webClients[port].STATUS == "finished":
-        print(f"Simulation {port} ended!-1")
-        await simulationFinished(websocket)
         return
+    # funished normally
     else:
         webClients[port].STATUS = "finished"
-        await simulationFinished(websocket)
+        await simulationFinished(websocket, conn)
         conn.close()
-        # sys.stdout.flush()
-        print(f"Simulation {port} ended!-2")
 
 
-async def simulationFinished(websocket):
-    stats = {'Vehicle statistics': {"loaded": 112, "inserted": 43, "running": 23},
-             'Vehicle Trips statistics': {
-        'Route length': 1990.31,
-        "Speed": 10.57,
-        "Duration": 187.67,
-        'Waiting Time': 0.27,
-        'Time Loss': 41.2,
-        'Depart Delay': 6.68,
-        'Total Travel Time': 45229.0,
-        'Total Depart Delay': 1610.0,
+async def simulationFinished(websocket, conn):
+
+    stats = {'Average statistics': {
+        'Route length (m)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.routeLength"),
+        "Vehicle Speed (m/s)": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.speed"),
+        "Vehicle Speed (km/h)": float(conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.speed"))*3.6,
+        "Trip Duration (s)": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.duration"),
+        'Waiting Time (s)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.waitingTime"),
+        'Time Lost (s)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.timeLoss"), },
+        'Total statistics': {
+        "Vehicle count": conn.simulation.getParameter("", "device.tripinfo.count"),
+        'Vehicle Travel Time (s)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.totalTravelTime"),
+        'Vehicle Depart Delay (s)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.totalDepartDelay"),
     },
     }
 
     msg = {"type": "finish", "data": stats}
     await websocket.send(json.dumps(msg))
-
+    print(f"Simulation ended!")
 
 
 def getVehicles(conn):
@@ -308,9 +307,6 @@ async def traciSimStep(websocket, vehicleData):
     # print("_______________________\n", time)
     msg = {"type": "step", "data": vehicleData, "trafficLights": tlights}
     await websocket.send(json.dumps(msg))
-
-
-
 
 
 async def main():
