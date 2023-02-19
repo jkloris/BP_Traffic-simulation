@@ -12,4 +12,15 @@ class Vehicle {
 		this.obj.translation.y = window.innerHeight - y - offset.y;
 		this.obj.rotation = (Math.PI * angle) / 180;
 	}
+
+    select(){
+        this.obj.stroke = 'red';
+		this.obj.linewidth = 1;
+		two.update();
+    }
+    unselect(){
+        this.obj.stroke = 'black';
+		this.obj.linewidth = 0.1;
+		two.update();
+    }
 }

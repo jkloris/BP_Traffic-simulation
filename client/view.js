@@ -11,6 +11,7 @@ var vehicles = {};
 
 
 
+
 function updateVehicleObjects(vehicleData) {
 	for (i in vehicleData.added) {
 		id = vehicleData.added[i];
@@ -182,14 +183,23 @@ function pointerdown(e) {
 		// selecting of traffic lights
 		for (const [id, tl] of Object.entries(network.trafficLights)) {
 			//  magic formula, DONT TOUCH
-			dist = Math.sqrt(
-				(tl.position.x * stage.scale + stage.position.x - x) ** 2 +
-					(tl.position.y * stage.scale + stage.position.y - y) ** 2
-			);
+			dist = Math.sqrt((tl.position.x * stage.scale + stage.position.x - x) ** 2 + (tl.position.y * stage.scale + stage.position.y - y) ** 2);
 
 			if (dist <= tl.radius * stage.scale) {
 				console.log(id);
 				main.sendTLightMsg(id);
+				return;
+			}
+		}
+
+		// selecting vehicle
+		for (const [id, v] of Object.entries(vehicles)) {
+			//  magic formula, DONT TOUCH
+			dist = Math.sqrt((v.obj.position.x * stage.scale + stage.position.x - x) ** 2 + (v.obj.position.y * stage.scale + stage.position.y - y) ** 2);
+
+			if (dist <= v.width * stage.scale) {
+				console.log(id);
+				main.vehicleClicked(v);
 				return;
 			}
 		}

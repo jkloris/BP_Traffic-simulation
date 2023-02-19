@@ -11,6 +11,7 @@ class Network {
 		this.trafficLights = trafficLights;
 		this.two = two;
 		this.paths = {};
+        this.markedRoute = null
 	}
 
 	async draw() {
@@ -64,9 +65,9 @@ class Network {
 			}
 
 			this.paths[id] = path;
-			stage.add(path);
+			stage.add(this.paths[id]);
 		}
-		this.markRoute(["E20_1", "E18_0"])
+
 
 		// traffic lights drawable objects creating
 		let tlights = {};
@@ -105,14 +106,27 @@ class Network {
 	 * @param {Array(string)} route is list of edge ids
 	 */
 	markRoute(route) {
+		if (this.markedRoute) this.resetMark(this.markedRoute);
+
 		for (const r of route) {
-			// this.paths[r].fill = 'blue';
-            console.log(this.paths[r])
+			const edges = Object.entries(this.paths).filter(([k]) => k.startsWith(r));
+			for (const e of edges) {
+				e[1].stroke = 'blue';
+			}
 		}
 
+		this.markedRoute = route;
+		this.two.update();
 	}
 
-
+	resetMark(route) {
+		for (const r of route) {
+			const edges = Object.entries(this.paths).filter(([k]) => k.startsWith(r));
+			for (const e of edges) {
+				e[1].stroke = 'black';
+			}
+		}
+	}
 }
 
 

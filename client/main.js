@@ -3,6 +3,8 @@ class Main {
 		this.websocket = websocket;
 		this.receiveMsgs(websocket);
 		this.sendButtonMsgs(buttons, websocket);
+
+		this.selectedVehicle = null;
 	}
 
 	sendTLightMsg(id) {
@@ -16,6 +18,22 @@ class Main {
 	setVisibility(item, visible) {
 		if (visible) item.style.visibility = 'visible';
 		else item.style.visibility = 'hidden';
+	}
+
+	vehicleClicked(vehicle) {
+		if (this.selectedVehicle) this.selectedVehicle.unselect();
+		vehicle.select();
+		this.selectedVehicle = vehicle;
+
+		this.getVehicleRoute(vehicle.id);
+	}
+
+	getVehicleRoute(id) {
+		const event = {
+			type: 'vehicleRoute',
+			id: id,
+		};
+		this.websocket.send(JSON.stringify(event));
 	}
 
 	receiveMsgs(websocket) {
@@ -40,6 +58,8 @@ class Main {
 				case 'finish':
 					createStatPopup(event['data']);
 					break;
+				case 'route':
+					network.markRoute(event['data']);
 				default:
 					break;
 			}
@@ -52,7 +72,7 @@ class Main {
 			[...document.querySelectorAll('.menuButton, .slider')].map((e) => {
 				this.setVisibility(e, true);
 			});
-		
+
 			const event = {
 				type: 'start',
 				scenario: document.querySelector('#scenarios').selectedOptions[0].value,

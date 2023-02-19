@@ -18,6 +18,8 @@ import threading
 from multiprocessing import Process
 from socketSim import SocketSim
 
+# testing
+TEST = 0
 
 # we need to import some python modules from the $SUMO_HOME/tools directory
 if 'SUMO_HOME' in os.environ:
@@ -147,6 +149,11 @@ async def handler(websocket):
                         traci.trafficlight.setRedYellowGreenState(
                             tlightId, state)
 
+            elif event["type"] == "vehicleRoute":
+                if webClients[port].STATUS == "paused":
+                    await sendVehicleRoute(websocket, traci.getConnection(port), event["id"])
+
+
     except websockets.ConnectionClosedOK:
         print(f"{websocket} ConnectionClosed OK\n")
     except websockets.ConnectionClosedError:
@@ -230,7 +237,7 @@ async def simulationFinished(websocket, conn):
     stats = {'Average statistics': {
         'Route length (m)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.routeLength"),
         "Vehicle Speed (m/s)": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.speed"),
-        # "Vehicle Speed (km/h)": float(conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.speed"))*3.6,
+        "Vehicle Speed (km/h)": float(conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.speed"))*3.6,
         "Trip Duration (s)": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.duration"),
         'Waiting Time (s)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.waitingTime"),
         'Time Lost (s)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.timeLoss"), },
@@ -275,19 +282,15 @@ def updateVehicles(vehicleData, conn):
         angle = conn.vehicle.getAngle(id)
         vehicleData["data"][id] = {"position": pos, "angle": angle}
 
-        # testing behaviour
-        # print(id)
-        # if id == "veh30" and len(conn.vehicle.getStops(id)) == 0:
-        #     print(conn.vehicle.getRoute(id))
-        #     # setting route target and stoping on edge
-        #     try:
-        #         conn.vehicle.changeTarget(id, "23066908#1")
-        #         conn.vehicle.setStop(id, "-23066903#1", duration=100)
-        #     except:
-        #         pass
-
-
     return vehicleData
+
+
+async def sendVehicleRoute(websocket, conn, id):
+    msg = {"type": "route", "data": conn.vehicle.getRoute(id)}
+    await websocket.send(json.dumps(msg))
+
+
+
 
 
 def getTrafficLights(conn, label):
@@ -313,7 +316,7 @@ async def traciSimStep(websocket, vehicleData):
     conn = traci.getConnection(websocket.remote_address[1])
     tlights = getTrafficLights(conn, websocket.remote_address[1])
     vehicleData = updateVehicles(vehicleData, conn)
-
+    # await testVehicle(websocket, conn)  # test
     conn.simulationStep()
 
     # time = traci.simulation.getTime()
