@@ -230,7 +230,7 @@ async def simulationFinished(websocket, conn):
     stats = {'Average statistics': {
         'Route length (m)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.routeLength"),
         "Vehicle Speed (m/s)": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.speed"),
-        "Vehicle Speed (km/h)": float(conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.speed"))*3.6,
+        # "Vehicle Speed (km/h)": float(conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.speed"))*3.6,
         "Trip Duration (s)": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.duration"),
         'Waiting Time (s)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.waitingTime"),
         'Time Lost (s)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.timeLoss"), },
@@ -240,6 +240,7 @@ async def simulationFinished(websocket, conn):
         'Vehicle Depart Delay (s)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.totalDepartDelay"),
     },
     }
+    print(stats)
 
     msg = {"type": "finish", "data": stats}
     await websocket.send(json.dumps(msg))
@@ -273,6 +274,18 @@ def updateVehicles(vehicleData, conn):
         pos = conn.vehicle.getPosition(id)
         angle = conn.vehicle.getAngle(id)
         vehicleData["data"][id] = {"position": pos, "angle": angle}
+
+        # testing behaviour
+        # print(id)
+        # if id == "veh30" and len(conn.vehicle.getStops(id)) == 0:
+        #     print(conn.vehicle.getRoute(id))
+        #     # setting route target and stoping on edge
+        #     try:
+        #         conn.vehicle.changeTarget(id, "23066908#1")
+        #         conn.vehicle.setStop(id, "-23066903#1", duration=100)
+        #     except:
+        #         pass
+
 
     return vehicleData
 

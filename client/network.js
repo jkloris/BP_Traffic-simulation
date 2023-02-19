@@ -10,7 +10,7 @@ class Network {
 		this.lanes = lanes;
 		this.trafficLights = trafficLights;
 		this.two = two;
-		this.paths = [];
+		this.paths = {};
 	}
 
 	async draw() {
@@ -63,19 +63,15 @@ class Network {
 					break;
 			}
 
-			this.paths.push(path);
+			this.paths[id] = path;
 			stage.add(path);
 		}
+		this.markRoute(["E20_1", "E18_0"])
 
 		// traffic lights drawable objects creating
 		let tlights = {};
 		for (const [id, pos] of Object.entries(this.trafficLights)) {
-			let dot = new Two.Circle(
-				parseFloat(pos[0]) + this.offset.x,
-				window.innerHeight - parseFloat(pos[1]) - this.offset.y,
-				3,
-				2
-			);
+			let dot = new Two.Circle(parseFloat(pos[0]) + this.offset.x, window.innerHeight - parseFloat(pos[1]) - this.offset.y, 3, 2);
 			dot.fill = 'green';
 			dot.stroke = 'white';
 			dot.linewidth = 0.3;
@@ -85,7 +81,6 @@ class Network {
 		this.trafficLights = tlights;
 		this.two.update();
 	}
-
 
 	drawTrafficLights(tlightsColors) {
 		for (const [id, col] of Object.entries(tlightsColors)) {
@@ -104,4 +99,20 @@ class Network {
 			}
 		}
 	}
+
+	/**
+	 *
+	 * @param {Array(string)} route is list of edge ids
+	 */
+	markRoute(route) {
+		for (const r of route) {
+			// this.paths[r].fill = 'blue';
+            console.log(this.paths[r])
+		}
+
+	}
+
+
 }
+
+
