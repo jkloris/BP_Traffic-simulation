@@ -36,6 +36,17 @@ class Main {
 		this.websocket.send(JSON.stringify(event));
 	}
 
+	start(event) {
+		if (network == null) {
+			network = new Network(event.data, event.trafficLights, event.boundary, two);
+			network.draw();
+		}
+
+		network.resetMark();
+
+		this.selectedVehicle = null;
+	}
+
 	receiveMsgs(websocket) {
 		websocket.addEventListener('message', ({ data }) => {
 			const event = JSON.parse(data);
@@ -48,11 +59,8 @@ class Main {
 					network.drawTrafficLights(event.trafficLights);
 					break;
 				case 'network':
-					if (network == null) {
-						network = new Network(event.data, event.trafficLights, event.boundary, two);
-						network.draw();
-					}
-				case 'restart':
+					this.start(event);
+				case 'end':
 					clearNetwork();
 					break;
 				case 'finish':
@@ -97,12 +105,12 @@ class Main {
 			};
 			await websocket.send(JSON.stringify(event));
 		};
-		//restart button
-		buttons['restart'].onclick = async () => {
-			console.log('Click restart');
+		//end button
+		buttons['end'].onclick = async () => {
+			console.log('Click end');
 
 			const event = {
-				type: 'restart',
+				type: 'end',
 			};
 			await websocket.send(JSON.stringify(event));
 		};
@@ -137,7 +145,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	const startButton = document.getElementById('startButton');
 	const pauseButton = document.getElementById('pauseButton');
 	const playButton = document.getElementById('playButton');
-	const restartButton = document.getElementById('restartButton');
+	const endButton = document.getElementById('endButton');
 	const setSpeedSlider = document.getElementById('speedSlider');
 	const setScaleSlider = document.getElementById('scaleSlider');
 	const buttons = {
@@ -146,7 +154,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		play: playButton,
 		setSpeed: setSpeedSlider,
 		setScale: setScaleSlider,
-		restart: restartButton,
+		end: endButton,
 	};
 	// Open the WebSocket connection and register event handlers.
 	const websocket = new WebSocket('ws://localhost:8001/');

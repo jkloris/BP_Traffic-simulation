@@ -106,7 +106,7 @@ class Network {
 	 * @param {Array(string)} route is list of edge ids
 	 */
 	markRoute(route) {
-		if (this.markedRoute) this.resetMark(this.markedRoute);
+		this.resetMark()
 
 		for (const r of route) {
 			const edges = Object.entries(this.paths).filter(([k]) => k.startsWith(r));
@@ -119,8 +119,10 @@ class Network {
 		this.two.update();
 	}
 
-	resetMark(route) {
-		for (const r of route) {
+	resetMark() {
+        if (!this.markedRoute) return
+
+		for (const r of this.markedRoute) {
 			const edges = Object.entries(this.paths).filter(([k]) => k.startsWith(r));
 			for (const e of edges) {
 				e[1].stroke = 'black';

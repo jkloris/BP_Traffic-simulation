@@ -107,14 +107,14 @@ async def handler(websocket):
                     traci.getConnection(port).simulation.subscribe()
                     loop.create_task(run(websocket, traci.getConnection(port)))
 
-            elif event["type"] == "restart":
+            elif event["type"] == "end":
                 if webClients[port].STATUS != "finished":
 
                     webClients[port].RUNNING = False
                     webClients[port].STATUS = "finished"
                     webClients[port].trafficLight.clearState()
 
-                    await confirmRestart(websocket)
+                    await confirmEnd(websocket)
 
                     conn = traci.getConnection(port)
                     await simulationFinished(websocket, conn)
@@ -171,8 +171,8 @@ async def handler(websocket):
         webClients.pop(port)
 
 
-async def confirmRestart(websocket):
-    msg = {"type": "restart"}
+async def confirmEnd(websocket):
+    msg = {"type": "end"}
     await websocket.send(json.dumps(msg))
 
 
@@ -222,7 +222,7 @@ async def run(websocket, conn):
         webClients[port].VEHICLES = vehicleData
         print(f"Simulation {port} paused!")
 
-    # finished via restart
+    # finished via end
     elif webClients[port].STATUS == "finished":
         return
     # funished normally
