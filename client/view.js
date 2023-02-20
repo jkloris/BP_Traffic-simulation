@@ -17,18 +17,20 @@ function updateVehicleObjects(vehicleData) {
 		id = vehicleData.added[i];
 		pos = vehicleData.data[id].position;
 		vehicles[id] = new Vehicle(id, pos[0], pos[1]);
-		stage.add(vehicles[id].obj);
-		stage.add(vehicles[id].obj3);
-		stage.add(vehicles[id].obj2);
+		vehicles[id].addTo(stage);
+		// stage.add(vehicles[id].objs);
+		// stage.add(vehicles[id].obj3);
+		// stage.add(vehicles[id].obj2);
 	}
 	for (i in vehicleData.removed) {
 		id = vehicleData.removed[i];
-		stage.remove(vehicles[id].obj);
-		stage.remove(vehicles[id].obj3);
-		stage.remove(vehicles[id].obj2);
-		two.remove(vehicles[id].obj);
-		two.remove(vehicles[id].obj3);
-		two.remove(vehicles[id].obj2);
+		vehicles[id].removeFrom(stage);
+		// stage.remove(vehicles[id].objs);
+		// stage.remove(vehicles[id].obj3);
+		// stage.remove(vehicles[id].obj2);
+		// two.remove(vehicles[id].objs);
+		// two.remove(vehicles[id].obj3);
+		// two.remove(vehicles[id].obj2);
 		delete vehicles[id];
 	}
 }
@@ -44,12 +46,13 @@ function drawVehicles(vehicleData) {
 
 function clearNetwork() {
 	for (id in vehicles) {
-		stage.remove(vehicles[id].obj);
-		stage.remove(vehicles[id].obj3);
-		stage.remove(vehicles[id].obj2);
-		two.remove(vehicles[id].obj);
-		two.remove(vehicles[id].obj3);
-		two.remove(vehicles[id].obj2);
+		// stage.remove(vehicles[id].objs);
+		vehicles[id].removeFrom(stage);
+		// stage.remove(vehicles[id].obj3);
+		// stage.remove(vehicles[id].obj2);
+		// two.remove(vehicles[id].objs);
+		// two.remove(vehicles[id].obj3);
+		// two.remove(vehicles[id].obj2);
 		delete vehicles[id];
 	}
 	two.update();
@@ -205,7 +208,7 @@ function pointerdown(e) {
 		// selecting vehicle
 		for (const [id, v] of Object.entries(vehicles)) {
 			//  magic formula, DONT TOUCH
-			dist = Math.sqrt((v.obj.position.x * stage.scale + stage.position.x - x) ** 2 + (v.obj.position.y * stage.scale + stage.position.y - y) ** 2);
+			dist = Math.sqrt((v.obj.car.position.x * stage.scale + stage.position.x - x) ** 2 + (v.obj.car.position.y * stage.scale + stage.position.y - y) ** 2);
 
 			if (dist <= v.width * stage.scale) {
 				console.log(id);
