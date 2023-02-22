@@ -5,7 +5,8 @@
     --secondaryColor:#388e3c;
     --secondaryLightColor:#6abf69;
     --secondaryDarkColor:#00600f;
-    --primaryTextColor:#ffffff;
+    --primaryTextHoverColor:#ffffff;
+    --primaryTextColor:#d1d1d1;
     --secondaryTextColor:#000000;
     font-family: "Roboto";
 }

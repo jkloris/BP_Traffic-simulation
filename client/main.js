@@ -5,6 +5,28 @@ class Main {
 		this.sendButtonMsgs(buttons, websocket);
 
 		this.selectedVehicle = null;
+        this.follow = true
+	}
+
+	// test
+	center() {
+		if (!this.selectedVehicle) return;
+
+		zui.zoomSet(4, 0, 0);
+        // Hokus pokus magic equation 
+		stage.position.x = - this.selectedVehicle.obj.car.position.x * stage.scale + elem.offsetWidth / 2
+		stage.position.y = - this.selectedVehicle.obj.car.position.y * stage.scale + elem.offsetHeight /2
+		zui.surfaceMatrix.elements[2] = stage.position.x;
+		zui.surfaceMatrix.elements[5] = stage.position.y;
+
+		two.update();
+	}
+
+	step(event) {
+		updateVehicleObjects(event.data);
+		drawVehicles(event.data);
+		network.drawTrafficLights(event.trafficLights);
+		if (this.selectedVehicle && this.follow) this.center();
 	}
 
 	sendTLightMsg(id) {
@@ -54,9 +76,7 @@ class Main {
 			// console.log(event);
 			switch (event.type) {
 				case 'step':
-					updateVehicleObjects(event.data);
-					drawVehicles(event.data);
-					network.drawTrafficLights(event.trafficLights);
+					this.step(event);
 					break;
 				case 'network':
 					this.start(event);

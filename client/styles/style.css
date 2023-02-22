@@ -1,11 +1,12 @@
 :root{
-    --primaryColor:#363636;
+    --primaryColor:#a5a5a5;
     --primaryLightColor:#868686;
     --primaryDarkColor:#000000;
     --secondaryColor:#388e3c;
     --secondaryLightColor:#6abf69;
     --secondaryDarkColor:#00600f;
-    --primaryTextColor:#ffffff;
+    --primaryTextHoverColor:#ffffff;
+    --primaryTextColor:#cfcfcf;
     --secondaryTextColor:#000000;
     font-family: "Roboto";
 }
@@ -45,7 +46,9 @@ body {
 
 #board {
     background-color: var(--secondaryColor);
-    width: 100%; height:85vh;
+    width: 80%; 
+    height:85vh;
+    display: inline-block;
     
 }
 
@@ -130,3 +133,40 @@ body {
     visibility: visible;
 }
 
+#sideMenu{
+    width: 19%;
+    background: var(--primaryDarkColor);
+    height: 85vh;
+    display: inline-block;
+    /* float: right; */
+    border: 2px solid var(--primaryColor);
+}
+
+#sideMenu *{
+    color: var(--primaryTextColor);
+    margin-left: 2rem;
+    margin-bottom: 0.5rem;
+    display: block
+}
+
+#sideMenu button{
+    background-color: var(--primaryColor);
+    font-size: larger;
+    width: calc(100% - 4rem);
+    cursor: pointer;
+    border-radius: 10%;
+    border-radius: 5%;
+    box-shadow: 0px 2px 2px var(--primaryLightColor);
+    border: 1px solid var(--primaryTextColor);
+}
+
+#sideMenu button:hover{
+    /* background-color: var(--primaryDarkColor); */
+    color: var(--primaryTextHoverColor);
+    border-radius: 5%;
+    border: 1px solid var(--primaryTextHoverColor);
+}
+
+#sideMenu button:active{
+    box-shadow: 0px 0px ;
+}

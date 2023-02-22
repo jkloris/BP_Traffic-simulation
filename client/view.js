@@ -1,16 +1,12 @@
 var elem = document.getElementById('board');
 var centerX = window.innerWidth / 2;
 var centerY = window.innerHeight / 2;
-
-var two = new Two({ width: elem.style.width, height: elem.style.height }).appendTo(elem);
+var two = new Two({ width: elem.offsetWidth, height: elem.offsetHeight }).appendTo(elem);
 var stage = new Two.Group();
 
 let network = null;
 
 var vehicles = {};
-
-
-
 
 function updateVehicleObjects(vehicleData) {
 	for (i in vehicleData.added) {
@@ -18,19 +14,11 @@ function updateVehicleObjects(vehicleData) {
 		pos = vehicleData.data[id].position;
 		vehicles[id] = new Vehicle(id, pos[0], pos[1]);
 		vehicles[id].addTo(stage);
-		// stage.add(vehicles[id].objs);
-		// stage.add(vehicles[id].obj3);
-		// stage.add(vehicles[id].obj2);
 	}
 	for (i in vehicleData.removed) {
 		id = vehicleData.removed[i];
 		vehicles[id].removeFrom(stage);
-		// stage.remove(vehicles[id].objs);
-		// stage.remove(vehicles[id].obj3);
-		// stage.remove(vehicles[id].obj2);
-		// two.remove(vehicles[id].objs);
-		// two.remove(vehicles[id].obj3);
-		// two.remove(vehicles[id].obj2);
+
 		delete vehicles[id];
 	}
 }
@@ -46,25 +34,20 @@ function drawVehicles(vehicleData) {
 
 function clearNetwork() {
 	for (id in vehicles) {
-		// stage.remove(vehicles[id].objs);
 		vehicles[id].removeFrom(stage);
-		// stage.remove(vehicles[id].obj3);
-		// stage.remove(vehicles[id].obj2);
-		// two.remove(vehicles[id].objs);
-		// two.remove(vehicles[id].obj3);
-		// two.remove(vehicles[id].obj2);
+
 		delete vehicles[id];
 	}
 	two.update();
 }
 
 two.add(stage);
-var zui = new Two.ZUI(stage);
+let zui = new Two.ZUI(stage);
 addZUI();
 
 function addZUI() {
 	var domElement = two.renderer.domElement;
-	var zui = new Two.ZUI(stage, elem);
+	// var zui = new Two.ZUI(stage, elem);
 	var mouse = new Two.Vector();
 	var touches = {};
 	var distance = 0;
