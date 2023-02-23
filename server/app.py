@@ -150,7 +150,8 @@ async def handler(websocket):
                             tlightId, state)
 
             elif event["type"] == "vehicleRoute":
-                if webClients[port].STATUS == "paused":
+                if webClients[port].STATUS != "finished":
+
                     await sendVehicleRoute(websocket, traci.getConnection(port), event["id"])
 
 
@@ -286,6 +287,10 @@ def updateVehicles(vehicleData, conn):
 
 
 async def sendVehicleRoute(websocket, conn, id):
+    if id not in conn.vehicle.getIDList():
+        print("ERROR: no id in vehicle ID List")
+        return
+
     msg = {"type": "route", "data": conn.vehicle.getRoute(id)}
     await websocket.send(json.dumps(msg))
 

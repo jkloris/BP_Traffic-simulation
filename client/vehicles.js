@@ -1,12 +1,12 @@
 class Vehicle {
 	constructor(id, x, y) {
 		this.id = id;
-		this.width = 1.5;
-		this.height = 4;
+		this.width = 2.5;
+		this.height = 6;
 
-		let car = two.makeRoundedRectangle(x, y, this.width, this.height, this.width - 1);
+		let car = two.makeRoundedRectangle(x, y, this.width, this.height, this.width - 2);
 		let window = two.makeRectangle(x, y, this.width, this.height - 2);
-		let roof = two.makeRectangle(x, y, this.width - 0.3, this.width - 0.3);
+		let roof = two.makeRectangle(x, y, this.width - 0.5, this.width - 0.3);
 
 		car.linewidth = 0.1;
 		window.linewidth = 0.1;

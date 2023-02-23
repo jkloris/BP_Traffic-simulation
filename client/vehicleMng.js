@@ -15,8 +15,9 @@ class VehicleMng {
 		}
 		for (let i in vehicleData.removed) {
 			id = vehicleData.removed[i];
-			this.vehicles[id].removeFrom(stage);
+            if (this.selectedVehicle && id == this.selectedVehicle.id) this.selectedVehicle = null;
 
+			this.vehicles[id].removeFrom(stage);
 			delete this.vehicles[id];
 		}
 	}
