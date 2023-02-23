@@ -1,21 +1,23 @@
 class Main {
 	constructor(websocket, buttons) {
 		this.websocket = websocket;
+
+		this.vehicleMng = new VehicleMng();
+
 		this.receiveMsgs(websocket);
 		this.sendButtonMsgs(buttons, websocket);
 
-		this.selectedVehicle = null;
-        this.follow = true
+		this.follow = true;
 	}
 
 	// test
 	center() {
-		if (!this.selectedVehicle) return;
+		if (!this.vehicleMng.selectedVehicle) return;
 
 		zui.zoomSet(4, 0, 0);
         // Hokus pokus magic equation 
-		stage.position.x = - this.selectedVehicle.obj.car.position.x * stage.scale + elem.offsetWidth / 2
-		stage.position.y = - this.selectedVehicle.obj.car.position.y * stage.scale + elem.offsetHeight /2
+		stage.position.x = -this.vehicleMng.selectedVehicle.obj.car.position.x * stage.scale + elem.offsetWidth / 2;
+		stage.position.y = -this.vehicleMng.selectedVehicle.obj.car.position.y * stage.scale + elem.offsetHeight / 2;
 		zui.surfaceMatrix.elements[2] = stage.position.x;
 		zui.surfaceMatrix.elements[5] = stage.position.y;
 
@@ -23,10 +25,11 @@ class Main {
 	}
 
 	step(event) {
-		updateVehicleObjects(event.data);
-		drawVehicles(event.data);
+		this.vehicleMng.updateVehicleObjects(event.data);
+		this.vehicleMng.drawVehicles(event.data);
 		network.drawTrafficLights(event.trafficLights);
-		if (this.selectedVehicle && this.follow) this.center();
+
+		if (this.vehicleMng.selectedVehicle && this.follow) this.center();
 	}
 
 	sendTLightMsg(id) {
@@ -43,9 +46,9 @@ class Main {
 	}
 
 	vehicleClicked(vehicle) {
-		if (this.selectedVehicle) this.selectedVehicle.unselect();
+		if (this.vehicleMng.selectedVehicle) this.vehicleMng.selectedVehicle.deselect();
 		vehicle.select();
-		this.selectedVehicle = vehicle;
+		this.vehicleMng.selectedVehicle = vehicle;
 
 		this.getVehicleRoute(vehicle.id);
 	}
@@ -81,7 +84,7 @@ class Main {
 				case 'network':
 					this.start(event);
 				case 'end':
-					clearNetwork();
+					this.vehicleMng.clearNetwork();
 					break;
 				case 'finish':
 					createStatPopup(event['data']);

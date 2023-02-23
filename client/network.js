@@ -1,44 +1,28 @@
 class Network {
 	constructor(lanes, trafficLights, boundary, two) {
 		// offset centers network
-		// !with drawing y coordinate use window.innerHeight - y - offset.y, because sumo calc coordinates from bottom left and js from top left
+		// !with drawing y coordinate use "-y + offset.y", because sumo calc coordinates from bottom left and js from top left
 		this.offset = {
 			x: centerX - boundary.x0 - Math.abs(boundary.x0 - boundary.x1) / 2,
-			y: centerY - boundary.y0 - Math.abs(boundary.y0 - boundary.y1) / 2,
+			y: elem.offsetHeight - (centerY - boundary.y0 - Math.abs(boundary.y0 - boundary.y1) / 2),
 		};
 
 		this.lanes = lanes;
 		this.trafficLights = trafficLights;
 		this.two = two;
 		this.paths = {};
-        this.markedRoute = null
+		this.markedRoute = null;
 	}
 
 	async draw() {
 		for (const [id, l] of Object.entries(this.lanes)) {
 			// await new Promise((r) => setTimeout(r, 500));
 			var anchors = [
-				new Two.Anchor(
-					parseFloat(l['points'][0][0]) + this.offset.x,
-					window.innerHeight - parseFloat(l['points'][0][1]) - this.offset.y,
-					0,
-					0,
-					0,
-					0,
-					Two.Commands.move
-				),
+				new Two.Anchor(parseFloat(l['points'][0][0]) + this.offset.x, -parseFloat(l['points'][0][1]) + this.offset.y, 0, 0, 0, 0, Two.Commands.move),
 			];
 			for (var a = 1; a < l['points'].length; a++) {
 				anchors.push(
-					new Two.Anchor(
-						parseFloat(l['points'][a][0]) + this.offset.x,
-						window.innerHeight - parseFloat(l['points'][a][1]) - this.offset.y,
-						0,
-						0,
-						0,
-						0,
-						Two.Commands.line
-					)
+					new Two.Anchor(parseFloat(l['points'][a][0]) + this.offset.x, -parseFloat(l['points'][a][1]) + this.offset.y, 0, 0, 0, 0, Two.Commands.line)
 				);
 			}
 
@@ -68,11 +52,10 @@ class Network {
 			stage.add(this.paths[id]);
 		}
 
-
 		// traffic lights drawable objects creating
 		let tlights = {};
 		for (const [id, pos] of Object.entries(this.trafficLights)) {
-			let dot = new Two.Circle(parseFloat(pos[0]) + this.offset.x, window.innerHeight - parseFloat(pos[1]) - this.offset.y, 3, 2);
+			let dot = new Two.Circle(parseFloat(pos[0]) + this.offset.x, -parseFloat(pos[1]) + this.offset.y, 3, 2);
 			dot.fill = 'green';
 			dot.stroke = 'white';
 			dot.linewidth = 0.3;

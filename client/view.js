@@ -1,45 +1,11 @@
-var elem = document.getElementById('board');
-var centerX = window.innerWidth / 2;
-var centerY = window.innerHeight / 2;
-var two = new Two({ width: elem.offsetWidth, height: elem.offsetHeight }).appendTo(elem);
-var stage = new Two.Group();
+let elem = document.getElementById('board');
+const centerX = elem.offsetWidth / 2;
+const centerY = elem.offsetHeight / 2;
+let two = new Two({ width: '100%', height: '100%' }).appendTo(elem);
+// let two = new Two({ width: elem.offsetWidth, height: elem.offsetHeight }).appendTo(elem);
+let stage = new Two.Group();
 
 let network = null;
-
-var vehicles = {};
-
-function updateVehicleObjects(vehicleData) {
-	for (i in vehicleData.added) {
-		id = vehicleData.added[i];
-		pos = vehicleData.data[id].position;
-		vehicles[id] = new Vehicle(id, pos[0], pos[1]);
-		vehicles[id].addTo(stage);
-	}
-	for (i in vehicleData.removed) {
-		id = vehicleData.removed[i];
-		vehicles[id].removeFrom(stage);
-
-		delete vehicles[id];
-	}
-}
-
-function drawVehicles(vehicleData) {
-	for (i in vehicleData.all) {
-		id = vehicleData.all[i];
-		data = vehicleData.data[id];
-		vehicles[id].move(data.position[0], data.position[1], data.angle, network.offset);
-	}
-	two.update();
-}
-
-function clearNetwork() {
-	for (id in vehicles) {
-		vehicles[id].removeFrom(stage);
-
-		delete vehicles[id];
-	}
-	two.update();
-}
 
 two.add(stage);
 let zui = new Two.ZUI(stage);
@@ -189,9 +155,11 @@ function pointerdown(e) {
 		}
 
 		// selecting vehicle
-		for (const [id, v] of Object.entries(vehicles)) {
+		for (const [id, v] of Object.entries(main.vehicleMng.vehicles)) {
 			//  magic formula, DONT TOUCH
-			dist = Math.sqrt((v.obj.car.position.x * stage.scale + stage.position.x - x) ** 2 + (v.obj.car.position.y * stage.scale + stage.position.y - y) ** 2);
+			dist = Math.sqrt(
+				(v.obj.car.position.x * stage.scale + stage.position.x - x) ** 2 + (v.obj.car.position.y * stage.scale + stage.position.y - y) ** 2
+			);
 
 			if (dist <= v.width * stage.scale) {
 				console.log(id);
