@@ -1,14 +1,14 @@
 
 
 function createStatPopup(stats) {
-    oldmodal = document.querySelector('#modal');
-	if (oldmodal) document.querySelector('body').removeChild(oldmodal);
+	modal = document.querySelector('#modal');
+	modal.className = 'modal'; // ???
+	modal.style.display = 'inherit';
 
-	const modal = document.createElement('div');
-	modal.className = 'modal';
-	modal.id = 'modal';
+	let popup = document.querySelector('.popup');
+	if (popup) modal.removeChild(popup);
 
-	let popup = document.createElement('div');
+	popup = document.createElement('div');
 	popup.className = 'popup';
 
 	let close = document.createElement('button');
@@ -16,12 +16,11 @@ function createStatPopup(stats) {
 	close.className = 'close';
 	close.onclick = () => {
 		modal.style.display = 'none';
+		popup.style.display = 'none';
 	};
 	popup.appendChild(close);
-    let h1 = document.createElement('h1');
+	let h1 = document.createElement('h1');
 	h1.innerHTML = 'Simulation Statistics';
-    
-
 
 	popup.appendChild(h1);
 	for (const [header, vals] of Object.entries(stats)) {
@@ -48,7 +47,18 @@ function createStatPopup(stats) {
 	}
 
 	modal.appendChild(popup);
-	document.querySelector('body').appendChild(modal);
+	// document.querySelector('body').appendChild(modal);
+}
+
+function loadingOn() {
+	document.querySelector('#modal').style.display = 'block';
+	document.querySelector('#loading').style.display = 'block';
+}
+
+function loadingOff() {
+	modal = document.querySelector('#modal');
+	modal.style.display = 'none';
+	document.querySelector('#loading').style.display = 'none';
 }
 
 //tmp just formating

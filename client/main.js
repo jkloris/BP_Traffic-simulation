@@ -76,7 +76,7 @@ class Main {
 		}
 
 		network.resetMark();
-
+        loadingOff();
 		this.selectedVehicle = null;
 	}
 
@@ -111,6 +111,8 @@ class Main {
 			[...document.querySelectorAll('.menuButton, .slider')].map((e) => {
 				this.setVisibility(e, true);
 			});
+
+            loadingOn();
 
 			const event = {
 				type: 'start',

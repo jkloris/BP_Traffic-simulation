@@ -18,8 +18,8 @@
         margin: auto;
         padding: 20px;
         width: 65rem;
-    border: 1px solid #888;
-    box-shadow: 1rem 1rem 1rem  rgba(0,0,0,0.4);
+        border: 1px solid #888;
+        box-shadow: 1rem 1rem 1rem  rgba(0,0,0,0.4);
     }
 }
 
@@ -36,8 +36,8 @@
 }
 
 
-.modal{
-
+#modal{
+    display: none;
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
     padding-top: 100px; /* Location of the box */
@@ -73,4 +73,14 @@
     float: right;
     cursor: pointer;
 
+}
+
+#loading{
+        background-color: rgba(0,0,0,0.5);
+        color: var(--primaryTextColor);
+        margin: auto;
+        padding: 10px;
+        width: 20rem;
+        font-size: xx-large;
+        text-align: center;
 }

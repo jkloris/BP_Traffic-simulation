@@ -1,12 +1,12 @@
 :root{
-    --primaryColor:#a5a5a5;
+    --primaryColor:#363636;
     --primaryLightColor:#868686;
     --primaryDarkColor:#000000;
     --secondaryColor:#388e3c;
     --secondaryLightColor:#6abf69;
     --secondaryDarkColor:#00600f;
     --primaryTextHoverColor:#ffffff;
-    --primaryTextColor:#cfcfcf;
+    --primaryTextColor:#d1d1d1;
     --secondaryTextColor:#000000;
     font-family: "Roboto";
 }
