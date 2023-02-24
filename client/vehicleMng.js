@@ -9,6 +9,12 @@ class VehicleMng {
 		return { type: 'stopVehicle', id: this.selectedVehicle.id };
 	}
 
+    getVehicleResumeMsg(){
+        if (!this.selectedVehicle) return;
+		return { type: 'resumeVehicle', id: this.selectedVehicle.id };
+    }
+
+
 	updateVehicleObjects(vehicleData) {
 		let id = null,
 			pos = null;

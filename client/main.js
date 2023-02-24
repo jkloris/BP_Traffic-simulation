@@ -15,6 +15,10 @@ class Main {
 		this.websocket.send(JSON.stringify(msg));
 	}
 
+	resumeVehicle() {
+		this.websocket.send(JSON.stringify(this.vehicleMng.getVehicleResumeMsg()));
+	}
+
 	center() {
 		if (!this.vehicleMng.selectedVehicle) return;
 

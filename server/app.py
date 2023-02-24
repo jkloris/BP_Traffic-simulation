@@ -146,7 +146,7 @@ async def handler(websocket):
                         tlightObj.statePlusOne(tlightId)
                         state = tlightObj.getCurrentState(tlightId)
 
-                        traci.trafficlight.setRedYellowGreenState(
+                        conn.trafficlight.setRedYellowGreenState(
                             tlightId, state)
 
             elif event["type"] == "vehicleRoute":
@@ -155,9 +155,11 @@ async def handler(websocket):
 
             elif event["type"] == "stopVehicle":
                 if webClients[port].STATUS != "finished":
-                    setVehicleStop(
-                        websocket, traci.getConnection(port), event["id"])
+                    setVehicleStop(traci.getConnection(port), event["id"])
 
+            elif event["type"] == "resumeVehicle":
+                if webClients[port].STATUS != "finished":
+                    resumeVehicleStop(traci.getConnection(port), event["id"])
 
     except websockets.ConnectionClosedOK:
         print(f"{websocket} ConnectionClosed OK\n")
@@ -175,14 +177,25 @@ async def handler(websocket):
 
         webClients.pop(port)
 
-# TODO finish
+
+def checkValidVehicleID(conn, id):
+    if id not in conn.vehicle.getIDList():
+        print("ERROR: no id in vehicle ID List")
+        return False
+    return True
 
 
-def setVehicleStop(websocket, conn, id):
-    print(id)
-    route = conn.vehicle.getRoute(id)
-    index = conn.vehicle.getRouteIndex(id)
-    conn.vehicle.setStop(id, route[index])
+def resumeVehicleStop(conn, id):
+    if not checkValidVehicleID(conn, id):
+        return
+    conn.vehicle.setSpeed(id, -1)
+
+
+def setVehicleStop(conn, id):
+    if not checkValidVehicleID(conn, id):
+        return
+    conn.vehicle.setSpeed(id, 0)
+
 
 async def confirmEnd(websocket):
     msg = {"type": "end"}
@@ -299,15 +312,11 @@ def updateVehicles(vehicleData, conn):
 
 
 async def sendVehicleRoute(websocket, conn, id):
-    if id not in conn.vehicle.getIDList():
-        print("ERROR: no id in vehicle ID List")
+    if not checkValidVehicleID(conn, id):
         return
 
     msg = {"type": "route", "data": conn.vehicle.getRoute(id)}
     await websocket.send(json.dumps(msg))
-
-
-
 
 
 def getTrafficLights(conn, label):
