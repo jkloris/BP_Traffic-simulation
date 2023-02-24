@@ -151,8 +151,12 @@ async def handler(websocket):
 
             elif event["type"] == "vehicleRoute":
                 if webClients[port].STATUS != "finished":
-
                     await sendVehicleRoute(websocket, traci.getConnection(port), event["id"])
+
+            elif event["type"] == "stopVehicle":
+                if webClients[port].STATUS != "finished":
+                    setVehicleStop(
+                        websocket, traci.getConnection(port), event["id"])
 
 
     except websockets.ConnectionClosedOK:
@@ -171,6 +175,14 @@ async def handler(websocket):
 
         webClients.pop(port)
 
+# TODO finish
+
+
+def setVehicleStop(websocket, conn, id):
+    print(id)
+    route = conn.vehicle.getRoute(id)
+    index = conn.vehicle.getRouteIndex(id)
+    conn.vehicle.setStop(id, route[index])
 
 async def confirmEnd(websocket):
     msg = {"type": "end"}

@@ -4,7 +4,7 @@ class Vehicle {
 		this.width = 2.5;
 		this.height = 6;
 
-		let car = two.makeRoundedRectangle(x, y, this.width, this.height, this.width - 2);
+        let car = two.makeRoundedRectangle(x, y, this.width, this.height, this.width - 2);
 		let window = two.makeRectangle(x, y, this.width, this.height - 2);
 		let roof = two.makeRectangle(x, y, this.width - 0.5, this.width - 0.3);
 
@@ -22,9 +22,9 @@ class Vehicle {
 		this.obj.roof.translation.x = x + offset.x;
 		this.obj.window.translation.x = x + offset.x;
 
-		this.obj.car.translation.y = - y + offset.y;
-		this.obj.roof.translation.y = - y + offset.y;
-		this.obj.window.translation.y =  - y + offset.y;
+		this.obj.car.translation.y = -y + offset.y;
+		this.obj.roof.translation.y = -y + offset.y;
+		this.obj.window.translation.y = -y + offset.y;
 
 		this.obj.car.rotation = (Math.PI * angle) / 180;
 		this.obj.roof.rotation = (Math.PI * angle) / 180;
@@ -57,4 +57,4 @@ class Vehicle {
 		stage.add(this.obj.window);
 		stage.add(this.obj.roof);
 	}
-}
+};

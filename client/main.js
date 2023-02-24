@@ -10,12 +10,16 @@ class Main {
 		this.follow = true;
 	}
 
-	// test
+	stopVehicle() {
+		const msg = this.vehicleMng.getVehicleStopMsg();
+		this.websocket.send(JSON.stringify(msg));
+	}
+
 	center() {
 		if (!this.vehicleMng.selectedVehicle) return;
 
 		zui.zoomSet(4, 0, 0);
-        // Hokus pokus magic equation 
+		// Hokus pokus magic equation
 		stage.position.x = -this.vehicleMng.selectedVehicle.obj.car.position.x * stage.scale + elem.offsetWidth / 2;
 		stage.position.y = -this.vehicleMng.selectedVehicle.obj.car.position.y * stage.scale + elem.offsetHeight / 2;
 		zui.surfaceMatrix.elements[2] = stage.position.x;

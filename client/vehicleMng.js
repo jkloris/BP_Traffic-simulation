@@ -4,6 +4,11 @@ class VehicleMng {
 		this.selectedVehicle = null;
 	}
 
+	getVehicleStopMsg() {
+		if (!this.selectedVehicle) return;
+		return { type: 'stopVehicle', id: this.selectedVehicle.id };
+	}
+
 	updateVehicleObjects(vehicleData) {
 		let id = null,
 			pos = null;
@@ -15,7 +20,7 @@ class VehicleMng {
 		}
 		for (let i in vehicleData.removed) {
 			id = vehicleData.removed[i];
-            if (this.selectedVehicle && id == this.selectedVehicle.id) this.selectedVehicle = null;
+			if (this.selectedVehicle && id == this.selectedVehicle.id) this.selectedVehicle = null;
 
 			this.vehicles[id].removeFrom(stage);
 			delete this.vehicles[id];
