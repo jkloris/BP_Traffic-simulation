@@ -75,6 +75,7 @@ function addZUI() {
 				panmove(e);
 				break;
 		}
+        two.update();
 	}
 
 	function touchend(e) {
