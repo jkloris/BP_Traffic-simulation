@@ -61,7 +61,15 @@ function loadingOff() {
 	document.querySelector('#loading').style.display = 'none';
 }
 
-//tmp just formating
+function openOptions() {
+	document.querySelector('#optionsClose').checked = true;
+	// document.querySelector('#options').style.width = '20%';
+    document.querySelector('.iconClose').innerHTML = '&times;';
+}
 
+function closeOptions() {
+    document.querySelector('#optionsClose').checked = false;
+    document.querySelector('.iconClose').innerHTML = '&times;';
+}
 
 

@@ -49,6 +49,7 @@ body {
     width: 100%; 
     height:85vh;
     display: inline-block;
+    transition: width ease .3s;
     
 }
 
@@ -170,3 +171,80 @@ body {
 #sideMenu button:active{
     box-shadow: 0px 0px ;
 }
+
+
+#options {
+    background: var(--primaryDarkColor);
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+    height: 85vh;
+    position: relative;
+    transition: width ease .3s;
+    width: 0;
+    /* z-index: 100; */
+    overflow: hidden;
+    float: right;
+}
+
+#vehicleOptions{
+    text-align: center;
+    width: 100%;
+    padding-top: 1rem;
+}
+
+#vehicleOptions button{
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    width: 100%;
+    background-color:var(--primaryColor);
+    color: var(--primaryTextColor);
+    cursor: pointer;
+}
+#vehicleOptions button:hover{
+    color: var(--primaryTextHoverColor);
+}
+#vehicleOptions button:active{
+    background-color: var(--primaryLightColor);
+}
+
+#vehicleOptions h2, p{
+    color: var(--primaryTextHoverColor);
+}
+
+#optionsClose{
+    position: absolute;
+    z-index: 5;
+    right: 0.2rem;
+    top: 5.2rem;
+    visibility: hidden;
+}
+
+.iconClose{
+    z-index: 6;
+    position: absolute;
+    right: 0.5rem;
+    top: 5rem;
+    font-size: xx-large;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#optionsClose:checked +.iconClose{
+    color: var(--primaryTextColor);
+    
+}
+
+
+#optionsClose:checked +.iconClose::after{
+    content: 'x';
+}
+
+#optionsClose:checked ~ #options{
+    width: 20%;
+}
+
+#optionsClose:checked ~ #board{
+    width: 80%;
+}
+
+
+
