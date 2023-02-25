@@ -64,12 +64,10 @@ function loadingOff() {
 function openOptions() {
 	document.querySelector('#optionsClose').checked = true;
 	// document.querySelector('#options').style.width = '20%';
-    document.querySelector('.iconClose').innerHTML = '&times;';
 }
 
 function closeOptions() {
-    document.querySelector('#optionsClose').checked = false;
-    document.querySelector('.iconClose').innerHTML = '&times;';
+	document.querySelector('#optionsClose').checked = false;
 }
 
 

@@ -111,6 +111,7 @@ class Network {
 				e[1].stroke = 'black';
 			}
 		}
+        this.two.update();
 	}
 }
 

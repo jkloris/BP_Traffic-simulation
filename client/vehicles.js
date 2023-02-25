@@ -50,6 +50,7 @@ class Vehicle {
 		two.remove(this.obj.car);
 		two.remove(this.obj.roof);
 		two.remove(this.obj.window);
+
 	}
 
 	addTo(stage) {

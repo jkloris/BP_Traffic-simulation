@@ -81,6 +81,9 @@ async def handler(websocket):
         async for message in websocket:
             # message = await websocket.recv()
             event = json.loads(message)
+            if event == None or "type" not in event:
+                print("ERROR: Wrong message format!", event)
+                continue
             print(event)
 
             if event["type"] == "start":
@@ -179,6 +182,7 @@ async def handler(websocket):
 
 
 def checkValidVehicleID(conn, id):
+    print(conn.vehicle.getIDList())
     if id not in conn.vehicle.getIDList():
         print("ERROR: no id in vehicle ID List")
         return False

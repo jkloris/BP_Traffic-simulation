@@ -5,12 +5,12 @@ class VehicleMng {
 	}
 
 	getVehicleStopMsg() {
-		if (!this.selectedVehicle) return;
+		if (!this.selectedVehicle) return null;
 		return { type: 'stopVehicle', id: this.selectedVehicle.id };
 	}
 
     getVehicleResumeMsg(){
-        if (!this.selectedVehicle) return;
+        if (!this.selectedVehicle) return null;
 		return { type: 'resumeVehicle', id: this.selectedVehicle.id };
     }
 
@@ -26,7 +26,11 @@ class VehicleMng {
 		}
 		for (let i in vehicleData.removed) {
 			id = vehicleData.removed[i];
-			if (this.selectedVehicle && id == this.selectedVehicle.id) this.selectedVehicle = null;
+			if (this.selectedVehicle && id == this.selectedVehicle.id) {
+				this.selectedVehicle = null;
+				document.querySelector('#vehicleOptions').style.display = 'none';
+				network.resetMark();
+			}
 
 			this.vehicles[id].removeFrom(stage);
 			delete this.vehicles[id];

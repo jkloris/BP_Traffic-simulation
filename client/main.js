@@ -7,16 +7,17 @@ class Main {
 		this.receiveMsgs(websocket);
 		this.sendButtonMsgs(buttons, websocket);
 
-		this.follow = true;
+		this.follow = false;
 	}
 
 	stopVehicle() {
 		const msg = this.vehicleMng.getVehicleStopMsg();
-		this.websocket.send(JSON.stringify(msg));
+		if (msg) this.websocket.send(JSON.stringify(msg));
 	}
 
 	resumeVehicle() {
-		this.websocket.send(JSON.stringify(this.vehicleMng.getVehicleResumeMsg()));
+		const msg = this.vehicleMng.getVehicleResumeMsg();
+		if (msg) this.websocket.send(JSON.stringify(msg));
 	}
 
 	center() {
@@ -59,6 +60,8 @@ class Main {
 		this.vehicleMng.selectedVehicle = vehicle;
 
 		this.getVehicleRoute(vehicle.id);
+		document.querySelector('#vehicleOptions').style.display = 'block';
+		openOptions();
 	}
 
 	getVehicleRoute(id) {
@@ -76,7 +79,7 @@ class Main {
 		}
 
 		network.resetMark();
-        loadingOff();
+		loadingOff();
 		this.selectedVehicle = null;
 	}
 
@@ -95,6 +98,7 @@ class Main {
 					this.vehicleMng.clearNetwork();
 					break;
 				case 'finish':
+					closeOptions();
 					createStatPopup(event['data']);
 					break;
 				case 'route':
@@ -112,7 +116,7 @@ class Main {
 				this.setVisibility(e, true);
 			});
 
-            loadingOn();
+			loadingOn();
 
 			const event = {
 				type: 'start',
@@ -169,6 +173,25 @@ class Main {
 			};
 			await this.websocket.send(JSON.stringify(event));
 		};
+
+		buttons['stopVehicle'].onclick = () => this.stopVehicle();
+		buttons['resumeVehicle'].onclick = () => this.resumeVehicle();
+		buttons['centerVehicle'].onclick = () => this.center();
+		buttons['followVehicle'].onclick = () => {
+			if (this.follow) {
+				buttons['followVehicle'].innerHTML = 'Follow';
+			} else {
+				buttons['followVehicle'].innerHTML = 'Unfollow';
+			}
+			this.follow = !this.follow;
+		};
+		buttons['deselectVehicle'].onclick = () => {
+			this.vehicleMng.selectedVehicle.deselect();
+			this.vehicleMng.selectedVehicle = null;
+			network.resetMark();
+			this.follow = false;
+			document.querySelector('#vehicleOptions').style.display = 'none';
+		};
 	}
 }
 // let main = null;
@@ -181,6 +204,12 @@ window.addEventListener('DOMContentLoaded', () => {
 	const endButton = document.getElementById('endButton');
 	const setSpeedSlider = document.getElementById('speedSlider');
 	const setScaleSlider = document.getElementById('scaleSlider');
+	const followVehicleBtn = document.getElementById('followVehicleBtn');
+	const centerVehicleBtn = document.getElementById('centerVehicleBtn');
+	const stopVehicleBtn = document.getElementById('stopVehicleBtn');
+	const resumeVehicleBtn = document.getElementById('resumeVehicleBtn');
+	const deselectVehicleBtn = document.getElementById('deselectVehicleBtn');
+
 	const buttons = {
 		start: startButton,
 		pause: pauseButton,
@@ -188,6 +217,11 @@ window.addEventListener('DOMContentLoaded', () => {
 		setSpeed: setSpeedSlider,
 		setScale: setScaleSlider,
 		end: endButton,
+		followVehicle: followVehicleBtn,
+		centerVehicle: centerVehicleBtn,
+		stopVehicle: stopVehicleBtn,
+		resumeVehicle: resumeVehicleBtn,
+		deselectVehicle: deselectVehicleBtn,
 	};
 	// Open the WebSocket connection and register event handlers.
 	const websocket = new WebSocket('ws://localhost:8001/');
