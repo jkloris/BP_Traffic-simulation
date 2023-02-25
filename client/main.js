@@ -61,6 +61,7 @@ class Main {
 
 		this.getVehicleRoute(vehicle.id);
 		document.querySelector('#vehicleOptions').style.display = 'block';
+		// TODO ID change
 		openOptions();
 	}
 

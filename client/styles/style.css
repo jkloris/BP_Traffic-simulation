@@ -185,7 +185,7 @@ body {
     float: right;
 }
 
-#vehicleOptions{
+#vehicleOptions, #tLightOptions{
     text-align: center;
     width: 100%;
     padding-top: 1rem;
@@ -207,7 +207,7 @@ body {
     background-color: var(--primaryLightColor);
 }
 
-#vehicleOptions h2, p{
+#options h2, p{
     color: var(--primaryTextHoverColor);
 }
 
@@ -250,6 +250,7 @@ body {
 #optionsClose:checked ~ #board{
     width: 80%;
 }
+
 
 
 
