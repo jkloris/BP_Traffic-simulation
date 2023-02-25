@@ -49,7 +49,7 @@ body {
     width: 100%; 
     height:85vh;
     display: inline-block;
-    transition: width ease .3s;
+    transition: width ease .1s;
     
 }
 
@@ -178,7 +178,7 @@ body {
     box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
     height: 85vh;
     position: relative;
-    transition: width ease .3s;
+    transition: width ease .1s;
     width: 0;
     /* z-index: 100; */
     overflow: hidden;
@@ -189,6 +189,7 @@ body {
     text-align: center;
     width: 100%;
     padding-top: 1rem;
+    display: none;
 }
 
 #vehicleOptions button{
@@ -223,19 +224,23 @@ body {
     position: absolute;
     right: 0.5rem;
     top: 5rem;
-    font-size: xx-large;
+    
     font-weight: bold;
     cursor: pointer;
 }
 
-#optionsClose:checked +.iconClose{
+#optionsClose:checked +.iconClose::before{
     color: var(--primaryTextColor);
-    
+    content: '\2715';
+    font-size: x-large;
 }
 
 
-#optionsClose:checked +.iconClose::after{
-    content: 'x';
+#optionsClose +.iconClose::before{
+    color: var(--primaryDarkColor);
+    content: '\2261';
+    font-size: xx-large;
+    
 }
 
 #optionsClose:checked ~ #options{
