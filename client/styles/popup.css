@@ -85,3 +85,7 @@
         text-align: center;
 }
 
+.selectedRow{
+    background-color: #6abf69 !important;
+}
+
