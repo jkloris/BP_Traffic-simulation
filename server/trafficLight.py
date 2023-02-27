@@ -41,7 +41,9 @@ class TrafficLight:
         self.__state[id] = []
         for log in program:
             for ph in log.getPhases():
-                self.__state[id].append(ph.state)
+                self.__state[id].append(
+                    {"state": ph.state, "duration": ph.duration})
+
 
 
     def getCurrentState(self, id):

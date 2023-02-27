@@ -71,10 +71,10 @@ function closeOptions() {
 }
 
 function selectableTable() {
-	let rows = document.querySelector('#tlightTable').querySelectorAll('tr');
-	console.log(rows);
+	let rows = document.querySelectorAll('#tlightTable > tbody > tr');
 	let statusInput = document.querySelector('#statusInput');
 	let durationInput = document.querySelector('#durationInput');
+	console.log(rows);
 
 	rows.forEach((r) =>
 		r.addEventListener('click', (e) => {
@@ -88,6 +88,6 @@ function selectableTable() {
 		})
 	);
 }
-selectableTable();
+
 
 

@@ -108,6 +108,7 @@ class Main {
 					network.markRoute(event['data']);
 				case 'traffic_light':
 					console.log(event);
+                    this.tLightMng.fillOptions(event['states']);
 					break;
 				default:
 					break;

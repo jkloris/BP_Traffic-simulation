@@ -147,6 +147,7 @@ async def handler(websocket):
                         #     tlightObj.extractStates(conn, tlightId)
                         if tlightObj.getState(tlightId) == None:
                             tlightObj.extractStates(conn, tlightId)
+                            
                         msg = {"type": "traffic_light", "id": tlightId,
                                "states": tlightObj.getState(tlightId)}
                         # print(msg)
