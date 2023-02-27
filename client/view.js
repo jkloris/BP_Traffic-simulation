@@ -150,7 +150,7 @@ function pointerdown(e) {
 
 			if (dist <= tl.radius * stage.scale) {
 				console.log(id);
-				main.sendTLightMsg(id);
+				main.tLightClicked(id);
 				return;
 			}
 		}

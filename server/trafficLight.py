@@ -13,7 +13,8 @@ class TrafficLight:
         return self.__state[id]
 
     def setStateCounter(self, id, value):
-        self.__stateCounter[id] = value if 0 <= value < len(self.getState(id)) else 0
+        self.__stateCounter[id] = value if 0 <= value < len(
+            self.getState(id)) else 0
 
     def clearState(self):
         self.__state = {}
@@ -41,7 +42,8 @@ class TrafficLight:
         for log in program:
             for ph in log.getPhases():
                 self.__state[id].append(ph.state)
-    
+
+
     def getCurrentState(self, id):
         state = self.getState(id)
         if state == None:

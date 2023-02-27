@@ -3,6 +3,7 @@ class Main {
 		this.websocket = websocket;
 
 		this.vehicleMng = new VehicleMng();
+        this.tLightMng = new TLightMng()
 
 		this.receiveMsgs(websocket);
 		this.sendButtonMsgs(buttons, websocket);
@@ -41,13 +42,14 @@ class Main {
 		if (this.vehicleMng.selectedVehicle && this.follow) this.center();
 	}
 
-	sendTLightMsg(id) {
-		const event = {
+	tLightClicked(id) {
+        const event = {
 			type: 'traffic_light',
 			id: id,
 		};
 		this.websocket.send(JSON.stringify(event));
-	}
+    }
+
 
 	setVisibility(item, visible) {
 		if (visible) item.style.visibility = 'visible';
@@ -104,6 +106,9 @@ class Main {
 					break;
 				case 'route':
 					network.markRoute(event['data']);
+				case 'traffic_light':
+					console.log(event);
+					break;
 				default:
 					break;
 			}

@@ -143,14 +143,19 @@ async def handler(websocket):
                     if event["id"] in tlightObj.ids.keys():
                         tlightId = tlightObj.ids[event["id"]]
 
-                        if tlightObj.getCurrentState(tlightId) == None:
+                        # if tlightObj.getCurrentState(tlightId) == None:
+                        #     tlightObj.extractStates(conn, tlightId)
+                        if tlightObj.getState(tlightId) == None:
                             tlightObj.extractStates(conn, tlightId)
+                        msg = {"type": "traffic_light", "id": tlightId,
+                               "states": tlightObj.getState(tlightId)}
+                        # print(msg)
+                        await websocket.send(json.dumps(msg))
+                        # tlightObj.statePlusOne(tlightId)
+                        # state = tlightObj.getCurrentState(tlightId)
 
-                        tlightObj.statePlusOne(tlightId)
-                        state = tlightObj.getCurrentState(tlightId)
-
-                        conn.trafficlight.setRedYellowGreenState(
-                            tlightId, state)
+                        # conn.trafficlight.setRedYellowGreenState(
+                        #     tlightId, state)
 
             elif event["type"] == "vehicleRoute":
                 if webClients[port].STATUS != "finished":
