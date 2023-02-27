@@ -3,7 +3,7 @@ class Main {
 		this.websocket = websocket;
 
 		this.vehicleMng = new VehicleMng();
-        this.tLightMng = new TLightMng()
+		this.tLightMng = new TLightMng();
 
 		this.receiveMsgs(websocket);
 		this.sendButtonMsgs(buttons, websocket);
@@ -21,13 +21,13 @@ class Main {
 		if (msg) this.websocket.send(JSON.stringify(msg));
 	}
 
-	center() {
-		if (!this.vehicleMng.selectedVehicle) return;
+	center(twoElement) {
+		if (!twoElement) return;
 
 		zui.zoomSet(4, 0, 0);
 		// Hokus pokus magic equation
-		stage.position.x = -this.vehicleMng.selectedVehicle.obj.car.position.x * stage.scale + elem.offsetWidth / 2;
-		stage.position.y = -this.vehicleMng.selectedVehicle.obj.car.position.y * stage.scale + elem.offsetHeight / 2;
+		stage.position.x = -twoElement.position.x * stage.scale + elem.offsetWidth / 2;
+		stage.position.y = -twoElement.position.y * stage.scale + elem.offsetHeight / 2;
 		zui.surfaceMatrix.elements[2] = stage.position.x;
 		zui.surfaceMatrix.elements[5] = stage.position.y;
 
@@ -39,17 +39,17 @@ class Main {
 		this.vehicleMng.drawVehicles(event.data);
 		network.drawTrafficLights(event.trafficLights);
 
-		if (this.vehicleMng.selectedVehicle && this.follow) this.center();
+		if (this.vehicleMng.selectedVehicle && this.follow) this.center(this.vehicleMng.selectedVehicle.obj.car);
 	}
 
 	tLightClicked(id) {
-        const event = {
+		const event = {
 			type: 'traffic_light',
 			id: id,
 		};
+		this.tLightMng.selected = id;
 		this.websocket.send(JSON.stringify(event));
-    }
-
+	}
 
 	setVisibility(item, visible) {
 		if (visible) item.style.visibility = 'visible';
@@ -107,8 +107,9 @@ class Main {
 				case 'route':
 					network.markRoute(event['data']);
 				case 'traffic_light':
-					console.log(event);
-                    this.tLightMng.fillOptions(event['states']);
+					this.selected = event['id'];
+					this.tLightMng.fillOptions(event['states']);
+					openOptions();
 					break;
 				default:
 					break;
@@ -183,7 +184,7 @@ class Main {
 
 		buttons['stopVehicle'].onclick = () => this.stopVehicle();
 		buttons['resumeVehicle'].onclick = () => this.resumeVehicle();
-		buttons['centerVehicle'].onclick = () => this.center();
+		buttons['centerVehicle'].onclick = () => this.center(this.vehicleMng.selectedVehicle.obj.car);
 		buttons['followVehicle'].onclick = () => {
 			if (this.follow) {
 				buttons['followVehicle'].innerHTML = 'Follow';
@@ -198,6 +199,10 @@ class Main {
 			network.resetMark();
 			this.follow = false;
 			document.querySelector('#vehicleOptions').style.display = 'none';
+		};
+
+		buttons['tlightCenter'].onclick = () => {
+			this.center(network.trafficLights[this.tLightMng.selected]);
 		};
 	}
 }
@@ -216,6 +221,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	const stopVehicleBtn = document.getElementById('stopVehicleBtn');
 	const resumeVehicleBtn = document.getElementById('resumeVehicleBtn');
 	const deselectVehicleBtn = document.getElementById('deselectVehicleBtn');
+	const tlightCenterBtn = document.getElementById('tlightCenterBtn');
 
 	const buttons = {
 		start: startButton,
@@ -229,6 +235,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		stopVehicle: stopVehicleBtn,
 		resumeVehicle: resumeVehicleBtn,
 		deselectVehicle: deselectVehicleBtn,
+		tlightCenter: tlightCenterBtn,
 	};
 	// Open the WebSocket connection and register event handlers.
 	const websocket = new WebSocket('ws://localhost:8001/');

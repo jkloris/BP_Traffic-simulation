@@ -70,24 +70,6 @@ function closeOptions() {
 	document.querySelector('#optionsClose').checked = false;
 }
 
-function selectableTable() {
-	let rows = document.querySelectorAll('#tlightTable > tbody > tr');
-	let statusInput = document.querySelector('#statusInput');
-	let durationInput = document.querySelector('#durationInput');
-	console.log(rows);
-
-	rows.forEach((r) =>
-		r.addEventListener('click', (e) => {
-			e.stopPropagation();
-			console.log(e.currentTarget);
-			statusInput.value = e.currentTarget.querySelector(':nth-child(2)').innerHTML;
-			durationInput.value = e.currentTarget.querySelector(':nth-child(3)').innerHTML;
-
-			rows.forEach((rw) => rw.classList.remove('selectedRow'));
-			e.currentTarget.classList.add('selectedRow');
-		})
-	);
-}
 
 
 
