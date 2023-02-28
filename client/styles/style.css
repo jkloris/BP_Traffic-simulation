@@ -307,7 +307,7 @@ body {
     top: 0;
 }
 
-#tlightTableContainer td:nth-child(2), th:nth-child(2){
+#tlightTableContainer td:nth-child(2), #tlightTableContainer th:nth-child(2){
     width: 100%;
 }
 #tlightTableContainer tbody tr{

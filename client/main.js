@@ -116,6 +116,7 @@ class Main {
 					break;
 				case 'route':
 					network.markRoute(event['data']);
+                    break;
 				case 'trafficLight':
 					this.selected = event['id'];
 					this.tLightMng.fillOptions(event['states']);
