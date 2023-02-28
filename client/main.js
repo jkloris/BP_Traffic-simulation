@@ -44,11 +44,16 @@ class Main {
 
 	tLightClicked(id) {
 		const event = {
-			type: 'traffic_light',
+			type: 'trafficLight',
 			id: id,
 		};
 		this.tLightMng.selected = id;
 		this.websocket.send(JSON.stringify(event));
+	}
+
+	sendtLightState() {
+		const msg = this.tLightMng.getStateMsg();
+		if (msg) this.websocket.send(JSON.stringify(msg));
 	}
 
 	setVisibility(item, visible) {
@@ -63,6 +68,7 @@ class Main {
 
 		this.getVehicleRoute(vehicle.id);
 		document.querySelector('#vehicleOptions').style.display = 'block';
+		document.querySelector('#tLightOptions').style.display = 'none';
 		// TODO ID change
 		openOptions();
 	}
@@ -106,7 +112,7 @@ class Main {
 					break;
 				case 'route':
 					network.markRoute(event['data']);
-				case 'traffic_light':
+				case 'trafficLight':
 					this.selected = event['id'];
 					this.tLightMng.fillOptions(event['states']);
 					openOptions();
@@ -204,6 +210,7 @@ class Main {
 		buttons['tlightCenter'].onclick = () => {
 			this.center(network.trafficLights[this.tLightMng.selected]);
 		};
+		buttons['setStateTLight'].onclick = () => this.sendtLightState();
 	}
 }
 // let main = null;
@@ -222,6 +229,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	const resumeVehicleBtn = document.getElementById('resumeVehicleBtn');
 	const deselectVehicleBtn = document.getElementById('deselectVehicleBtn');
 	const tlightCenterBtn = document.getElementById('tlightCenterBtn');
+	const setStateTLightBtn = document.getElementById('setStateTLightBtn');
 
 	const buttons = {
 		start: startButton,
@@ -236,6 +244,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		resumeVehicle: resumeVehicleBtn,
 		deselectVehicle: deselectVehicleBtn,
 		tlightCenter: tlightCenterBtn,
+		setStateTLight: setStateTLightBtn,
 	};
 	// Open the WebSocket connection and register event handlers.
 	const websocket = new WebSocket('ws://localhost:8001/');

@@ -3,6 +3,7 @@ class TLightMng {
 	constructor() {}
 
 	fillOptions(states) {
+		document.querySelector('#vehicleOptions').style.display = 'none';
 		document.querySelector('#tLightOptions').style.display = 'block';
 		let tbody = document.querySelector('#tlightTableBody');
 		tbody.innerHTML = '';
@@ -19,7 +20,7 @@ class TLightMng {
 			tbody.append(tr);
 		}
 		this.selectableTable();
-        console.log(network.trafficLights)
+		console.log(network.trafficLights);
 	}
 
 	selectableTable() {
@@ -38,5 +39,14 @@ class TLightMng {
 				e.currentTarget.classList.add('selectedRow');
 			})
 		);
+	}
+
+	getStateMsg() {
+		if (!this.selected) return null;
+
+		let cell = document.querySelector('.selectedRow :nth-child(2)');
+		if (cell) return { type: 'trafficLightState', id: this.selected, state: cell.innerHTML };
+
+		return null;
 	}
 }

@@ -134,7 +134,7 @@ async def handler(websocket):
                     if webClients[port].STATUS != "finished":
                         TRAFFIC_SCALE = int(event["value"])
 
-            elif event["type"] == "traffic_light":
+            elif event["type"] == "trafficLight":
                 if webClients[port].STATUS != "finished":
                     conn = traci.getConnection(port)
                     tlightObj = webClients[port].trafficLight
@@ -147,8 +147,8 @@ async def handler(websocket):
                         #     tlightObj.extractStates(conn, tlightId)
                         if tlightObj.getState(tlightId) == None:
                             tlightObj.extractStates(conn, tlightId)
-                            
-                        msg = {"type": "traffic_light", "id": tlightId,
+
+                        msg = {"type": "trafficLight", "id": tlightId,
                                "states": tlightObj.getState(tlightId)}
                         # print(msg)
                         await websocket.send(json.dumps(msg))
@@ -157,6 +157,11 @@ async def handler(websocket):
 
                         # conn.trafficlight.setRedYellowGreenState(
                         #     tlightId, state)
+            elif event["type"] == "trafficLightState":
+                conn = traci.getConnection(port)
+                tlightId = tlightObj.ids[event["id"]]
+                conn.trafficlight.setRedYellowGreenState(tlightId, event["state"])
+                
 
             elif event["type"] == "vehicleRoute":
                 if webClients[port].STATUS != "finished":
