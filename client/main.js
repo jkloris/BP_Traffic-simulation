@@ -55,6 +55,10 @@ class Main {
 		const msg = this.tLightMng.getStateMsg();
 		if (msg) this.websocket.send(JSON.stringify(msg));
 	}
+	sendTLightReset() {
+		const msg = { type: 'trafficLightReset', id: this.tLightMng.selected };
+		this.websocket.send(JSON.stringify(msg));
+	}
 
 	setVisibility(item, visible) {
 		if (visible) item.style.visibility = 'visible';
@@ -211,6 +215,7 @@ class Main {
 			this.center(network.trafficLights[this.tLightMng.selected]);
 		};
 		buttons['setStateTLight'].onclick = () => this.sendtLightState();
+		buttons['resetTLight'].onclick = () => this.sendTLightReset();
 	}
 }
 // let main = null;
@@ -230,6 +235,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	const deselectVehicleBtn = document.getElementById('deselectVehicleBtn');
 	const tlightCenterBtn = document.getElementById('tlightCenterBtn');
 	const setStateTLightBtn = document.getElementById('setStateTLightBtn');
+	const resetTLightBtn = document.getElementById('resetTLightBtn');
 
 	const buttons = {
 		start: startButton,
@@ -245,6 +251,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		deselectVehicle: deselectVehicleBtn,
 		tlightCenter: tlightCenterBtn,
 		setStateTLight: setStateTLightBtn,
+		resetTLight: resetTLightBtn,
 	};
 	// Open the WebSocket connection and register event handlers.
 	const websocket = new WebSocket('ws://localhost:8001/');

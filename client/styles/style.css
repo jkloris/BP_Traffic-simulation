@@ -288,10 +288,6 @@ body {
     right: 0;
 }
 
-#setStateTLightBtn{
-    margin-bottom: .5rem;
-}
-
 #tlightTableContainer{
     
     overflow-y: scroll;
@@ -326,5 +322,8 @@ body {
 
 #tLightOptions input:last-of-type{
     margin-bottom: .5rem;
+}
+#tLightOptions input:first-of-type{
+    margin-top: .5rem;
 }
 

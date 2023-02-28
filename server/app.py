@@ -160,8 +160,14 @@ async def handler(websocket):
             elif event["type"] == "trafficLightState":
                 conn = traci.getConnection(port)
                 tlightId = tlightObj.ids[event["id"]]
-                conn.trafficlight.setRedYellowGreenState(tlightId, event["state"])
-                
+
+                conn.trafficlight.setRedYellowGreenState(
+                    tlightId, event["state"])
+
+            elif event["type"] == "trafficLightReset":
+                conn = traci.getConnection(port)
+                tlightId = tlightObj.ids[event["id"]]
+                conn.trafficlight.setProgram(tlightId, 0)
 
             elif event["type"] == "vehicleRoute":
                 if webClients[port].STATUS != "finished":

@@ -45,7 +45,6 @@ class TrafficLight:
                     {"state": ph.state, "duration": ph.duration})
 
 
-
     def getCurrentState(self, id):
         state = self.getState(id)
         if state == None:

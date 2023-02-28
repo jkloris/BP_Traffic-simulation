@@ -12,7 +12,7 @@ class TLightMng {
 			let num = document.createElement('td');
 			let state = document.createElement('td');
 			let duration = document.createElement('td');
-			state.innerHTML = s.state;
+			state.innerHTML = s.state.replace(/G/g, 'g');
 			duration.innerHTML = s.duration;
 			num.innerHTML = i;
 
@@ -20,7 +20,6 @@ class TLightMng {
 			tbody.append(tr);
 		}
 		this.selectableTable();
-		console.log(network.trafficLights);
 	}
 
 	selectableTable() {
@@ -31,7 +30,6 @@ class TLightMng {
 		rows.forEach((r) =>
 			r.addEventListener('click', (e) => {
 				e.stopPropagation();
-				console.log(e.currentTarget);
 				statusInput.value = e.currentTarget.querySelector(':nth-child(2)').innerHTML;
 				durationInput.value = e.currentTarget.querySelector(':nth-child(3)').innerHTML;
 
