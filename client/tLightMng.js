@@ -5,7 +5,7 @@ class TLightMng {
 	fillOptions(states) {
 		document.querySelector('#vehicleOptions').style.display = 'none';
 		document.querySelector('#tLightOptions').style.display = 'block';
-        
+
 		let tbody = document.querySelector('#tlightTableBody');
 		tbody.innerHTML = '';
 		for (const [i, s] of Object.entries(states)) {
@@ -45,6 +45,26 @@ class TLightMng {
 
 		let cell = document.querySelector('.selectedRow :nth-child(2)');
 		if (cell) return { type: 'trafficLightState', id: this.selected, state: cell.innerHTML };
+
+		return null;
+	}
+
+	getStateSetMsg() {
+		if (!this.selected) return null;
+
+		let state = document.querySelector('#statusInput');
+		let dur = document.querySelector('#durationInput');
+
+		let rows = document.querySelectorAll('#tlightTable > tbody > tr');
+		let ri = 0;
+		for (let r of rows) {
+			if (r.className == 'selectedRow') break;
+			ri += 1;
+		}
+		if (ri == rows.length) return null;
+
+		const msg = { type: 'trafficLightStateUpdate', id: this.selected, state: state.value, duration: dur.value, index: ri };
+		if (state && dur) return msg;
 
 		return null;
 	}

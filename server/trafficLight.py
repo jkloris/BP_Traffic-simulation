@@ -45,8 +45,6 @@ class TrafficLight:
                 self.__state[id].append(
                     {"state": ph.state, "duration": ph.duration})
 
-        print(self.__state[id])
-
     def getCurrentState(self, id):
         state = self.getState(id)
         if state == None:
@@ -69,7 +67,7 @@ class TrafficLight:
         self.extractStates(conn, id)
 
     def checkValidState(self, state, newState):
-        reg = f"[rgy]{len(state)}"
+        reg = f"[rgy]{{{len(state)}}}"
 
         if len(state) != len(newState) or not re.search(reg, newState.lower()):
             return False

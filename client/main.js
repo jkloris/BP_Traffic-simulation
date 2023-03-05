@@ -61,7 +61,7 @@ class Main {
 	}
 
 	sendTLightStateUpdate() {
-		const msg = { type: 'trafficLightStateUpdate', id: this.tLightMng.selected, state: 'z112ttx', duration: '880', index: 0 };
+		const msg = this.tLightMng.getStateSetMsg();
 		this.websocket.send(JSON.stringify(msg));
 	}
 
@@ -223,6 +223,7 @@ class Main {
 		};
 		buttons['setStateTLight'].onclick = () => this.sendtLightState();
 		buttons['resetTLight'].onclick = () => this.sendTLightReset();
+		buttons['saveStateTLight'].onclick = () => this.sendTLightStateUpdate();
 	}
 }
 // let main = null;
@@ -259,6 +260,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		tlightCenter: tlightCenterBtn,
 		setStateTLight: setStateTLightBtn,
 		resetTLight: resetTLightBtn,
+		saveStateTLight: document.getElementById('saveStateTLightBtn'),
 	};
 	// Open the WebSocket connection and register event handlers.
 	const websocket = new WebSocket('ws://localhost:8001/');
