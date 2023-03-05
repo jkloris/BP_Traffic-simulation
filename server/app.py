@@ -168,6 +168,18 @@ async def handler(websocket):
                 conn = traci.getConnection(port)
                 tlightId = tlightObj.ids[event["id"]]
                 conn.trafficlight.setProgram(tlightId, 0)
+                
+            
+            elif event["type"] == "trafficLightStateUpdate":
+                conn = traci.getConnection(port)
+                tlightId = tlightObj.ids[event["id"]]
+                webClients[port].trafficLight.setPhase(conn, tlightId, event["state"], event["duration"], event["index"])
+
+                msg = {"type": "trafficLight", "id": tlightId, "states": webClients[port].trafficLight.getState(tlightId)}
+                await websocket.send(json.dumps(msg))
+
+
+
 
             elif event["type"] == "vehicleRoute":
                 if webClients[port].STATUS != "finished":
@@ -180,6 +192,8 @@ async def handler(websocket):
             elif event["type"] == "resumeVehicle":
                 if webClients[port].STATUS != "finished":
                     resumeVehicleStop(traci.getConnection(port), event["id"])
+
+            
 
     except websockets.ConnectionClosedOK:
         print(f"{websocket} ConnectionClosed OK\n")

@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+import re
 
 
 class TrafficLight:
@@ -44,9 +45,32 @@ class TrafficLight:
                 self.__state[id].append(
                     {"state": ph.state, "duration": ph.duration})
 
+        print(self.__state[id])
 
     def getCurrentState(self, id):
         state = self.getState(id)
         if state == None:
             return None
         return state[self.__stateCounter[id]]
+
+    def setPhase(self, conn, id, state, duration, index):
+        logics = conn.trafficlight.getAllProgramLogics(id)
+
+        if not self.checkValidState(logics[0].phases[index].state, state):
+            return
+
+        logics[0].phases[index].duration = duration
+        logics[0].phases[index].maxDur = duration
+        logics[0].phases[index].minDur = duration
+        logics[0].phases[index].state = state
+
+        conn.trafficlight.setProgramLogic(id, logics[0])
+
+        self.extractStates(conn, id)
+
+    def checkValidState(self, state, newState):
+        reg = f"[rgy]{len(state)}"
+
+        if len(state) != len(newState) or not re.search(reg, newState.lower()):
+            return False
+        return True

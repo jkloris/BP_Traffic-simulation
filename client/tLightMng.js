@@ -5,6 +5,7 @@ class TLightMng {
 	fillOptions(states) {
 		document.querySelector('#vehicleOptions').style.display = 'none';
 		document.querySelector('#tLightOptions').style.display = 'block';
+        
 		let tbody = document.querySelector('#tlightTableBody');
 		tbody.innerHTML = '';
 		for (const [i, s] of Object.entries(states)) {

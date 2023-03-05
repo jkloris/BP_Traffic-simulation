@@ -60,6 +60,11 @@ class Main {
 		this.websocket.send(JSON.stringify(msg));
 	}
 
+	sendTLightStateUpdate() {
+		const msg = { type: 'trafficLightStateUpdate', id: this.tLightMng.selected, state: 'z112ttx', duration: '880', index: 0 };
+		this.websocket.send(JSON.stringify(msg));
+	}
+
 	setVisibility(item, visible) {
 		if (visible) item.style.visibility = 'visible';
 		else item.style.visibility = 'hidden';
@@ -116,11 +121,12 @@ class Main {
 					break;
 				case 'route':
 					network.markRoute(event['data']);
-                    break;
+					break;
 				case 'trafficLight':
 					this.selected = event['id'];
 					this.tLightMng.fillOptions(event['states']);
 					openOptions();
+
 					break;
 				default:
 					break;
