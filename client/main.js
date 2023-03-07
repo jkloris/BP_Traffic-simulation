@@ -64,6 +64,10 @@ class Main {
 		const msg = this.tLightMng.getStateSetMsg();
 		this.websocket.send(JSON.stringify(msg));
 	}
+	sendTLightStateAdd() {
+		const msg = this.tLightMng.getStateAddMsg();
+		this.websocket.send(JSON.stringify(msg));
+	}
 
 	setVisibility(item, visible) {
 		if (visible) item.style.visibility = 'visible';
@@ -224,6 +228,7 @@ class Main {
 		buttons['setStateTLight'].onclick = () => this.sendtLightState();
 		buttons['resetTLight'].onclick = () => this.sendTLightReset();
 		buttons['saveStateTLight'].onclick = () => this.sendTLightStateUpdate();
+		buttons['addStateTLight'].onclick = () => this.sendTLightStateAdd();
 	}
 }
 // let main = null;
@@ -261,6 +266,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		setStateTLight: setStateTLightBtn,
 		resetTLight: resetTLightBtn,
 		saveStateTLight: document.getElementById('saveStateTLightBtn'),
+		addStateTLight: document.getElementById('addStateTLightBtn'),
 	};
 	// Open the WebSocket connection and register event handlers.
 	const websocket = new WebSocket('ws://localhost:8001/');

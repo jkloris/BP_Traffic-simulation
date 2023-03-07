@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 import re
+from sumolib.net import Phase
 
 
 class TrafficLight:
@@ -38,12 +39,11 @@ class TrafficLight:
         pass
 
     def extractStates(self, conn, id):
-        program = conn.trafficlight.getAllProgramLogics(id)
+        logics = conn.trafficlight.getAllProgramLogics(id)
         self.__state[id] = []
-        for log in program:
-            for ph in log.getPhases():
-                self.__state[id].append(
-                    {"state": ph.state, "duration": ph.duration})
+        
+        for ph in logics[0].getPhases():
+            self.__state[id].append({"state": ph.state, "duration": ph.duration})
 
     def getCurrentState(self, id):
         state = self.getState(id)
@@ -54,17 +54,34 @@ class TrafficLight:
     def setPhase(self, conn, id, state, duration, index):
         logics = conn.trafficlight.getAllProgramLogics(id)
 
-        if not self.checkValidState(logics[0].phases[index].state, state):
+        if not self.checkValidState(logics[0].phases[index].state, state) or int(duration) < 1:
             return
 
         logics[0].phases[index].duration = duration
-        logics[0].phases[index].maxDur = duration
-        logics[0].phases[index].minDur = duration
+        logics[0].phases[index].minDur = 1
+        logics[0].phases[index].maxDur = duration + 5
         logics[0].phases[index].state = state
 
-        conn.trafficlight.setProgramLogic(id, logics[0])
 
+        conn.trafficlight.setProgramLogic(id, logics[0])
+    
         self.extractStates(conn, id)
+
+    def addPhase(self, conn, id, state, duration):
+        logics = conn.trafficlight.getAllProgramLogics(id)
+
+        if not self.checkValidState(logics[0].phases[0].state, state) or int(duration) < 1:
+            return
+
+        phase = Phase(duration, state, 1, int(duration)+5)
+
+        phasesList = list(logics[0].phases)
+        phasesList.append(phase)
+        logics[0].phases = tuple(phasesList)
+
+        conn.trafficlight.setProgramLogic(id, logics[0])
+        self.extractStates(conn, id)
+
 
     def checkValidState(self, state, newState):
         reg = f"[rgy]{{{len(state)}}}"

@@ -68,4 +68,16 @@ class TLightMng {
 
 		return null;
 	}
+
+    getStateAddMsg() {
+		if (!this.selected) return null;
+
+		let state = document.querySelector('#statusInput');
+		let dur = document.querySelector('#durationInput');
+
+		const msg = { type: 'trafficLightStateAdd', id: this.selected, state: state.value, duration: dur.value };
+		if (state && dur) return msg;
+
+		return null;
+	}
 }

@@ -73,8 +73,7 @@ async def handler(websocket):
     # TODO mozno pouzit id(websocket) miesto portu
     port = websocket.remote_address[1]
     webClients[port] = SocketSim()
-    print(
-        f'\nNew connection from: {websocket.remote_address} ({len(webClients)} total)\n')
+    print( f'\nNew connection from: {websocket.remote_address} ({len(webClients)} total)\n')
     # asyncio.create_task(send(websocket))
 
     try:
@@ -84,7 +83,7 @@ async def handler(websocket):
             if event == None or "type" not in event:
                 print("ERROR: Wrong message format!", event)
                 continue
-            print(event)
+            print("--------------------\n",event)
 
             if event["type"] == "start":
                 if webClients[port].STATUS == "finished":
@@ -143,20 +142,13 @@ async def handler(websocket):
                     if event["id"] in tlightObj.ids.keys():
                         tlightId = tlightObj.ids[event["id"]]
 
-                        # if tlightObj.getCurrentState(tlightId) == None:
-                        #     tlightObj.extractStates(conn, tlightId)
                         if tlightObj.getState(tlightId) == None:
                             tlightObj.extractStates(conn, tlightId)
 
                         msg = {"type": "trafficLight", "id": tlightId,
                                "states": tlightObj.getState(tlightId)}
-                        # print(msg)
                         await websocket.send(json.dumps(msg))
-                        # tlightObj.statePlusOne(tlightId)
-                        # state = tlightObj.getCurrentState(tlightId)
 
-                        # conn.trafficlight.setRedYellowGreenState(
-                        #     tlightId, state)
             elif event["type"] == "trafficLightState":
                 conn = traci.getConnection(port)
                 tlightId = tlightObj.ids[event["id"]]
@@ -178,6 +170,13 @@ async def handler(websocket):
                 msg = {"type": "trafficLight", "id": tlightId, "states": webClients[port].trafficLight.getState(tlightId)}
                 await websocket.send(json.dumps(msg))
 
+            elif event["type"] == "trafficLightStateAdd":
+                conn = traci.getConnection(port)
+                tlightId = tlightObj.ids[event["id"]]
+                webClients[port].trafficLight.addPhase(conn, tlightId, event["state"], event["duration"])
+
+                msg = {"type": "trafficLight", "id": tlightId, "states": webClients[port].trafficLight.getState(tlightId)}
+                await websocket.send(json.dumps(msg))
 
 
 
@@ -354,7 +353,7 @@ async def sendVehicleRoute(websocket, conn, id):
     await websocket.send(json.dumps(msg))
 
 
-def getTrafficLights(conn, label):
+def getTrafficLights(conn):
     tlights = {}
     for id in conn.trafficlight.getIDList():
         # state = webClients[label].trafficLight.getState(id)
@@ -364,7 +363,9 @@ def getTrafficLights(conn, label):
 
         # conn.trafficlight.setRedYellowGreenState(id, len(signal)*'G')
         signal = conn.trafficlight.getRedYellowGreenState(id)
+        
         # print(conn.trafficlight.getAllProgramLogics(id), '\n')
+
         lanes = conn.trafficlight.getControlledLanes(id)
         for i in range(len(lanes)):
             tlights[lanes[i]] = signal[i]
@@ -375,14 +376,14 @@ def getTrafficLights(conn, label):
 async def traciSimStep(websocket, vehicleData):
 
     conn = traci.getConnection(websocket.remote_address[1])
-    tlights = getTrafficLights(conn, websocket.remote_address[1])
+    tlights = getTrafficLights(conn)
     vehicleData = updateVehicles(vehicleData, conn)
     # await testVehicle(websocket, conn)  # test
     conn.simulationStep()
 
     # time = traci.simulation.getTime()
-    # print("_______________________\n", time)
     msg = {"type": "step", "data": vehicleData, "trafficLights": tlights}
+    # print("_______________________\n", msg)
     await websocket.send(json.dumps(msg))
 
 
