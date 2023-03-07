@@ -2,9 +2,11 @@ class TLightMng {
 	selected = null;
 	constructor() {}
 
-	fillOptions(states) {
+	fillOptions(states, logicType) {
 		document.querySelector('#vehicleOptions').style.display = 'none';
 		document.querySelector('#tLightOptions').style.display = 'block';
+
+        document.querySelector("#logicType").innerHTML = logicType
 
 		let tbody = document.querySelector('#tlightTableBody');
 		tbody.innerHTML = '';

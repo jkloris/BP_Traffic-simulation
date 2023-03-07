@@ -2,12 +2,15 @@ import xml.etree.ElementTree as ET
 import re
 from sumolib.net import Phase
 
+    
+logicTypes = {0 : "static" , 3:"actuated", 5 : "delay_based"}
 
 class TrafficLight:
     def __init__(self):
         self.__state = {}
         self.__stateCounter = {}
         self.ids = {}
+
 
     def getState(self, id):
         if (id not in self.__state.keys()):
@@ -59,7 +62,7 @@ class TrafficLight:
 
         logics[0].phases[index].duration = duration
         logics[0].phases[index].minDur = 1
-        logics[0].phases[index].maxDur = duration + 5
+        logics[0].phases[index].maxDur = int(duration) + 5
         logics[0].phases[index].state = state
 
 
@@ -67,10 +70,15 @@ class TrafficLight:
     
         self.extractStates(conn, id)
 
-    def addPhase(self, conn, id, state, duration):
-        logics = conn.trafficlight.getAllProgramLogics(id)
 
-        if not self.checkValidState(logics[0].phases[0].state, state) or int(duration) < 1:
+    
+
+    # addPhase does not work with actuated
+    def addPhase(self, conn, id, state, duration):
+        
+        logics = conn.trafficlight.getAllProgramLogics(id)
+        
+        if not self.checkValidState(logics[0].phases[0].state, state) or int(duration) < 1 or logics[0].getType() == 3:
             return
 
         phase = Phase(duration, state, 1, int(duration)+5)
@@ -89,3 +97,12 @@ class TrafficLight:
         if len(state) != len(newState) or not re.search(reg, newState.lower()):
             return False
         return True
+
+    def getLogicType(self, conn, id):
+        logics = conn.trafficlight.getAllProgramLogics(id)
+        return logicTypes[logics[0].getType()]
+
+    
+    def getTrafficLightMsg(self, conn, id):
+        return {"type": "trafficLight", "id": id, "states": self.getState(id), "logicType" :self.getLogicType(conn, id)}
+    

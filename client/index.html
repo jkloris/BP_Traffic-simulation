@@ -76,6 +76,10 @@
 
         <div id="tLightOptions">
             <h2> Traffic Light Options</h2>
+            <div>
+                <span>Type: </span>
+                <span id="logicType">Actuated</span>
+            </div>
             <button id="tlightCenterBtn">Center</button>
             <div id="tlightTableContainer">
                 <table id="tlightTable">
@@ -96,7 +100,7 @@
             <input id="durationInput" min="1" type="number" placeholder="duration">
         
             <button id="saveStateTLightBtn">Save Edit</button>
-            <button id="addStateTLightBtn" >Add State</button>
+            <button id="addStateTLightBtn" title="Does not work with 'Actuated' type">Add State</button>
             <button id="removeStatusTLightBtn">Remove State</button>
             <!-- <button id="deselectTLightBtn">Deselect</button> -->
 

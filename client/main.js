@@ -128,7 +128,8 @@ class Main {
 					break;
 				case 'trafficLight':
 					this.selected = event['id'];
-					this.tLightMng.fillOptions(event['states']);
+                    console.log(event)
+					this.tLightMng.fillOptions(event['states'], event["logicType"]);
 					openOptions();
 
 					break;

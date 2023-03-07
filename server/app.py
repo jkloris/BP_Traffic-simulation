@@ -145,8 +145,7 @@ async def handler(websocket):
                         if tlightObj.getState(tlightId) == None:
                             tlightObj.extractStates(conn, tlightId)
 
-                        msg = {"type": "trafficLight", "id": tlightId,
-                               "states": tlightObj.getState(tlightId)}
+                        msg = tlightObj.getTrafficLightMsg(conn, tlightId)
                         await websocket.send(json.dumps(msg))
 
             elif event["type"] == "trafficLightState":
@@ -167,7 +166,7 @@ async def handler(websocket):
                 tlightId = tlightObj.ids[event["id"]]
                 webClients[port].trafficLight.setPhase(conn, tlightId, event["state"], event["duration"], event["index"])
 
-                msg = {"type": "trafficLight", "id": tlightId, "states": webClients[port].trafficLight.getState(tlightId)}
+                msg = msg = tlightObj.getTrafficLightMsg(conn, tlightId)
                 await websocket.send(json.dumps(msg))
 
             elif event["type"] == "trafficLightStateAdd":
@@ -175,7 +174,7 @@ async def handler(websocket):
                 tlightId = tlightObj.ids[event["id"]]
                 webClients[port].trafficLight.addPhase(conn, tlightId, event["state"], event["duration"])
 
-                msg = {"type": "trafficLight", "id": tlightId, "states": webClients[port].trafficLight.getState(tlightId)}
+                msg = tlightObj.getTrafficLightMsg(conn, tlightId)
                 await websocket.send(json.dumps(msg))
 
 
