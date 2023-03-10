@@ -143,8 +143,8 @@ async def handler(websocket):
                     if event["id"] in tlightObj.ids.keys():
                         tlightId = tlightObj.ids[event["id"]]
 
-                        if tlightObj.getState(tlightId) == None:
-                            tlightObj.extractStates(conn, tlightId)
+                        # if tlightObj.getState(tlightId) == None:
+                        tlightObj.extractStates(conn, tlightId)
 
                         msg = tlightObj.getTrafficLightMsg(conn, tlightId)
                         await websocket.send(json.dumps(msg))
