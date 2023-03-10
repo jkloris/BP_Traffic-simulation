@@ -2,15 +2,15 @@ import xml.etree.ElementTree as ET
 import re
 from sumolib.net import Phase
 
-    
-logicTypes = {0 : "static" , 3:"actuated", 5 : "delay_based"}
+
+logicTypes = {0: "static", 3: "actuated", 5: "delay_based"}
+
 
 class TrafficLight:
     def __init__(self):
         self.__state = {}
         self.__stateCounter = {}
         self.ids = {}
-
 
     def getState(self, id):
         if (id not in self.__state.keys()):
@@ -44,9 +44,10 @@ class TrafficLight:
     def extractStates(self, conn, id):
         logics = conn.trafficlight.getAllProgramLogics(id)
         self.__state[id] = []
-        
+
         for ph in logics[0].getPhases():
-            self.__state[id].append({"state": ph.state, "duration": ph.duration})
+            self.__state[id].append(
+                {"state": ph.state, "duration": ph.duration})
 
     def getCurrentState(self, id):
         state = self.getState(id)
@@ -65,19 +66,16 @@ class TrafficLight:
         logics[0].phases[index].maxDur = int(duration) + 5
         logics[0].phases[index].state = state
 
-
         conn.trafficlight.setProgramLogic(id, logics[0])
-    
+
         self.extractStates(conn, id)
 
-
-    
-
     # addPhase does not work with actuated
+
     def addPhase(self, conn, id, state, duration):
-        
+
         logics = conn.trafficlight.getAllProgramLogics(id)
-        
+
         if not self.checkValidState(logics[0].phases[0].state, state) or int(duration) < 1 or logics[0].getType() == 3:
             return
 
@@ -87,6 +85,21 @@ class TrafficLight:
         phasesList.append(phase)
         logics[0].phases = tuple(phasesList)
 
+        conn.trafficlight.setProgramLogic(id, logics[0])
+        self.extractStates(conn, id)
+
+    # does not work with actuated tlight, because one could delete all phases, but cannot add one
+    #   -(Doable but not practical)
+    def deletePhase(self, conn, id, index):
+        conn.trafficlight.setPhase(id, 0)
+        logics = conn.trafficlight.getAllProgramLogics(id)
+        if len(logics[0].phases) < 2 or index >= len(logics[0].phases) or logics[0].getType() == 3:
+            return
+
+        phases = list(logics[0].phases)
+        del phases[index]
+
+        logics[0].phases = tuple(phases)
         conn.trafficlight.setProgramLogic(id, logics[0])
         self.extractStates(conn, id)
 
@@ -102,7 +115,5 @@ class TrafficLight:
         logics = conn.trafficlight.getAllProgramLogics(id)
         return logicTypes[logics[0].getType()]
 
-    
     def getTrafficLightMsg(self, conn, id):
-        return {"type": "trafficLight", "id": id, "states": self.getState(id), "logicType" :self.getLogicType(conn, id)}
-    
+        return {"type": "trafficLight", "id": id, "states": self.getState(id), "logicType": self.getLogicType(conn, id)}

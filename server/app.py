@@ -177,7 +177,13 @@ async def handler(websocket):
                 msg = tlightObj.getTrafficLightMsg(conn, tlightId)
                 await websocket.send(json.dumps(msg))
 
+            elif event["type"] == "trafficLightStateDel":
+                conn = traci.getConnection(port)
+                tlightId = tlightObj.ids[event["id"]]
+                webClients[port].trafficLight.deletePhase(conn, tlightId, event["index"])
 
+                msg = tlightObj.getTrafficLightMsg(conn, tlightId)
+                await websocket.send(json.dumps(msg))
 
             elif event["type"] == "vehicleRoute":
                 if webClients[port].STATUS != "finished":

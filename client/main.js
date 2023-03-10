@@ -69,6 +69,11 @@ class Main {
 		this.websocket.send(JSON.stringify(msg));
 	}
 
+	sendTLightStateDelete() {
+		const msg = this.tLightMng.getStateDelMsg();
+		this.websocket.send(JSON.stringify(msg));
+	}
+
 	setVisibility(item, visible) {
 		if (visible) item.style.visibility = 'visible';
 		else item.style.visibility = 'hidden';
@@ -128,8 +133,7 @@ class Main {
 					break;
 				case 'trafficLight':
 					this.selected = event['id'];
-                    console.log(event)
-					this.tLightMng.fillOptions(event['states'], event["logicType"]);
+					this.tLightMng.fillOptions(event['states'], event['logicType']);
 					openOptions();
 
 					break;
@@ -230,6 +234,7 @@ class Main {
 		buttons['resetTLight'].onclick = () => this.sendTLightReset();
 		buttons['saveStateTLight'].onclick = () => this.sendTLightStateUpdate();
 		buttons['addStateTLight'].onclick = () => this.sendTLightStateAdd();
+		buttons['removeStatusTLight'].onclick = () => this.sendTLightStateDelete();
 	}
 }
 // let main = null;
@@ -268,6 +273,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		resetTLight: resetTLightBtn,
 		saveStateTLight: document.getElementById('saveStateTLightBtn'),
 		addStateTLight: document.getElementById('addStateTLightBtn'),
+		removeStatusTLight: document.getElementById('removeStatusTLightBtn'),
 	};
 	// Open the WebSocket connection and register event handlers.
 	const websocket = new WebSocket('ws://localhost:8001/');

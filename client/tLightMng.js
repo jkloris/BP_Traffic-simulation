@@ -6,7 +6,7 @@ class TLightMng {
 		document.querySelector('#vehicleOptions').style.display = 'none';
 		document.querySelector('#tLightOptions').style.display = 'block';
 
-        document.querySelector("#logicType").innerHTML = logicType
+		document.querySelector('#logicType').innerHTML = logicType;
 
 		let tbody = document.querySelector('#tlightTableBody');
 		tbody.innerHTML = '';
@@ -71,7 +71,24 @@ class TLightMng {
 		return null;
 	}
 
-    getStateAddMsg() {
+	getStateDelMsg() {
+		if (!this.selected) return null;
+
+		let rows = document.querySelectorAll('#tlightTable > tbody > tr');
+        if(rows.length < 2) return null
+        
+		let ri = 0;
+		for (let r of rows) {
+			if (r.className == 'selectedRow') break;
+			ri += 1;
+		}
+		if (ri == rows.length) return null;
+
+		const msg = { type: 'trafficLightStateDel', id: this.selected, index: ri };
+		return msg;
+	}
+
+	getStateAddMsg() {
 		if (!this.selected) return null;
 
 		let state = document.querySelector('#statusInput');
