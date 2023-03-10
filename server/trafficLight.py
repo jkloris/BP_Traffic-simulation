@@ -49,6 +49,7 @@ class TrafficLight:
             self.__state[id].append(
                 {"state": ph.state, "duration": ph.duration})
 
+
     def getCurrentState(self, id):
         state = self.getState(id)
         if state == None:
@@ -56,6 +57,9 @@ class TrafficLight:
         return state[self.__stateCounter[id]]
 
     def setPhase(self, conn, id, state, duration, index):
+        # resets program
+        conn.trafficlight.setProgram(id, 0)
+
         logics = conn.trafficlight.getAllProgramLogics(id)
 
         if not self.checkValidState(logics[0].phases[index].state, state) or int(duration) < 1:
@@ -69,11 +73,14 @@ class TrafficLight:
         conn.trafficlight.setProgramLogic(id, logics[0])
 
         self.extractStates(conn, id)
+        
 
     # addPhase does not work with actuated
 
     def addPhase(self, conn, id, state, duration):
 
+        # resets program
+        conn.trafficlight.setProgram(id, 0)
         logics = conn.trafficlight.getAllProgramLogics(id)
 
         if not self.checkValidState(logics[0].phases[0].state, state) or int(duration) < 1 or logics[0].getType() == 3:
@@ -91,7 +98,11 @@ class TrafficLight:
     # does not work with actuated tlight, because one could delete all phases, but cannot add one
     #   -(Doable but not practical)
     def deletePhase(self, conn, id, index):
+        # prevention from Error "index must be less than parameter phase number"
         conn.trafficlight.setPhase(id, 0)
+        # resets program
+        conn.trafficlight.setProgram(id, 0)
+
         logics = conn.trafficlight.getAllProgramLogics(id)
         if len(logics[0].phases) < 2 or index >= len(logics[0].phases) or logics[0].getType() == 3:
             return
@@ -102,7 +113,6 @@ class TrafficLight:
         logics[0].phases = tuple(phases)
         conn.trafficlight.setProgramLogic(id, logics[0])
         self.extractStates(conn, id)
-
 
     def checkValidState(self, state, newState):
         reg = f"[rgy]{{{len(state)}}}"
