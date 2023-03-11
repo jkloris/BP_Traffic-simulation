@@ -9,6 +9,12 @@ class Main {
 		this.sendButtonMsgs(buttons, websocket);
 
 		this.follow = false;
+		this.selectPath = true;
+	}
+
+	pathSelected(obj, id) {
+		obj.stroke = 'orange';
+		console.log(id);
 	}
 
 	stopVehicle() {
@@ -132,7 +138,7 @@ class Main {
 					network.markRoute(event['data']);
 					break;
 				case 'trafficLight':
-                    console.log(event)
+					console.log(event);
 					this.selected = event['id'];
 					this.tLightMng.fillOptions(event['states'], event['logicType']);
 					openOptions();

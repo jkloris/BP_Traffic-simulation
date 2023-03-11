@@ -75,7 +75,7 @@ function addZUI() {
 				panmove(e);
 				break;
 		}
-        two.update();
+		two.update();
 	}
 
 	function touchend(e) {
@@ -166,6 +166,43 @@ function pointerdown(e) {
 				console.log(id);
 				main.vehicleClicked(v);
 				return;
+			}
+		}
+
+		// selecting path
+		if (main.selectPath) {
+			let vert0 = { x: 0, y: 0 },
+				vert1 = { x: 0, y: 0 },
+				d1,
+				d2,
+				dv;
+
+			let distanceFromPointToLine = (pa, lb, lc) => {
+				return Math.abs((lb.x - pa.x) * (lc.y - pa.y) - (lb.y - pa.y) * (lc.x - pa.x)) / Math.sqrt(Math.pow(lc.x - lb.x, 2) + Math.pow(lc.y - lb.y, 2));
+			};
+
+			let distancePointToPoint = (p1, p2) => {
+				return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+			};
+
+			for (const [id, p] of Object.entries(network.paths)) {
+				vertices = p.toObject().vertices;
+				for (let i = 1; i < vertices.length; i++) {
+					vert0.x = (vertices[i - 1].x + p.position.x) * stage.scale + stage.position.x;
+					vert0.y = (vertices[i - 1].y + p.position.y) * stage.scale + stage.position.y;
+					vert1.x = (vertices[i].x + p.position.x) * stage.scale + stage.position.x;
+					vert1.y = (vertices[i].y + p.position.y) * stage.scale + stage.position.y;
+
+					dist = distanceFromPointToLine({ x: x, y: y }, vert0, vert1);
+					d1 = distancePointToPoint(vert0, { x: x, y: y });
+					d2 = distancePointToPoint(vert1, { x: x, y: y });
+					dv = distancePointToPoint(vert0, vert1);
+
+					if (dist < (p.linewidth - 0.5) * stage.scale && d1 < dv && d2 < dv) {
+						main.pathSelected(p, id);
+						return;
+					}
+				}
 			}
 		}
 	}
