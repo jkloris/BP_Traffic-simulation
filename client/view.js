@@ -198,7 +198,7 @@ function pointerdown(e) {
 					d2 = distancePointToPoint(vert1, { x: x, y: y });
 					dv = distancePointToPoint(vert0, vert1);
 
-					if (dist < (p.linewidth - 0.5) * stage.scale && d1 < dv && d2 < dv) {
+					if (dist < (p.linewidth - 1) * stage.scale && d1 < dv && d2 < dv) {
 						main.pathSelected(p, id);
 						return;
 					}

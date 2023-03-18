@@ -4,6 +4,7 @@ class Main {
 
 		this.vehicleMng = new VehicleMng();
 		this.tLightMng = new TLightMng();
+		this.pathMng = new PathMng();
 
 		this.receiveMsgs(websocket);
 		this.sendButtonMsgs(buttons, websocket);
@@ -13,8 +14,9 @@ class Main {
 	}
 
 	pathSelected(obj, id) {
-		obj.stroke = 'orange';
-		console.log(id);
+		this.pathMng.select(obj);
+		const msg = { type: 'path', id: id };
+		this.websocket.send(JSON.stringify(msg));
 	}
 
 	stopVehicle() {
@@ -91,8 +93,8 @@ class Main {
 		this.vehicleMng.selectedVehicle = vehicle;
 
 		this.getVehicleRoute(vehicle.id);
+		clearOptions();
 		document.querySelector('#vehicleOptions').style.display = 'block';
-		document.querySelector('#tLightOptions').style.display = 'none';
 		// TODO ID change
 		openOptions();
 	}
@@ -138,11 +140,15 @@ class Main {
 					network.markRoute(event['data']);
 					break;
 				case 'trafficLight':
-					console.log(event);
-					this.selected = event['id'];
+					// this.selected = event['id'];
+					clearOptions();
 					this.tLightMng.fillOptions(event['states'], event['logicType']);
 					openOptions();
-
+					break;
+				case 'path':
+					clearOptions();
+					this.pathMng.fillOptions(event);
+					openOptions();
 					break;
 				default:
 					break;

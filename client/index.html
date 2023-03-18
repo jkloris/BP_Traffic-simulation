@@ -105,6 +105,29 @@
             <!-- <button id="deselectTLightBtn">Deselect</button> -->
 
         </div>
+
+        <div id="pathOptions">
+            <h2>Path Options</h2>
+            <div >
+                <span>ID: </span>
+                <span id="pathId">xxxx</span>
+            </div>
+            <div>
+                <span>Street name: </span>
+                <span id="pathStreetName">aAsa sas asAS</span>
+            </div>
+            <div>
+                <span>Max Speed(km/h): </span>
+                <span id="pathMaxSpeed">33</span>
+            </div>
+            <div>
+                <span>Average Speed(km/h): </span>
+                <span id="pathAvgSpeed">32</span>
+            </div>
+
+            <input type="number"  min=1 placeholder="New max speed" name="maxspeed">
+            <button>Set max speed</button>
+        </div>
     </nav>
 
     <div id="modal">
@@ -117,6 +140,7 @@
     <script src="vehicles.js"></script>
     <script src="tLightMng.js"></script>
     <script src="vehicleMng.js"></script>
+    <script src="pathMng.js"></script>
     <script src="network.js"></script>
     <script src="popup.js"></script>
     <script src="main.js" type="module"></script>

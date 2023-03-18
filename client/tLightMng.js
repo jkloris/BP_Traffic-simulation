@@ -3,9 +3,7 @@ class TLightMng {
 	constructor() {}
 
 	fillOptions(states, logicType) {
-		document.querySelector('#vehicleOptions').style.display = 'none';
 		document.querySelector('#tLightOptions').style.display = 'block';
-
 		document.querySelector('#logicType').innerHTML = logicType;
 
 		let tbody = document.querySelector('#tlightTableBody');
@@ -75,8 +73,8 @@ class TLightMng {
 		if (!this.selected) return null;
 
 		let rows = document.querySelectorAll('#tlightTable > tbody > tr');
-        if(rows.length < 2) return null
-        
+		if (rows.length < 2) return null;
+
 		let ri = 0;
 		for (let r of rows) {
 			if (r.className == 'selectedRow') break;

@@ -1,5 +1,3 @@
-
-
 function createStatPopup(stats) {
 	modal = document.querySelector('#modal');
 	modal.className = 'modal'; // ???
@@ -70,6 +68,8 @@ function closeOptions() {
 	document.querySelector('#optionsClose').checked = false;
 }
 
-
-
-
+function clearOptions() {
+	document.querySelector('#pathOptions').style.display = 'none';
+	document.querySelector('#vehicleOptions').style.display = 'none';
+	document.querySelector('#tLightOptions').style.display = 'none';
+}

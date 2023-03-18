@@ -6,6 +6,7 @@ import os
 import asyncio
 import itertools
 import json
+import math
 from time import sleep
 from turtle import position
 import sumolib
@@ -204,6 +205,19 @@ async def handler(websocket):
             elif event["type"] == "resumeVehicle":
                 if webClients[port].STATUS != "finished":
                     resumeVehicleStop(traci.getConnection(port), event["id"])
+
+            elif event["type"] == "path":
+                if webClients[port].STATUS != "finished":
+                    conn = traci.getConnection(port)
+                    edgeID = conn.lane.getEdgeID(event["id"])
+
+                    msg = {"type": "path",
+                           "id": event["id"],
+                           "maxSpeed": math.floor(float(conn.lane.getMaxSpeed(event["id"])) * 360) / 100.0,
+                           "averageSpeed": math.floor(float(conn.lane.getLastStepMeanSpeed(event["id"])) * 360) / 100.0,
+                           "streetName": conn.edge.getStreetName(edgeID)
+                           }
+                    await websocket.send(json.dumps(msg))
 
     except websockets.ConnectionClosedOK:
         print(f"{websocket} ConnectionClosed OK\n")

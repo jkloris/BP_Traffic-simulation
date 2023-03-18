@@ -1,90 +1,83 @@
-:root{
-    --primaryColor:#363636;
-    --primaryLightColor:#868686;
-    --primaryDarkColor:#000000;
-    --secondaryColor:#388e3c;
-    --secondaryLightColor:#6abf69;
-    --secondaryDarkColor:#00600f;
-    --primaryTextHoverColor:#ffffff;
-    --primaryTextColor:#d1d1d1;
-    --secondaryTextColor:#000000;
-    font-family: "Roboto";
+:root {
+	--primaryColor: #363636;
+	--primaryLightColor: #868686;
+	--primaryDarkColor: #000000;
+	--secondaryColor: #388e3c;
+	--secondaryLightColor: #6abf69;
+	--secondaryDarkColor: #00600f;
+	--primaryTextHoverColor: #ffffff;
+	--primaryTextColor: #d1d1d1;
+	--secondaryTextColor: #000000;
+	font-family: 'Roboto';
 }
 
 body {
 	margin: 0;
-    background-color: var(--primaryDarkColor);
+	background-color: var(--primaryDarkColor);
 }
 
 #optionMenu {
 	height: 5em;
-    position: relative;
+	position: relative;
 }
 
-
-
-#optionMenu div{
-    overflow: hidden;
+#optionMenu div {
+	overflow: hidden;
 }
-
 
 .menuButton {
-    height: 100%;
+	height: 100%;
 	background-color: var(--primaryColor);
 	width: 7em;
 	text-align: center;
 	color: var(--primaryTextColor);
-    /* transform: translateY(-45%); */
-    padding: 0;
-    cursor: pointer;
+	/* transform: translateY(-45%); */
+	padding: 0;
+	cursor: pointer;
 }
 
-.menuButton:hover{
-    background-color: var(--primaryLightColor)
+.menuButton:hover {
+	background-color: var(--primaryLightColor);
 }
-
 
 #board {
-    background-color: var(--secondaryColor);
-    width: 100%; 
-    height:85vh;
-    display: inline-block;
-    transition: width ease .1s;
-    
+	background-color: var(--secondaryColor);
+	width: 100%;
+	height: 85vh;
+	display: inline-block;
+	transition: width ease 0.1s;
 }
 
-#scenarios{
-    margin: 0; 
-    /* font-size: large; */
-    overflow: visible;
-    cursor: pointer;
-    width: 9rem;
+#scenarios {
+	margin: 0;
+	/* font-size: large; */
+	overflow: visible;
+	cursor: pointer;
+	width: 9rem;
 }
 
-#scenarioBlock{
-    margin-left: 2em;
-    display: inline-block;
-    height: 50%;
-    overflow: visible;
-    text-align: center;
+#scenarioBlock {
+	margin-left: 2em;
+	display: inline-block;
+	height: 50%;
+	overflow: visible;
+	text-align: center;
 }
 
 #scenarioBlock p {
-    font-size: small;
-    color: var(--primaryTextColor);
-    margin: 0 0 0.5em 0;
-    
+	font-size: small;
+	color: var(--primaryTextColor);
+	margin: 0 0 0.5em 0;
 }
 
 .slider {
-    height: 100%;
-    width: 13em;
-   
-    background-color: var(--primaryColor);
-    color: var(--primaryTextColor);
-    display: inline-block;
-    text-align: center;
-    
+	height: 100%;
+	width: 13em;
+
+	background-color: var(--primaryColor);
+	color: var(--primaryTextColor);
+	display: inline-block;
+	text-align: center;
 }
 
 /* .verticalCenter {
@@ -93,19 +86,17 @@ body {
     transform: translateY(-50%)
 } */
 
-
-
-
-#setSpeedButton, #setScaleButton{
-    width: 2em;
-    height: 2em;
-    background-color: var(--secondaryColor);
-    /* aspect-ratio: 1 / 1; */
-    
+#setSpeedButton,
+#setScaleButton {
+	width: 2em;
+	height: 2em;
+	background-color: var(--secondaryColor);
+	/* aspect-ratio: 1 / 1; */
 }
-#setSpeedButton:hover,  #setScaleButton:hover{
-    background-color: var(--primaryTextColor);
-    color: var(--secondaryColor);
+#setSpeedButton:hover,
+#setScaleButton:hover {
+	background-color: var(--primaryTextColor);
+	color: var(--secondaryColor);
 }
 
 /* .material-symbols-outlined {
@@ -117,216 +108,236 @@ body {
   transform: translateX(-25%)
 } */
 
-.block{
-    display: block!important;
+.block {
+	display: block !important;
 }
 
-.inlineBlock{
-    display: inline-block;
-    height: 100%;
-    
+.inlineBlock {
+	display: inline-block;
+	height: 100%;
 }
 
-.menuButton, .slider{
-    visibility: hidden;
+.menuButton,
+.slider {
+	visibility: hidden;
 }
-#startButton{
-    visibility: visible;
-}
-
-#sideMenu{
-    width: 19%;
-    background: var(--primaryDarkColor);
-    height: 85vh;
-    display: inline-block;
-    /* float: right; */
-    border: 2px solid var(--primaryColor);
+#startButton {
+	visibility: visible;
 }
 
-#sideMenu *{
-    color: var(--primaryTextColor);
-    margin-left: 2rem;
-    margin-bottom: 0.5rem;
-    display: block
+#sideMenu {
+	width: 19%;
+	background: var(--primaryDarkColor);
+	height: 85vh;
+	display: inline-block;
+	/* float: right; */
+	border: 2px solid var(--primaryColor);
 }
 
-#sideMenu button{
-    background-color: var(--primaryColor);
-    font-size: larger;
-    width: calc(100% - 4rem);
-    cursor: pointer;
-    border-radius: 10%;
-    border-radius: 5%;
-    box-shadow: 0px 2px 2px var(--primaryLightColor);
-    border: 1px solid var(--primaryTextColor);
+#sideMenu * {
+	color: var(--primaryTextColor);
+	margin-left: 2rem;
+	margin-bottom: 0.5rem;
+	display: block;
 }
 
-#sideMenu button:hover{
-    /* background-color: var(--primaryDarkColor); */
-    color: var(--primaryTextHoverColor);
-    border-radius: 5%;
-    border: 1px solid var(--primaryTextHoverColor);
+#sideMenu button {
+	background-color: var(--primaryColor);
+	font-size: larger;
+	width: calc(100% - 4rem);
+	cursor: pointer;
+	border-radius: 10%;
+	border-radius: 5%;
+	box-shadow: 0px 2px 2px var(--primaryLightColor);
+	border: 1px solid var(--primaryTextColor);
 }
 
-#sideMenu button:active{
-    box-shadow: 0px 0px ;
+#sideMenu button:hover {
+	/* background-color: var(--primaryDarkColor); */
+	color: var(--primaryTextHoverColor);
+	border-radius: 5%;
+	border: 1px solid var(--primaryTextHoverColor);
 }
 
+#sideMenu button:active {
+	box-shadow: 0px 0px;
+}
 
 #options {
-    background: var(--primaryDarkColor);
-    box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
-    height: 85vh;
-    position: relative;
-    transition: width ease .1s;
-    width: 0;
-    /* z-index: 100; */
-    overflow: hidden;
-    float: right;
+	background: var(--primaryDarkColor);
+	box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+	height: 85vh;
+	position: relative;
+	transition: width ease 0.1s;
+	width: 0;
+	/* z-index: 100; */
+	overflow: hidden;
+	float: right;
 }
 
-#vehicleOptions, #tLightOptions{
-    text-align: center;
-    width: 100%;
-    padding-top: 1rem;
-    display: none;
+#vehicleOptions,
+#tLightOptions,
+#pathOptions {
+	text-align: center;
+	width: 100%;
+	padding-top: 1rem;
+	display: none;
 }
 
 @media (min-height: 620px) {
-    #vehicleOptions button, #tLightOptions button{
-        padding-top: 5%;
-        padding-bottom: 5%;
-    }
+	#vehicleOptions button,
+	#tLightOptions button,
+	#pathOptions button {
+		padding-top: 5%;
+		padding-bottom: 5%;
+	}
 }
 
 @media (max-height: 620px) {
-    #vehicleOptions button, #tLightOptions button{
-        padding-top: 0;
-        padding-bottom: 0;
-    }
-
-
+	#vehicleOptions button,
+	#tLightOptions button,
+	#pathOptions button {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
 }
 
-#vehicleOptions button, #tLightOptions button{
-
-    
-    width: 100%;
-    background-color:var(--primaryColor);
-    color: var(--primaryTextColor);
-    cursor: pointer;
+#vehicleOptions button,
+#tLightOptions button,
+#pathOptions button {
+	width: 100%;
+	background-color: var(--primaryColor);
+	color: var(--primaryTextColor);
+	cursor: pointer;
 }
-#vehicleOptions button:hover, #tLightOptions button:hover{
-    color: var(--primaryTextHoverColor);
+#vehicleOptions button:hover,
+#tLightOptions button:hover,
+#pathOptions button:hover {
+	color: var(--primaryTextHoverColor);
 }
-#vehicleOptions button:active, #tLightOptions button:active{
-    background-color: var(--primaryLightColor);
-}
-
-#options h2, p{
-    color: var(--primaryTextHoverColor);
-}
-
-#options h2{
-    font-size: 1em;
-}
-#optionsClose{
-    position: absolute;
-    z-index: 5;
-    right: 0.2rem;
-    top: 5.2rem;
-    visibility: hidden;
+#vehicleOptions button:active,
+#tLightOptions button:active,
+#pathOptions button:active {
+	background-color: var(--primaryLightColor);
 }
 
-.iconClose{
-    z-index: 6;
-    position: absolute;
-    right: 0.5rem;
-    top: 5rem;
-    
-    font-weight: bold;
-    cursor: pointer;
+#options h2,
+p {
+	color: var(--primaryTextHoverColor);
 }
 
-#optionsClose:checked +.iconClose::before{
-    color: var(--primaryTextColor);
-    content: '\2715';
-    font-size: x-large;
+#options h2 {
+	font-size: 1em;
+}
+#optionsClose {
+	position: absolute;
+	z-index: 5;
+	right: 0.2rem;
+	top: 5.2rem;
+	visibility: hidden;
 }
 
+.iconClose {
+	z-index: 6;
+	position: absolute;
+	right: 0.5rem;
+	top: 5rem;
 
-#optionsClose +.iconClose::before{
-    color: var(--primaryDarkColor);
-    content: '\2261';
-    font-size: xx-large;
-    
+	font-weight: bold;
+	cursor: pointer;
 }
 
-#optionsClose:checked ~ #options{
-    width: 20%;
+#optionsClose:checked + .iconClose::before {
+	color: var(--primaryTextColor);
+	content: '\2715';
+	font-size: x-large;
 }
 
-#optionsClose:checked ~ #board{
-    width: 80%;
+#optionsClose + .iconClose::before {
+	color: var(--primaryDarkColor);
+	content: '\2261';
+	font-size: xx-large;
 }
 
+#optionsClose:checked ~ #options {
+	width: 20%;
+}
+
+#optionsClose:checked ~ #board {
+	width: 80%;
+}
 
 #tLightOptions {
-    color: var(--primaryTextColor);
+	color: var(--primaryTextColor);
 }
 
-#removeStatusTLightBtn{
-    color: rgb(255, 121, 121) !important;
+#removeStatusTLightBtn {
+	color: rgb(255, 121, 121) !important;
 }
-#removeStatusTLightBtn:hover{
-    color: red !important;
-}
-
-#deselectTLightBtn, #deselectVehicleBtn{
-    position: absolute;
-    bottom: 0;
-    right: 0;
+#removeStatusTLightBtn:hover {
+	color: red !important;
 }
 
-#tlightTableContainer{
-    
-    overflow-y: scroll;
-    overflow-x: hidden;
-    height: 6rem;
-    font-size: 0.8rem;
-    padding: 0;
-    margin: 0;
-}
-#tlightTableContainer th{
-    padding: 0.3rem;
+#deselectTLightBtn,
+#deselectVehicleBtn {
+	position: absolute;
+	bottom: 0;
+	right: 0;
 }
 
-#tlightTable thead{
-    background-color: var(--primaryDarkColor);
-    position: sticky;
-    top: 0;
+#tlightTableContainer {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	height: 6rem;
+	font-size: 0.8rem;
+	padding: 0;
+	margin: 0;
+}
+#tlightTableContainer th {
+	padding: 0.3rem;
 }
 
-#tlightTableContainer td:nth-child(2), #tlightTableContainer th:nth-child(2){
-    width: 100%;
-}
-#tlightTableContainer tbody tr{
-    background-color: var(--primaryLightColor);
-    color: var(--secondaryTextColor);
-    cursor: pointer;
+#tlightTable thead {
+	background-color: var(--primaryDarkColor);
+	position: sticky;
+	top: 0;
 }
 
-#tLightOptions input{
-    width: 80%;
+#tlightTableContainer td:nth-child(2),
+#tlightTableContainer th:nth-child(2) {
+	width: 100%;
+}
+#tlightTableContainer tbody tr {
+	background-color: var(--primaryLightColor);
+	color: var(--secondaryTextColor);
+	cursor: pointer;
 }
 
-#tLightOptions input:last-of-type{
-    margin-bottom: .5rem;
-}
-#tLightOptions input:first-of-type{
-    margin-top: .5rem;
+#tLightOptions input,
+#pathOptions input {
+	width: 80%;
 }
 
-#tlightCenterBtn{
-    margin-top: 1rem;
+#tLightOptions input:last-of-type,
+#pathOptions input {
+	margin-bottom: 0.5rem;
+}
+#tLightOptions input:first-of-type {
+	margin-top: 0.5rem;
+}
+
+#tlightCenterBtn {
+	margin-top: 1rem;
+}
+
+#pathOptions {
+	color: var(--primaryTextColor);
+}
+#pathOptions div {
+	margin: 1rem;
+	text-align: left;
+}
+
+#pathOptions div span:nth-child(2) {
+	font-weight: bold;
 }
