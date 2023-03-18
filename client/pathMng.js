@@ -34,4 +34,9 @@ class PathMng {
 		const speed = input.value > 1 ? input.value : 1;
 		return { type: 'pathMaxSpeed', value: speed, id: this.selected.id };
 	}
+    
+	closePathOptions() {
+		document.querySelector('#pathOptions').style.display = 'none';
+		closeOptions();
+	}
 }

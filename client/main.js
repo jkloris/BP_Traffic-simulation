@@ -255,6 +255,11 @@ class Main {
 		buttons['removeStatusTLight'].onclick = () => this.sendTLightStateDelete();
 
 		buttons['pathMaxSpeed'].onclick = () => this.sendPathMaxSpeed();
+		buttons['pathCenter'].onclick = () => this.center(this.pathMng.selected.obj);
+		buttons['pathDeselect'].onclick = () => {
+			this.pathMng.deselect();
+			this.pathMng.closePathOptions();
+		};
 	}
 }
 // let main = null;
@@ -295,6 +300,8 @@ window.addEventListener('DOMContentLoaded', () => {
 		addStateTLight: document.getElementById('addStateTLightBtn'),
 		removeStatusTLight: document.getElementById('removeStatusTLightBtn'),
 		pathMaxSpeed: document.getElementById('pathMaxSpeedBtn'),
+		pathDeselect: document.getElementById('pathDeselectBtn'),
+		pathCenter: document.getElementById('pathCenterBtn'),
 	};
 	// Open the WebSocket connection and register event handlers.
 	const websocket = new WebSocket('ws://localhost:8001/');
