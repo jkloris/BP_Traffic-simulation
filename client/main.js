@@ -14,8 +14,13 @@ class Main {
 	}
 
 	pathSelected(obj, id) {
-		this.pathMng.select(obj);
+		this.pathMng.select(obj, id);
 		const msg = { type: 'path', id: id };
+		this.websocket.send(JSON.stringify(msg));
+	}
+
+	sendPathMaxSpeed() {
+		const msg = this.pathMng.getMaxSpeedMsg();
 		this.websocket.send(JSON.stringify(msg));
 	}
 
@@ -248,6 +253,8 @@ class Main {
 		buttons['saveStateTLight'].onclick = () => this.sendTLightStateUpdate();
 		buttons['addStateTLight'].onclick = () => this.sendTLightStateAdd();
 		buttons['removeStatusTLight'].onclick = () => this.sendTLightStateDelete();
+
+		buttons['pathMaxSpeed'].onclick = () => this.sendPathMaxSpeed();
 	}
 }
 // let main = null;
@@ -287,6 +294,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		saveStateTLight: document.getElementById('saveStateTLightBtn'),
 		addStateTLight: document.getElementById('addStateTLightBtn'),
 		removeStatusTLight: document.getElementById('removeStatusTLightBtn'),
+		pathMaxSpeed: document.getElementById('pathMaxSpeedBtn'),
 	};
 	// Open the WebSocket connection and register event handlers.
 	const websocket = new WebSocket('ws://localhost:8001/');

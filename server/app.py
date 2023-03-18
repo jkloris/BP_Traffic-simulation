@@ -219,6 +219,11 @@ async def handler(websocket):
                            }
                     await websocket.send(json.dumps(msg))
 
+            elif event["type"] == "pathMaxSpeed":
+                if webClients[port].STATUS != "finished":
+                    conn = traci.getConnection(port)
+                    conn.lane.setMaxSpeed(event["id"], float(event["value"])/3.6)
+
     except websockets.ConnectionClosedOK:
         print(f"{websocket} ConnectionClosed OK\n")
     except websockets.ConnectionClosedError:
