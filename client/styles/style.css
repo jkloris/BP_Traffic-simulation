@@ -182,6 +182,7 @@ body {
 	width: 100%;
 	padding-top: 1rem;
 	display: none;
+	color: var(--primaryTextColor);
 }
 
 @media (min-height: 620px) {
@@ -333,12 +334,17 @@ p {
 #pathOptions {
 	color: var(--primaryTextColor);
 }
-#pathOptions div {
+#pathOptions div,
+#vehicleOptions div {
 	margin: 1rem;
 	text-align: left;
-    box-shadow: 0.5px 0.5px 1px;
+	box-shadow: 0.5px 0.5px 1px;
 }
 
 #pathOptions div span:nth-child(2) {
 	font-weight: bold;
+}
+
+.hidden{
+    display: none;
 }

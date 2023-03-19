@@ -222,7 +222,18 @@ async def handler(websocket):
             elif event["type"] == "pathMaxSpeed":
                 if webClients[port].STATUS != "finished":
                     conn = traci.getConnection(port)
-                    conn.lane.setMaxSpeed(event["id"], float(event["value"])/3.6)
+                    conn.lane.setMaxSpeed(
+                        event["id"], float(event["value"])/3.6)
+
+            elif event["type"] == "vehicleDestination":
+                if webClients[port].STATUS != "finished":
+                    conn = traci.getConnection(port)
+                    edgeID = conn.lane.getEdgeID(event["pathId"])
+                    try:
+                        conn.vehicle.changeTarget(event["vehId"], edgeID)
+                        await sendVehicleRoute(websocket, conn, event["vehId"])
+                    except:
+                        print("Route not found")
 
     except websockets.ConnectionClosedOK:
         print(f"{websocket} ConnectionClosed OK\n")

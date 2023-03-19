@@ -66,7 +66,17 @@
         <div id="vehicleOptions">
     
             <h2>Vehicle Options</h2>
-            <p>ID:432423</p>
+            <div>
+
+                <span>ID: </span>
+                <span id="vehicleOptionId"></span>
+            </div>
+            
+            <div>
+                <span>Selected path: </span>
+                <span id="vehicleOptionsPath"></span>
+            </div>
+            <button title="Tries to find a route to the selected path." id="newDestVehicleBtn" class="hidden">Set new destination</button>
             <button id="followVehicleBtn">Follow</button>
             <button id="centerVehicleBtn">Center</button>
             <button id="stopVehicleBtn">Stop</button>

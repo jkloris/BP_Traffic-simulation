@@ -6,12 +6,14 @@ class PathMng {
 		this.deselect();
 		this.selected = { obj: obj, id: id };
 		obj.stroke = 'orange';
+		two.update();
 	}
 
 	deselect() {
 		if (!this.selected) return;
 		this.selected.obj.stroke = 'black';
 		this.selected = null;
+		two.update();
 	}
 
 	fillOptions(event) {
@@ -34,7 +36,7 @@ class PathMng {
 		const speed = input.value > 1 ? input.value : 1;
 		return { type: 'pathMaxSpeed', value: speed, id: this.selected.id };
 	}
-    
+
 	closePathOptions() {
 		document.querySelector('#pathOptions').style.display = 'none';
 		closeOptions();

@@ -200,6 +200,7 @@ function pointerdown(e) {
 
 					if (dist < (p.linewidth - 1) * stage.scale && d1 < dv && d2 < dv) {
 						main.pathSelected(p, id);
+
 						return;
 					}
 				}

@@ -57,4 +57,18 @@ class VehicleMng {
 		}
 		two.update();
 	}
+
+    drawOptions(vehicle, pathId){
+        if (this.selectedVehicle) this.selectedVehicle.deselect();
+		vehicle.select();
+		this.selectedVehicle = vehicle;
+
+
+		document.querySelector('#vehicleOptions').style.display = 'block';
+		document.querySelector('#vehicleOptionId').innerHTML = vehicle.id;
+		if (pathId) {
+			document.querySelector('#vehicleOptionsPath').innerHTML = pathId;
+			document.querySelector('#newDestVehicleBtn').classList = [];
+		}
+    }
 }

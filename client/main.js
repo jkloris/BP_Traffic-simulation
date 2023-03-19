@@ -13,8 +13,19 @@ class Main {
 		this.selectPath = true;
 	}
 
+	sendVehicleDestination() {
+		const msg = { type: 'vehicleDestination', vehId: this.vehicleMng.selectedVehicle.id, pathId: this.pathMng.selected.id };
+		this.websocket.send(JSON.stringify(msg));
+	}
+
 	pathSelected(obj, id) {
 		this.pathMng.select(obj, id);
+
+		if (this.vehicleMng.selectedVehicle) {
+			this.vehicleMng.drawOptions(this.vehicleMng.selectedVehicle, id);
+			return;
+		}
+
 		const msg = { type: 'path', id: id };
 		this.websocket.send(JSON.stringify(msg));
 	}
@@ -93,14 +104,9 @@ class Main {
 	}
 
 	vehicleClicked(vehicle) {
-		if (this.vehicleMng.selectedVehicle) this.vehicleMng.selectedVehicle.deselect();
-		vehicle.select();
-		this.vehicleMng.selectedVehicle = vehicle;
-
-		this.getVehicleRoute(vehicle.id);
 		clearOptions();
-		document.querySelector('#vehicleOptions').style.display = 'block';
-		// TODO ID change
+		this.vehicleMng.drawOptions(vehicle, this.pathMng.selected ? this.pathMng.selected.id : null);
+		this.getVehicleRoute(vehicle.id);
 		openOptions();
 	}
 
@@ -242,7 +248,9 @@ class Main {
 			this.vehicleMng.selectedVehicle = null;
 			network.resetMark();
 			this.follow = false;
-			document.querySelector('#vehicleOptions').style.display = 'none';
+			clearOptions();
+			document.querySelector('#vehicleOptionsPath').innerHTML = '';
+			document.querySelector('#newDestVehicleBtn').classList = ['hidden'];
 		};
 
 		buttons['tlightCenter'].onclick = () => {
@@ -260,6 +268,7 @@ class Main {
 			this.pathMng.deselect();
 			this.pathMng.closePathOptions();
 		};
+		buttons['newDestVehicle'].onclick = () => this.sendVehicleDestination();
 	}
 }
 // let main = null;
@@ -302,6 +311,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		pathMaxSpeed: document.getElementById('pathMaxSpeedBtn'),
 		pathDeselect: document.getElementById('pathDeselectBtn'),
 		pathCenter: document.getElementById('pathCenterBtn'),
+		newDestVehicle: document.getElementById('newDestVehicleBtn'),
 	};
 	// Open the WebSocket connection and register event handlers.
 	const websocket = new WebSocket('ws://localhost:8001/');
