@@ -18,9 +18,11 @@ from aiohttp import web
 import threading
 from multiprocessing import Process
 from socketSim import SocketSim
+from fileHandler import FileHandler
 
 # testing
 TEST = 0
+FILE_HANDLER = FileHandler()
 
 # we need to import some python modules from the $SUMO_HOME/tools directory
 if 'SUMO_HOME' in os.environ:
@@ -74,13 +76,20 @@ async def handler(websocket):
     # TODO mozno pouzit id(websocket) miesto portu
     port = websocket.remote_address[1]
     webClients[port] = SocketSim()
-    print(
-        f'\nNew connection from: {websocket.remote_address} ({len(webClients)} total)\n')
-    # asyncio.create_task(send(websocket))
+    print(f'\nNew connection from: {port} ({len(webClients)} total)\n')
+
+    uploading = False
 
     try:
         async for message in websocket:
-            # message = await websocket.recv()
+
+            # File upload handling
+            if type(message) == bytes:
+                if uploading:
+                    print(message[:10])
+                    FILE_HANDLER.appendToFile(port, message)
+                continue
+
             event = json.loads(message)
             if event == None or "type" not in event:
                 print("ERROR: Wrong message format!", event)
@@ -234,6 +243,15 @@ async def handler(websocket):
                         await sendVehicleRoute(websocket, conn, event["vehId"])
                     except:
                         print("Route not found")
+
+            elif event["type"] == "upload":
+                if webClients[port].STATUS == "finished":
+                    uploading = True
+                    FILE_HANDLER.handleNewFile(port, event["format"])
+            elif event["type"] == "uploadFin":
+                if webClients[port].STATUS == "finished":
+                    uploading = False
+                    FILE_HANDLER.closeFile(port, event["format"])
 
     except websockets.ConnectionClosedOK:
         print(f"{websocket} ConnectionClosed OK\n")

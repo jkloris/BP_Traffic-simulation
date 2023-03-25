@@ -13,6 +13,40 @@ class Main {
 		this.selectPath = true;
 	}
 
+	sendFile(format) { 
+		let file = document.querySelector('#fileInput').files[0];
+		if (file.type != 'text/xml') {
+			console.log('Wrong file format. Acceptable is only XML');
+			return;
+		}
+		let reader = new FileReader();
+		let rawData = new ArrayBuffer();
+		let decoder = new TextDecoder('utf-8');
+
+		reader.loadend = function () {};
+		let ws = this.websocket;
+		reader.onload = function (e) {
+			rawData = e.target.result;
+			if (decoder.decode(rawData.slice(2, 5)).toLowerCase() != 'xml') {
+				console.log('Wrong file format. Acceptable is only XML');
+				return;
+			}
+
+			ws.send(JSON.stringify({ type: 'upload', format: format }));
+
+			let chunk;
+			for (let i = 0; i < rawData.byteLength; i += 1024 * 512) {
+				chunk = rawData.slice(i, i + 1024 * 512);
+				ws.send(chunk);
+			}
+
+			ws.send(JSON.stringify({ type: 'uploadFin', format: format }));
+			console.log('the File has been transferred.');
+		};
+
+		reader.readAsArrayBuffer(file);
+	}
+
 	sendVehicleDestination() {
 		const msg = { type: 'vehicleDestination', vehId: this.vehicleMng.selectedVehicle.id, pathId: this.pathMng.selected.id };
 		this.websocket.send(JSON.stringify(msg));
