@@ -110,8 +110,7 @@ async def handler(websocket):
                 if webClients[port].STATUS == "running":
                     webClients[port].STATUS = "paused"
                     webClients[port].RUNNING = False
-                    print(traci.getConnection(
-                        port).simulation.getSubscriptionResults())
+                    print(traci.getConnection(port).simulation.getSubscriptionResults())
 
             elif event["type"] == "play":
                 if webClients[port].STATUS == "paused":
