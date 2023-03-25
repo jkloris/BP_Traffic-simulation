@@ -86,7 +86,6 @@ async def handler(websocket):
             # File upload handling
             if type(message) == bytes:
                 if uploading:
-                    print(message[:10])
                     FILE_HANDLER.appendToFile(port, message)
                 continue
 
@@ -110,7 +109,8 @@ async def handler(websocket):
                 if webClients[port].STATUS == "running":
                     webClients[port].STATUS = "paused"
                     webClients[port].RUNNING = False
-                    print(traci.getConnection(port).simulation.getSubscriptionResults())
+                    print(traci.getConnection(
+                        port).simulation.getSubscriptionResults())
 
             elif event["type"] == "play":
                 if webClients[port].STATUS == "paused":
@@ -266,6 +266,7 @@ async def handler(websocket):
         except:
             pass
 
+        FILE_HANDLER.removeFile(port)
         webClients.pop(port)
 
 
@@ -295,10 +296,16 @@ async def confirmEnd(websocket):
 
 
 async def traciStart(websocket, sumocfgFile):
-    sumoBinary = checkBinary('sumo')
-
-    sumocmd = [sumoBinary, "-c",  "..\sumo\\" + sumocfgFile + ".sumocfg"]
     label = websocket.remote_address[1]
+
+    if sumocfgFile == "upload":
+        if not FILE_HANDLER.setupConfig(label):
+            return
+        sumocfgFile += str(label)
+
+    sumoBinary = checkBinary('sumo')
+    sumocmd = [sumoBinary, "-c",  "..\sumo\\" + sumocfgFile + ".sumocfg"]
+
     traci.start(sumocmd, label=label)
 
     msg = xmlnetToNetwork("../sumo/"+sumocfgFile + ".net.xml")

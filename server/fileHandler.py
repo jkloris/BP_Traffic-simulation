@@ -1,4 +1,5 @@
 import os
+import traceback
 
 
 class FileHandler():
@@ -9,7 +10,7 @@ class FileHandler():
     # @port {string} Identifier of websocket
     # @format {string} Must be either "net" or "trips". Labels file type
     def handleNewFile(self, port, format):
-        if format != "net" or format != "trips":
+        if format != "net" and format != "trips":
             return
 
         try:
@@ -20,7 +21,8 @@ class FileHandler():
             if port not in self.files:
                 self.files[port] = {}
 
-            self.files[port][format] = open(f"../sumo/upload{port}.{format}.xml", 'ab')
+            self.files[port][format] = open(
+                f"../sumo/upload{port}.{format}.xml", 'ab')
 
     # Writes data into the file.
     # @port {string} Identifier of websocket
@@ -44,12 +46,47 @@ class FileHandler():
     # @port {string} Identifier of websocket
     def removeFile(self, port):
         try:
+            os.remove(f"../sumo/upload{port}.sumocfg")
+        except Exception:
+            print(traceback.format_exc())
+
+        try:
             os.remove(f"../sumo/upload{port}.trips.xml")
-        except:
-            print("Trip file does not exist!")
+        except Exception:
+            print(traceback.format_exc())
+
         try:
             os.remove(f"../sumo/upload{port}.net.xml")
-        except:
-            print("Net file does not exist!")
+        except Exception:
+            print(traceback.format_exc())
 
         del self.files[port]
+
+    # Creates sumocfg file for uploaded files that is needed for simulation to start
+    # @port {string} Identifier of websocket
+    def setupConfig(self, port):
+        if port not in self.files or "net" not in self.files[port] or "trips" not in self.files[port]:
+            print("Missing files for config file")
+            return False
+
+        data = f"""<?xml version="1.0" encoding="UTF-8"?>
+                <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+                    <input>
+                        <net-file value="upload{port}.net.xml"/>
+                        <route-files value="upload{port}.trips.xml"/>
+                    </input>
+
+                    <report>
+                        <verbose value="false"/>
+                        <duration-log.statistics value="true"/>
+                        <no-step-log value="true"/>
+                    </report>
+
+                </configuration>"""
+
+        with open(f"../sumo/upload{port}.sumocfg", "w") as f:
+            f.write(data)
+            self.files[port]["sumocfg"] = f
+
+        return True

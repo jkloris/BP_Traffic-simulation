@@ -13,7 +13,8 @@ class Main {
 		this.selectPath = true;
 	}
 
-	sendFile(format) { 
+	sendFile(format) {
+		//tmp format
 		let file = document.querySelector('#fileInput').files[0];
 		if (file.type != 'text/xml') {
 			console.log('Wrong file format. Acceptable is only XML');
@@ -48,7 +49,11 @@ class Main {
 	}
 
 	sendVehicleDestination() {
-		const msg = { type: 'vehicleDestination', vehId: this.vehicleMng.selectedVehicle.id, pathId: this.pathMng.selected.id };
+		const msg = {
+			type: 'vehicleDestination',
+			vehId: this.vehicleMng.selectedVehicle.id,
+			pathId: this.pathMng.selected.id,
+		};
 		this.websocket.send(JSON.stringify(msg));
 	}
 
