@@ -137,11 +137,6 @@ class Main {
 		this.websocket.send(JSON.stringify(msg));
 	}
 
-	setVisibility(item, visible) {
-		if (visible) item.style.visibility = 'visible';
-		else item.style.visibility = 'hidden';
-	}
-
 	vehicleClicked(vehicle) {
 		clearOptions();
 		this.vehicleMng.drawOptions(vehicle, this.pathMng.selected ? this.pathMng.selected.id : null);
@@ -209,8 +204,9 @@ class Main {
 	sendButtonMsgs(buttons, websocket) {
 		buttons['start'].onclick = async () => {
 			document.querySelector('#scenarioBlock').style.display = 'none';
+			document.querySelector('#uploadInputs').style.display = 'none';
 			[...document.querySelectorAll('.menuButton, .slider')].map((e) => {
-				this.setVisibility(e, true);
+				e.classList.remove('hidden');
 			});
 
 			loadingOn();

@@ -28,17 +28,22 @@
                             <option value="upload">Custom Scenario</option>
                         </select>
                     </div>
-                    <!-- <div>
-                        <input  type="file" id="fileInput">
-                        <input  type="file" id="fileInpu2t">
-                    </div> -->
-                    <button class="menuButton" id="endButton"> End </button>
-                    <button class="menuButton" id="pauseButton"> Pause </button>
-                    <button class="menuButton" id="playButton"> Play </button>
+                  
+                    <button class="menuButton hidden" id="endButton"> End </button>
+                    <button class="menuButton hidden" id="pauseButton"> Pause </button>
+                    <button class="menuButton hidden" id="playButton"> Play </button>
                     </div>
+                <div class="inlineBlock" >
+                    <div id="uploadInputs">
 
-        <div class="slider">
-            <div class="verticalCenter">
+                        <label for="uploadNetInput" title="Choose .net.xml file for custom scenario" >.net.xml file</label>
+                        <input type="file" id="uploadNetInput" name="uploadNetInput" class="hidden">
+                        <label for="uploadTripInput" title="Choose .trips.xml file for custom scenario">.trips.xml file</label>
+                        <input type="file" id="uploadTripInput" name="uploadTripInput" class="hidden">
+                    </div>
+                </div>
+        <div class="slider  hidden">
+            <div class="verticalCenter ">
 
                 <div class="block"> Simulation Speed</div>
                 <input id="speedSlider" type="range" value="30" min="1" max="200">
@@ -50,7 +55,7 @@
             </div>
         </div>
 
-        <div class="slider">
+        <div class="slider  hidden">
             <div class="verticalCenter">
                 <div class="block"> Traffic scaling</div>
                 <input id="scaleSlider" type="range" value="1" min="1" max="5">
