@@ -80,11 +80,12 @@ body {
 	text-align: center;
 }
 
-/* .verticalCenter {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%)
-} */
+.verticalCenter {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	justify-content: center;
+}
 
 #setSpeedButton,
 #setScaleButton {

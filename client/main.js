@@ -266,10 +266,11 @@ class Main {
 		// setSpeed button
 		buttons['setSpeed'].oninput = async () => {
 			var sliderVal = buttons['setSpeed'].value;
+			const max = buttons['setSpeed'].max;
 			document.getElementById('speedSliderOut').value = sliderVal;
 			const event = {
 				type: 'setSpeed',
-				value: sliderVal,
+				value: max - sliderVal - 10,
 			};
 			await websocket.send(JSON.stringify(event));
 		};
