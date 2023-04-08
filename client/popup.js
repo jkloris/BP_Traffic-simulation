@@ -31,10 +31,13 @@ function createStatPopup(stats) {
 		h3.innerHTML = header;
 
 		for (const [head, val] of Object.entries(vals)) {
+			console.log(val);
 			let th = document.createElement('th');
 			let td = document.createElement('td');
-			th.innerHTML = head;
-			td.innerHTML = val;
+			th.innerHTML = head + ' &#9432;';
+			td.innerHTML = val.value;
+			th.title = val.title;
+			td.title = val.title;
 			thead.appendChild(th);
 			tbody.appendChild(td);
 		}

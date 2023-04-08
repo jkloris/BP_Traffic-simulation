@@ -360,16 +360,34 @@ async def run(websocket, conn):
 async def simulationFinished(websocket, conn):
 
     stats = {'Average statistics': {
-        'Route length (m)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.routeLength"),
-        "Vehicle Speed (m/s)": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.speed"),
-        "Vehicle Speed (km/h)": float(conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.speed"))*3.6,
-        "Trip Duration (s)": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.duration"),
-        'Waiting Time (s)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.waitingTime"),
-        'Time Lost (s)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.timeLoss"), },
+        'Route length (m)': {
+            "value": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.routeLength"),
+            "title": "The average length in metres of routes of all the vehicles."},
+        "Vehicle Speed (m/s)": {
+            "value": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.speed"),
+            "title": "The average speed of the vehicles in metres per second."},
+        "Vehicle Speed (km/h)": {
+            "value": float(conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.speed"))*3.6,
+            "title": "The average speed of the vehicles in kilometres per hour."},
+        "Trip Duration (s)": {
+            "value": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.duration"),
+            "title": "The average duration of all vehicle trips during the simulation."},
+        'Waiting Time (s)': {
+            "value": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.waitingTime"),
+            "title": "The average time spent standing (involuntarily) in seconds"},
+        'Time Lost (s)': {
+            "value": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.timeLoss"),
+            "title": "The average time lost due to walking below maximum speed or stopping."}, },
         'Total statistics': {
-        "Vehicle count": conn.simulation.getParameter("", "device.tripinfo.count"),
-        'Vehicle Travel Time (s)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.totalTravelTime"),
-        'Vehicle Depart Delay (s)': conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.totalDepartDelay"),
+        "Vehicle count": {
+            "value": conn.simulation.getParameter("", "device.tripinfo.count"),
+            "title": "Total number of vehicles that entered the simulation."},
+        'Vehicle Travel Time (s)': {
+            "value": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.totalTravelTime"),
+            "title": "The total travel time of all vehicles."},
+        'Vehicle Depart Delay (s)': {
+            "value": conn.simulation.getParameter("", "device.tripinfo.vehicleTripStatistics.totalDepartDelay"),
+            "title": "The total depart delay of all vehicles."},
     },
     }
     print(stats)
@@ -464,4 +482,3 @@ if __name__ == "__main__":
     # Test -->
     # server = threading.Thread(target=main, daemon=True)
     # server.start()
-
