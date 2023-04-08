@@ -11,14 +11,23 @@ class Main {
 
 		this.follow = false;
 		this.selectPath = true;
+
+		this.upload = { net: false, trips: false };
 	}
 
 	sendFile(format) {
 		//tmp format
-		let file = document.querySelector('#fileInput').files[0];
-		if (file.type != 'text/xml') {
+		if (format != 'trips' && format != 'net') {
+			console.log('Wrong format');
+			return false;
+		}
+		let input = document.querySelector('#upload' + format + 'Input');
+
+		let file = input?.files[0];
+
+		if (!file || file.type != 'text/xml') {
 			console.log('Wrong file format. Acceptable is only XML');
-			return;
+			return false;
 		}
 		let reader = new FileReader();
 		let rawData = new ArrayBuffer();
@@ -28,10 +37,10 @@ class Main {
 		let ws = this.websocket;
 		reader.onload = function (e) {
 			rawData = e.target.result;
-			if (decoder.decode(rawData.slice(2, 5)).toLowerCase() != 'xml') {
-				console.log('Wrong file format. Acceptable is only XML');
-				return;
-			}
+			// if (decoder.decode(rawData.slice(2, 5)).toLowerCase() != 'xml') {
+			// 	console.log('Wrong file format. Acceptable is only XML');
+			// 	return false;
+			// }
 
 			ws.send(JSON.stringify({ type: 'upload', format: format }));
 
@@ -46,6 +55,7 @@ class Main {
 		};
 
 		reader.readAsArrayBuffer(file);
+		return true;
 	}
 
 	sendVehicleDestination() {
@@ -203,17 +213,25 @@ class Main {
 
 	sendButtonMsgs(buttons, websocket) {
 		buttons['start'].onclick = async () => {
+			loadingOn();
+			const scenario = document.querySelector('#scenarios').selectedOptions[0].value;
+
+			if (scenario == 'upload') {
+				if (!this.upload.trips || !this.upload.net) {
+					loadingOff();
+					console.log(this.upload);
+					return;
+				}
+			}
 			document.querySelector('#scenarioBlock').style.display = 'none';
 			document.querySelector('#uploadInputs').style.display = 'none';
 			[...document.querySelectorAll('.menuButton, .slider')].map((e) => {
 				e.classList.remove('hidden');
 			});
 
-			loadingOn();
-
 			const event = {
 				type: 'start',
-				scenario: document.querySelector('#scenarios').selectedOptions[0].value,
+				scenario: scenario,
 			};
 			websocket.send(JSON.stringify(event));
 		};
@@ -304,6 +322,12 @@ class Main {
 			this.pathMng.closePathOptions();
 		};
 		buttons['newDestVehicle'].onclick = () => this.sendVehicleDestination();
+		buttons['uploadnet'].onchange = () => {
+			this.upload.net = this.sendFile('net');
+		};
+		buttons['uploadtrips'].onchange = () => {
+			this.upload.trips = this.sendFile('trips');
+		};
 	}
 }
 // let main = null;
@@ -347,9 +371,12 @@ window.addEventListener('DOMContentLoaded', () => {
 		pathDeselect: document.getElementById('pathDeselectBtn'),
 		pathCenter: document.getElementById('pathCenterBtn'),
 		newDestVehicle: document.getElementById('newDestVehicleBtn'),
+
+		uploadnet: document.querySelector('#uploadnetInput'),
+		uploadtrips: document.querySelector('#uploadtripsInput'),
 	};
 	// Open the WebSocket connection and register event handlers.
-	const websocket = new WebSocket('ws://localhost:8001/');
+	const websocket = new WebSocket('ws://localhost:8001'); ///ws://147.175.161.232:8001/
 	// receiveMsgs(websocket);
 	// sendMsgs(buttons, websocket);
 	main = new Main(websocket, buttons);
