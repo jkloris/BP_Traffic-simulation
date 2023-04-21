@@ -378,7 +378,25 @@ window.addEventListener('DOMContentLoaded', () => {
 	};
 	// Open the WebSocket connection and register event handlers.
 	const websocket = new WebSocket('ws://localhost:8001'); ///ws://147.175.161.232:8001/
-	// receiveMsgs(websocket);
-	// sendMsgs(buttons, websocket);
-	main = new Main(websocket, buttons);
+	websocket.addEventListener('open', () => {
+		websocket.send(JSON.stringify({ type: 'connected' }));
+	});
+
+	let websocket2 = null;
+	websocket.addEventListener('message', ({ data }) => {
+		const event = JSON.parse(data);
+
+		switch (event['type']) {
+			case 'newPort':
+				console.log(event);
+				websocket2 = new WebSocket(`ws://localhost:${event['port']}`);
+				main = new Main(websocket2, buttons);
+				break;
+
+			default:
+				break;
+		}
+	});
+
+	// main = new Main(websocket2, buttons);
 });

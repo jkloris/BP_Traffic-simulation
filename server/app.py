@@ -7,6 +7,7 @@ import asyncio
 import itertools
 import json
 import math
+import subprocess
 from time import sleep
 from turtle import position
 import sumolib
@@ -19,9 +20,12 @@ import threading
 from multiprocessing import Process
 from socketSim import SocketSim
 from fileHandler import FileHandler
+import argparse
+import socket
 
-# testing
-TEST = 0
+import re
+PARSER = argparse.ArgumentParser()
+
 FILE_HANDLER = FileHandler()
 
 # we need to import some python modules from the $SUMO_HOME/tools directory
@@ -101,6 +105,7 @@ async def handler(websocket):
                     webClients[port].STATUS = "running"
                     webClients[port].VEHICLES = None
                     webClients[port].scenario = event["scenario"]
+                    print(PARSER.parse_args())
                     loop = asyncio.get_event_loop()
                     loop.create_task(traciStart(websocket, event["scenario"]))
 
@@ -295,8 +300,16 @@ async def confirmEnd(websocket):
     await websocket.send(json.dumps(msg))
 
 
+def find_available_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(('localhost', 0))
+        return s.getsockname()[1]
+
+
 async def traciStart(websocket, sumocfgFile):
     label = websocket.remote_address[1]
+    port = find_available_port()
+    print(port, "tracistart")
 
     if sumocfgFile == "upload":
         if not FILE_HANDLER.setupConfig(label):
@@ -304,9 +317,9 @@ async def traciStart(websocket, sumocfgFile):
         sumocfgFile += str(label)
 
     sumoBinary = checkBinary('sumo')
-    sumocmd = [sumoBinary, "-c",  "..\sumo\\" + sumocfgFile + ".sumocfg"]
+    sumocmd = [sumoBinary, "-c", f"../sumo/{sumocfgFile}.sumocfg"]
 
-    traci.start(sumocmd, label=label)
+    traci.start(sumocmd, label=label, port=port)
 
     msg = xmlnetToNetwork("../sumo/"+sumocfgFile + ".net.xml")
 
@@ -470,15 +483,23 @@ async def traciSimStep(websocket, vehicleData):
     await websocket.send(json.dumps(msg))
 
 
+async def startWebsocket(port):
+    async with websockets.serve(handler, "", port):
+        print(f"Websocket opened of {port}")
+        await asyncio.Future()
+
+
 async def main():
 
-    # FUNKCNE -->
+    PARSER.add_argument("-p", "--port", type=int,
+                        help="port number for Traci simulation")
+    args = PARSER.parse_args()
+    print(args)
 
-    async with websockets.serve(handler, "", 8001):
+    print(args.port, "app")
+    async with websockets.serve(handler, "", args.port):
         await asyncio.Future()  # run forever
 
 if __name__ == "__main__":
+
     asyncio.run(main())
-    # Test -->
-    # server = threading.Thread(target=main, daemon=True)
-    # server.start()
