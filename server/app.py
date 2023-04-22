@@ -65,10 +65,11 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
     # traffic lights
     tl = {}
 
-    for j in root.findall("junction"):
-        if "type" in j.attrib and j.attrib["type"] == "traffic_light":
-            for id in j.attrib["incLanes"].split(" "):
-                tl[id] = network[id]["points"][-1]
+    for idd in traci.trafficlight.getIDList():
+        lanes = traci.trafficlight.getControlledLanes(idd)
+        print(traci.trafficlight.getControlledLinks(idd))
+        for id in lanes:
+            tl[id] = network[id]["points"][-1]
 
     return {"type": "network", "data": network, "boundary": convBoundary, "trafficLights": tl}
 
@@ -465,7 +466,6 @@ def getTrafficLights(conn):
         lanes = conn.trafficlight.getControlledLanes(id)
         for i in range(len(lanes)):
             tlights[lanes[i]] = signal[i]
-
     return tlights
 
 

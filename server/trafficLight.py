@@ -38,9 +38,6 @@ class TrafficLight:
             for l in conn.trafficlight.getControlledLanes(id):
                 self.ids[l] = id
 
-    def saveProgram(self, program):
-        pass
-
     def extractStates(self, conn, id):
         logics = conn.trafficlight.getAllProgramLogics(id)
         self.__state[id] = []
@@ -48,7 +45,6 @@ class TrafficLight:
         for ph in logics[0].getPhases():
             self.__state[id].append(
                 {"state": ph.state, "duration": ph.duration})
-
 
     def getCurrentState(self, id):
         state = self.getState(id)
@@ -73,7 +69,6 @@ class TrafficLight:
         conn.trafficlight.setProgramLogic(id, logics[0])
 
         self.extractStates(conn, id)
-        
 
     # addPhase does not work with actuated
 
