@@ -205,6 +205,8 @@ class Main {
 					this.pathMng.fillOptions(event);
 					openOptions();
 					break;
+				case 'error':
+					openToast(event['text'], 5000);
 				default:
 					break;
 			}

@@ -67,7 +67,6 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
 
     for idd in traci.trafficlight.getIDList():
         lanes = traci.trafficlight.getControlledLanes(idd)
-        print(traci.trafficlight.getControlledLinks(idd))
         for id in lanes:
             tl[id] = network[id]["points"][-1]
 
@@ -75,6 +74,11 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
 
 
 webClients = {}
+
+
+async def sendErrorToClient(websocket, text):
+    msg = {"type": "error", "text": text}
+    await websocket.send(json.dumps(msg))
 
 
 async def handler(websocket):
@@ -97,6 +101,7 @@ async def handler(websocket):
             event = json.loads(message)
             if event == None or "type" not in event:
                 print("ERROR: Wrong message format!", event)
+                await sendErrorToClient(websocket, "ERROR: Wrong message format!")
                 continue
             print("--------------------\n", event)
 
@@ -247,7 +252,8 @@ async def handler(websocket):
                         conn.vehicle.changeTarget(event["vehId"], edgeID)
                         await sendVehicleRoute(websocket, conn, event["vehId"])
                     except:
-                        print("Route not found")
+                        await sendErrorToClient(websocket, "ERROR: Non existing route or prohibited destination.")
+                        print("ERROR: Route not found")
 
             elif event["type"] == "upload":
                 if webClients[port].STATUS == "finished":

@@ -76,3 +76,18 @@ function clearOptions() {
 	document.querySelector('#vehicleOptions').style.display = 'none';
 	document.querySelector('#tLightOptions').style.display = 'none';
 }
+
+const toast = document.getElementById('toast');
+const closeToastBtn = document.getElementById('close');
+
+function openToast(text, time) {
+	toast.classList.add('active');
+	document.getElementById('toastText').innerHTML = text;
+	setTimeout(() => {
+		toast.classList.remove('active');
+	}, time);
+}
+
+closeToastBtn.addEventListener('click', () => {
+	toast.classList.remove('active');
+});

@@ -1,0 +1,49 @@
+.toast {
+	position: fixed;
+	top: 6em;
+	left: 1em;
+	width: 375px;
+	background: rgba(0, 0, 0, 0.527);
+	padding: 25px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	/*   gap: 20px; */
+	border-radius: 12px;
+	border-left: 3px solid rgb(255, 0, 0);
+	overflow: hidden;
+	transform: translateX(calc(-100% - 2em));
+	transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35);
+}
+
+.toast.active {
+	transform: translateX(0);
+}
+
+.toast i:first-child {
+	color: red;
+	font-size: 20px;
+}
+
+#toastText {
+	margin: 0;
+	font-size: 1rem;
+	color: rgb(255, 255, 255);
+	font-weight: bold;
+}
+
+.toast i:last-child {
+	color: #ccc;
+	cursor: pointer;
+	transition: 350ms;
+}
+
+.toast i:last-child:hover {
+	color: #333;
+}
+
+.toast #close {
+	font-size: 2em;
+	margin: 0;
+    cursor: pointer;
+}

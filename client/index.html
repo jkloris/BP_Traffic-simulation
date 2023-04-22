@@ -13,6 +13,7 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="./styles/style.css">
     <link rel="stylesheet" href="./styles/popup.css">
+    <link rel="stylesheet" href="./styles/toast.css">
 </head>
 
 <body>
@@ -71,7 +72,13 @@
 
     <input type="checkbox" id="optionsClose" class="close"></input>
     <label for="optionsClose" class="iconClose"></label>
-    <div id="board"></div>
+    <div id="board">
+        <div class="toast" id="toast">
+            <i class="fas fa-exclamation-circle"></i>
+            <p id="toastText">Oops, Wrong email or password!</p>
+            <p id="close">&times;</p>
+          </div>
+    </div>
     <nav id="options">
         
         <div id="vehicleOptions">
