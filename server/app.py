@@ -76,8 +76,8 @@ def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
 webClients = {}
 
 
-async def sendErrorToClient(websocket, text):
-    msg = {"type": "error", "text": text}
+async def sendErrorToClient(websocket, text, duration=5000):
+    msg = {"type": "error", "text": text, "duration": duration}
     await websocket.send(json.dumps(msg))
 
 
@@ -307,6 +307,20 @@ async def confirmEnd(websocket):
     await websocket.send(json.dumps(msg))
 
 
+async def resetProgram(websocket):
+    port = websocket.remote_address[1]
+
+    webClients[port].RUNNING = False
+    webClients[port].STATUS = "finished"
+    webClients[port].trafficLight.clearState()
+
+    conn = traci.getConnection(port)
+    conn.close()
+
+    msg = {"type": "reset"}
+    await websocket.send(json.dumps(msg))
+
+
 def find_available_port():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(('localhost', 0))
@@ -316,7 +330,7 @@ def find_available_port():
 async def traciStart(websocket, sumocfgFile):
     label = websocket.remote_address[1]
     port = find_available_port()
-    print(port, "tracistart")
+    print(port, "tracistart", sumocfgFile)
 
     if sumocfgFile == "upload":
         if not FILE_HANDLER.setupConfig(label):
@@ -326,8 +340,13 @@ async def traciStart(websocket, sumocfgFile):
     sumoBinary = checkBinary('sumo')
     sumocmd = [sumoBinary, "-c", f"../sumo/{sumocfgFile}.sumocfg"]
 
-    traci.start(sumocmd, label=label, port=port)
-    print("readz")
+    try:
+        traci.start(sumocmd, label=label, port=port, numRetries=2)
+    except:
+        print("Error: Wrong .sumocfg file")
+        await resetProgram(websocket)
+        await sendErrorToClient(websocket, "Error: Probable corruption in uploaded files. Make sure you have uploaded the correct files.", 10000)
+        return
     msg = xmlnetToNetwork("../sumo/"+sumocfgFile + ".net.xml")
 
     await websocket.send(json.dumps(msg))

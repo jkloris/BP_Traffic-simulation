@@ -207,12 +207,39 @@ class Main {
 					this.pathMng.fillOptions(event);
 					openOptions();
 					break;
+				case 'reset':
+					loadingOff();
+					this.swichToPresimulationScreen();
 				case 'error':
-					openToast(event['text'], 5000);
+					openToast(event['text'], event['duration']);
 				default:
 					break;
 			}
 		});
+	}
+
+	swichToSimulationScreen() {
+		document.querySelector('#scenarioBlock').style.display = 'none';
+		document.querySelector('#uploadInputs').style.display = 'none';
+		[...document.querySelectorAll('.menuButton, .slider')].map((e) => {
+			e.classList.remove('hidden');
+		});
+	}
+
+	swichToPresimulationScreen() {
+		document.querySelector('#scenarioBlock').style.display = 'inline-block';
+		document.querySelector('#uploadInputs').style.display = 'inline-block';
+		[...document.querySelectorAll('.menuButton, .slider')].map((e) => {
+			e.classList.add('hidden');
+		});
+	}
+
+	async changeScenario(websocket) {
+		await websocket.send(JSON.stringify({ type: 'end' }));
+		this.swichToPresimulationScreen();
+
+		network?.clearAll();
+		network = null;
 	}
 
 	sendButtonMsgs(buttons, websocket) {
@@ -227,11 +254,7 @@ class Main {
 					return;
 				}
 			}
-			document.querySelector('#scenarioBlock').style.display = 'none';
-			document.querySelector('#uploadInputs').style.display = 'none';
-			[...document.querySelectorAll('.menuButton, .slider')].map((e) => {
-				e.classList.remove('hidden');
-			});
+			this.swichToSimulationScreen();
 
 			const event = {
 				type: 'start',
@@ -333,6 +356,7 @@ class Main {
 		buttons['uploadtrips'].onchange = () => {
 			this.upload.trips = this.sendFile('trips');
 		};
+		buttons['scenarioChange'].onclick = () => this.changeScenario(websocket);
 	}
 }
 // let main = null;
@@ -376,6 +400,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		pathDeselect: document.getElementById('pathDeselectBtn'),
 		pathCenter: document.getElementById('pathCenterBtn'),
 		newDestVehicle: document.getElementById('newDestVehicleBtn'),
+		scenarioChange: document.getElementById('scenarioChangeButton'),
 
 		uploadnet: document.querySelector('#uploadnetInput'),
 		uploadtrips: document.querySelector('#uploadtripsInput'),

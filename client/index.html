@@ -19,23 +19,24 @@
 <body>
     <div id="optionMenu">
         <div class="inlineBlock">
-
-                    <button class="menuButton" id="startButton"> Start</button>
-                    <div id="scenarioBlock">
-                        <p>Choose Simulation Scenario</p>
-                        <select name="" id="scenarios">
-                            <option value="pezinok">Pezinok</option>
-                            <option value="demoAAA">demoAAA</option>
-                            <option value="upload">Custom Scenario</option>
-                        </select>
+            
+            <button class="menuButton" id="startButton"> Start</button>
+            <div id="scenarioBlock">
+                <p>Choose Simulation Scenario</p>
+                <select name="" id="scenarios">
+                    <option value="pezinok">Pezinok</option>
+                    <option value="demoAAA">demoAAA</option>
+                    <option value="upload">Custom Scenario</option>
+                </select>
+            </div>
+            
+            <button class="menuButton hidden" id="endButton"> End </button>
+            <button class="menuButton hidden" id="pauseButton"> Pause </button>
+            <button class="menuButton hidden" id="playButton"> Play</button>
+            <button class="menuButton hidden" id="scenarioChangeButton">Change scenario</button> 
                     </div>
-                  
-                    <button class="menuButton hidden" id="endButton"> End </button>
-                    <button class="menuButton hidden" id="pauseButton"> Pause </button>
-                    <button class="menuButton hidden" id="playButton"> Play </button>
-                    </div>
-                <div class="inlineBlock" >
-                    <div id="uploadInputs">
+                <div class="inlineBlock" id="uploadInputs">
+                    <div >
 
                         <label for="uploadnetInput" title="Choose .net.xml file for custom scenario" >.net.xml file</label>
                         <input type="file" id="uploadnetInput" name="uploadnetInput" class="hidden">
@@ -67,7 +68,6 @@
                 </div>
             </div>
             </div>
-        
     </div>
 
     <input type="checkbox" id="optionsClose" class="close"></input>

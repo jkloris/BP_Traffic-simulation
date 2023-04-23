@@ -14,15 +14,44 @@ class Network {
 		this.markedRoute = null;
 	}
 
+	clearAll() {
+		for (const [id, path] of Object.entries(this.paths)) {
+			two.remove(path);
+			stage.remove(path);
+			delete this.paths[id];
+		}
+		for (const [id, tl] of Object.entries(this.trafficLights)) {
+			two.remove(tl);
+			stage.remove(tl);
+			delete this.paths[id];
+		}
+	}
+
 	async draw() {
 		for (const [id, l] of Object.entries(this.lanes)) {
 			// await new Promise((r) => setTimeout(r, 500));
 			var anchors = [
-				new Two.Anchor(parseFloat(l['points'][0][0]) + this.offset.x, -parseFloat(l['points'][0][1]) + this.offset.y, 0, 0, 0, 0, Two.Commands.move),
+				new Two.Anchor(
+					parseFloat(l['points'][0][0]) + this.offset.x,
+					-parseFloat(l['points'][0][1]) + this.offset.y,
+					0,
+					0,
+					0,
+					0,
+					Two.Commands.move
+				),
 			];
 			for (var a = 1; a < l['points'].length; a++) {
 				anchors.push(
-					new Two.Anchor(parseFloat(l['points'][a][0]) + this.offset.x, -parseFloat(l['points'][a][1]) + this.offset.y, 0, 0, 0, 0, Two.Commands.line)
+					new Two.Anchor(
+						parseFloat(l['points'][a][0]) + this.offset.x,
+						-parseFloat(l['points'][a][1]) + this.offset.y,
+						0,
+						0,
+						0,
+						0,
+						Two.Commands.line
+					)
 				);
 			}
 

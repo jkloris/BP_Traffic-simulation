@@ -346,7 +346,7 @@ p {
 	display: none;
 }
 
-#uploadInputs {
+#uploadInputs div {
 	display: grid;
 	height: 100%;
 	align-content: space-evenly;
