@@ -327,7 +327,7 @@ async def traciStart(websocket, sumocfgFile):
     sumocmd = [sumoBinary, "-c", f"../sumo/{sumocfgFile}.sumocfg"]
 
     traci.start(sumocmd, label=label, port=port)
-
+    print("readz")
     msg = xmlnetToNetwork("../sumo/"+sumocfgFile + ".net.xml")
 
     await websocket.send(json.dumps(msg))

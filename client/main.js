@@ -19,6 +19,7 @@ class Main {
 		//tmp format
 		if (format != 'trips' && format != 'net') {
 			console.log('Wrong format');
+
 			return false;
 		}
 		let input = document.querySelector('#upload' + format + 'Input');
@@ -27,6 +28,7 @@ class Main {
 
 		if (!file || file.type != 'text/xml') {
 			console.log('Wrong file format. Acceptable is only XML');
+			openToast('Error: Wrong file format! Acceptable is only XML.', 5000);
 			return false;
 		}
 		let reader = new FileReader();
