@@ -292,7 +292,8 @@ p {
 	right: 0;
 }
 
-#tlightTableContainer {
+#tlightTableContainer,
+#pathAllowedContainer {
 	overflow-y: scroll;
 	overflow-x: hidden;
 	height: 6rem;
@@ -300,11 +301,16 @@ p {
 	padding: 0;
 	margin: 0;
 }
-#tlightTableContainer th {
+#tlightTableContainer th,
+#pathAllowed th {
 	padding: 0.3rem;
 }
+#pathAllowed {
+	width: 100%;
+}
 
-#tlightTable thead {
+#tlightTable thead,
+#pathAllowed thead {
 	background-color: var(--primaryDarkColor);
 	position: sticky;
 	top: 0;
@@ -318,6 +324,11 @@ p {
 	background-color: var(--primaryLightColor);
 	color: var(--secondaryTextColor);
 	cursor: pointer;
+}
+#pathAllowed tbody tr {
+	background-color: var(--primaryLightColor);
+	color: var(--secondaryTextColor);
+	font-weight: bold;
 }
 
 #tLightOptions input,

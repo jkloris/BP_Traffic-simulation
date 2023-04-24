@@ -234,7 +234,8 @@ async def handler(websocket):
                            "id": event["id"],
                            "maxSpeed": math.floor(float(conn.lane.getMaxSpeed(event["id"])) * 360) / 100.0,
                            "averageSpeed": math.floor(float(conn.lane.getLastStepMeanSpeed(event["id"])) * 360) / 100.0,
-                           "streetName": conn.edge.getStreetName(edgeID)
+                           "streetName": conn.edge.getStreetName(edgeID),
+                           "allowed": conn.lane.getAllowed(event["id"])
                            }
                     await websocket.send(json.dumps(msg))
 
@@ -444,7 +445,12 @@ def getVehicles(conn):
     for id in vehicleIDs:
         pos = conn.vehicle.getPosition(id)
         angle = conn.vehicle.getAngle(id)
-        vehicleData["added"][id] = {"position": pos, "angle": angle}
+        typeId = conn.vehicle.getVehicleClass(id)
+        vehicleData["added"][id] = {
+            "position": pos,
+            "angle": angle,
+            "typeId": typeId,
+        }
 
     return vehicleData
 
@@ -462,7 +468,12 @@ def updateVehicles(vehicleData, conn):
     for id in vehicleIDs:
         pos = conn.vehicle.getPosition(id)
         angle = conn.vehicle.getAngle(id)
-        vehicleData["data"][id] = {"position": pos, "angle": angle}
+        typeId = conn.vehicle.getVehicleClass(id)
+        print(typeId)
+        vehicleData["data"][id] = {"position": pos,
+                                   "angle": angle,
+                                   "typeId": typeId,
+                                   }
 
     return vehicleData
 

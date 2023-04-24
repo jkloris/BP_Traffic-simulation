@@ -9,11 +9,10 @@ class VehicleMng {
 		return { type: 'stopVehicle', id: this.selectedVehicle.id };
 	}
 
-    getVehicleResumeMsg(){
-        if (!this.selectedVehicle) return null;
+	getVehicleResumeMsg() {
+		if (!this.selectedVehicle) return null;
 		return { type: 'resumeVehicle', id: this.selectedVehicle.id };
-    }
-
+	}
 
 	updateVehicleObjects(vehicleData) {
 		let id = null,
@@ -21,7 +20,8 @@ class VehicleMng {
 		for (let i in vehicleData.added) {
 			id = vehicleData.added[i];
 			pos = vehicleData.data[id].position;
-			this.vehicles[id] = new Vehicle(id, pos[0], pos[1]);
+			let typeId = vehicleData.data[id].typeId;
+			this.vehicles[id] = new Vehicle(id, pos[0], pos[1], typeId);
 			this.vehicles[id].addTo(stage);
 		}
 		for (let i in vehicleData.removed) {
@@ -58,17 +58,17 @@ class VehicleMng {
 		two.update();
 	}
 
-    drawOptions(vehicle, pathId){
-        if (this.selectedVehicle) this.selectedVehicle.deselect();
+	drawOptions(vehicle, pathId) {
+		if (this.selectedVehicle) this.selectedVehicle.deselect();
 		vehicle.select();
 		this.selectedVehicle = vehicle;
 
-
 		document.querySelector('#vehicleOptions').style.display = 'block';
 		document.querySelector('#vehicleOptionId').innerHTML = vehicle.id;
+		document.querySelector('#vehicleOptionType').innerHTML = vehicle.typeId;
 		if (pathId) {
 			document.querySelector('#vehicleOptionsPath').innerHTML = pathId;
 			document.querySelector('#newDestVehicleBtn').classList = [];
 		}
-    }
+	}
 }

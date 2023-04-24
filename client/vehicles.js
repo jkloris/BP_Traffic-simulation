@@ -1,10 +1,12 @@
 class Vehicle {
-	constructor(id, x, y) {
+	constructor(id, x, y, typeId) {
 		this.id = id;
 		this.width = 2.5;
 		this.height = 6;
+		this.typeId = typeId;
+		console.log(typeId);
 
-        let car = two.makeRoundedRectangle(x, y, this.width, this.height, this.width - 2);
+		let car = two.makeRoundedRectangle(x, y, this.width, this.height, this.width - 2);
 		let window = two.makeRectangle(x, y, this.width, this.height - 2);
 		let roof = two.makeRectangle(x, y, this.width - 0.5, this.width - 0.3);
 
@@ -50,7 +52,6 @@ class Vehicle {
 		two.remove(this.obj.car);
 		two.remove(this.obj.roof);
 		two.remove(this.obj.window);
-
 	}
 
 	addTo(stage) {
@@ -58,4 +59,4 @@ class Vehicle {
 		stage.add(this.obj.window);
 		stage.add(this.obj.roof);
 	}
-};
+}

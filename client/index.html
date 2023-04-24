@@ -90,6 +90,11 @@
                 <span>ID: </span>
                 <span id="vehicleOptionId"></span>
             </div>
+            <div>
+
+                <span>Road user: </span>
+                <span id="vehicleOptionType"></span>
+            </div>
             
             <div>
                 <span>Selected path: </span>
@@ -136,14 +141,14 @@
         </div>
 
         <div id="pathOptions">
-            <h2>Path Options</h2>
+            <h2>Edge Options</h2>
             <div >
                 <span>ID: </span>
                 <span id="pathId">xxxx</span>
             </div>
             <div>
                 <span>Street name: </span>
-                <span id="pathStreetName">aAsa sas asAS</span>
+                <span id="pathStreetName">Unknown</span>
             </div>
             <div>
                 <span>Max Speed(km/h): </span>
@@ -153,6 +158,19 @@
                 <span>Average Speed(km/h): </span>
                 <span id="pathAvgSpeed">32</span>
             </div>
+           <div id="pathAllowedContainer">
+
+               <table id="pathAllowed">
+                   <thead title="Bellow are listed all road users, that are allowed to enter on selected lane.">
+                       <tr >
+                           <th>Entrance allowed for:  &#9432;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
 
             <input type="number"  min=1 placeholder="New max speed" name="maxspeed" id="pathMaxSpeedInput">
             <button id="pathMaxSpeedBtn">Set max speed</button>
