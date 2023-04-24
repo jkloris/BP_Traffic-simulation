@@ -18,7 +18,7 @@
 
 <body>
     <div id="optionMenu">
-        <div class="inlineBlock">
+        <div class="flex">
             
             <button class="menuButton" id="startButton"> Start</button>
             <div id="scenarioBlock">
@@ -33,9 +33,9 @@
             <button class="menuButton hidden" id="endButton"> End </button>
             <button class="menuButton hidden" id="pauseButton"> Pause </button>
             <button class="menuButton hidden" id="playButton"> Play</button>
-            <button class="menuButton hidden" id="scenarioChangeButton">Change scenario</button> 
-                    </div>
-                <div class="inlineBlock" id="uploadInputs">
+        </div>
+          
+                <div class="flex" id="uploadInputs">
                     <div >
 
                         <label for="uploadnetInput" title="Choose .net.xml file for custom scenario" >.net.xml file</label>
@@ -48,11 +48,11 @@
             <div class="verticalCenter ">
 
                 <div class="block"> Simulation Speed</div>
-                <input id="speedSlider" type="range" value="120" min="1" max="200">
+                <input id="speedSlider" type="range" value="65" min="1" max="100">
                 <!-- <button title="Set simulation speed. Higher number mean simulation is slower." id="setSpeedButton"><span
                         class="material-symbols-outlined"> check</span> </button> -->
                 <div>
-                    <output id="speedSliderOut"> 120</output> 
+                    <output id="speedSliderOut"> 65</output> 
                 </div>
             </div>
         </div>
@@ -67,7 +67,8 @@
                     <output id="scaleSliderOut">1</output>&times;
                 </div>
             </div>
-            </div>
+        </div>
+        <button class="menuButton hidden" id="scenarioChangeButton">Change scenario</button>   
     </div>
 
     <input type="checkbox" id="optionsClose" class="close"></input>

@@ -8,7 +8,7 @@ class SocketSim:
         # types : 'paused', 'running', 'finished'
         self.STATUS = 'finished'
         self.VEHICLES = None
-        self.SIMULATION_SPEED = 70  # lower means faster
+        self.SIMULATION_SPEED = 85  # lower means faster
         self.TRAFFIC_SCALE = 1
         self.trafficLight = TrafficLight()
         self.scenario = None

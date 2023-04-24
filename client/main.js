@@ -297,7 +297,7 @@ class Main {
 			document.getElementById('speedSliderOut').value = sliderVal;
 			const event = {
 				type: 'setSpeed',
-				value: max - sliderVal - 10,
+				value: Math.floor((max - sliderVal) * 2.5),
 			};
 			await websocket.send(JSON.stringify(event));
 		};

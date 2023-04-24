@@ -19,6 +19,7 @@ body {
 #optionMenu {
 	height: 5em;
 	position: relative;
+	display: flex;
 }
 
 #optionMenu div {
@@ -37,6 +38,9 @@ body {
 }
 
 .menuButton:hover {
+	color: var(--primaryTextHoverColor);
+}
+.menuButton:active {
 	background-color: var(--primaryLightColor);
 }
 
@@ -59,7 +63,7 @@ body {
 #scenarioBlock {
 	margin-left: 2em;
 	display: inline-block;
-	height: 50%;
+	height: 100%;
 	overflow: visible;
 	text-align: center;
 }
@@ -68,6 +72,7 @@ body {
 	font-size: small;
 	color: var(--primaryTextColor);
 	margin: 0 0 0.5em 0;
+	padding-top: 1em;
 }
 
 .slider {
@@ -116,6 +121,10 @@ body {
 .inlineBlock {
 	display: inline-block;
 	height: 100%;
+}
+
+.flex {
+	display: flex;
 }
 
 #startButton {
@@ -371,4 +380,8 @@ p {
 
 #uploadInputs label:active {
 	box-shadow: 0 0 black;
+}
+
+#scenarioChangeButton {
+	margin-left: auto;
 }
