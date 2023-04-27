@@ -51,9 +51,11 @@ function createStatPopup(stats) {
 	// document.querySelector('body').appendChild(modal);
 }
 
-function loadingOn() {
+function loadingOn(text = 'Loading Simulation..') {
 	document.querySelector('#modal').style.display = 'block';
-	document.querySelector('#loading').style.display = 'block';
+	let loading = document.querySelector('#loading');
+	loading.style.display = 'block';
+	loading.innerHTML = text;
 }
 
 function loadingOff() {

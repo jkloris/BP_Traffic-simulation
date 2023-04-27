@@ -410,7 +410,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	websocket.addEventListener('open', () => {
 		websocket.send(JSON.stringify({ type: 'connected' }));
 	});
-
+	loadingOn('Author: Kapusta J.   FIIT STU');
 	let websocket2 = null;
 	websocket.addEventListener('message', ({ data }) => {
 		const event = JSON.parse(data);
@@ -420,6 +420,9 @@ window.addEventListener('DOMContentLoaded', () => {
 				console.log(event);
 				websocket2 = new WebSocket(`ws://localhost:${event['port']}`);
 				main = new Main(websocket2, buttons);
+				websocket2.addEventListener('open', () => {
+					loadingOff();
+				});
 				break;
 
 			default:

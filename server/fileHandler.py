@@ -14,7 +14,7 @@ class FileHandler():
             return
 
         try:
-            os.remove(f"../sumo/upload{port}.{format}.xml")
+            os.remove(f"../sumo/upload/upload{port}.{format}.xml")
         except:
             print("file not existing!")
         finally:
@@ -22,7 +22,7 @@ class FileHandler():
                 self.files[port] = {}
 
             self.files[port][format] = open(
-                f"../sumo/upload{port}.{format}.xml", 'ab')
+                f"../sumo/upload/upload{port}.{format}.xml", 'ab')
 
     # Writes data into the file.
     # @port {string} Identifier of websocket
@@ -46,17 +46,17 @@ class FileHandler():
     # @port {string} Identifier of websocket
     def removeFile(self, port):
         try:
-            os.remove(f"../sumo/upload{port}.sumocfg")
+            os.remove(f"../sumo/upload/upload{port}.sumocfg")
         except Exception:
             print(traceback.format_exc())
 
         try:
-            os.remove(f"../sumo/upload{port}.trips.xml")
+            os.remove(f"../sumo/upload/upload{port}.trips.xml")
         except Exception:
             print(traceback.format_exc())
 
         try:
-            os.remove(f"../sumo/upload{port}.net.xml")
+            os.remove(f"../sumo/upload/upload{port}.net.xml")
         except Exception:
             print(traceback.format_exc())
 
@@ -73,8 +73,8 @@ class FileHandler():
                 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
                     <input>
-                        <net-file value="upload{port}.net.xml"/>
-                        <route-files value="upload{port}.trips.xml"/>
+                        <net-file value="./upload{port}.net.xml"/>
+                        <route-files value="./upload{port}.trips.xml"/>
                     </input>
 
                     <report>
@@ -85,7 +85,7 @@ class FileHandler():
 
                 </configuration>"""
 
-        with open(f"../sumo/upload{port}.sumocfg", "w") as f:
+        with open(f"../sumo/upload/upload{port}.sumocfg", "w") as f:
             f.write(data)
             self.files[port]["sumocfg"] = f
 

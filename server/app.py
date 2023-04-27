@@ -22,8 +22,15 @@ from socketSim import SocketSim
 from fileHandler import FileHandler
 import argparse
 import socket
+import chardet
 
-import re
+# TODO
+# diakritika street names
+# nicer code - refacotr if else
+# multiple scenarios
+# play / stop switching
+# tlight state too long
+
 PARSER = argparse.ArgumentParser()
 
 FILE_HANDLER = FileHandler()
@@ -36,7 +43,7 @@ else:
     sys.exit("please declare environment variable 'SUMO_HOME'")
 
 
-def xmlnetToNetwork(path="../sumo/demoAAA.net.xml"):
+def xmlnetToNetwork(path="../sumo/demoAAA/demoAAA.net.xml"):
     tree = ET.parse(path)
     root = tree.getroot()
     network = {}
@@ -333,13 +340,16 @@ async def traciStart(websocket, sumocfgFile):
     port = find_available_port()
     print(port, "tracistart", sumocfgFile)
 
+    sumoBinary = checkBinary('sumo')
+    sumocmd = [sumoBinary, "-c", f"../sumo/{sumocfgFile}/{sumocfgFile}.sumocfg"]
+
     if sumocfgFile == "upload":
         if not FILE_HANDLER.setupConfig(label):
             return
-        sumocfgFile += str(label)
+        # sumocfgFile += str(label)
+        sumocmd = [sumoBinary, "-c",f"../sumo/upload/{sumocfgFile}{label}.sumocfg"]
 
-    sumoBinary = checkBinary('sumo')
-    sumocmd = [sumoBinary, "-c", f"../sumo/{sumocfgFile}.sumocfg"]
+    print(sumocmd)
 
     try:
         traci.start(sumocmd, label=label, port=port, numRetries=2)
@@ -348,7 +358,7 @@ async def traciStart(websocket, sumocfgFile):
         await resetProgram(websocket)
         await sendErrorToClient(websocket, "Error: Probable corruption in uploaded files. Make sure you have uploaded the correct files.", 10000)
         return
-    msg = xmlnetToNetwork("../sumo/"+sumocfgFile + ".net.xml")
+    msg = xmlnetToNetwork(f"../sumo/{sumocfgFile}/{sumocfgFile}.net.xml")
 
     await websocket.send(json.dumps(msg))
 
@@ -469,7 +479,7 @@ def updateVehicles(vehicleData, conn):
         pos = conn.vehicle.getPosition(id)
         angle = conn.vehicle.getAngle(id)
         typeId = conn.vehicle.getVehicleClass(id)
-        print(typeId)
+
         vehicleData["data"][id] = {"position": pos,
                                    "angle": angle,
                                    "typeId": typeId,
