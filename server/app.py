@@ -30,6 +30,8 @@ import chardet
 # multiple scenarios
 # play / stop switching
 # tlight state too long
+# set traffic scale on scenario change
+# traffic lights save, add, remove state check handler and actuated buttons handler
 
 PARSER = argparse.ArgumentParser()
 
@@ -339,18 +341,15 @@ async def traciStart(websocket, sumocfgFile):
     label = websocket.remote_address[1]
     port = find_available_port()
     print(port, "tracistart", sumocfgFile)
-
-    sumoBinary = checkBinary('sumo')
-    sumocmd = [sumoBinary, "-c", f"../sumo/{sumocfgFile}/{sumocfgFile}.sumocfg"]
+    folder = sumocfgFile
 
     if sumocfgFile == "upload":
         if not FILE_HANDLER.setupConfig(label):
             return
-        # sumocfgFile += str(label)
-        sumocmd = [sumoBinary, "-c",f"../sumo/upload/{sumocfgFile}{label}.sumocfg"]
+        sumocfgFile += str(label)
 
-    print(sumocmd)
-
+    sumoBinary = checkBinary('sumo')
+    sumocmd = [sumoBinary, "-c", f"../sumo/{folder}/{sumocfgFile}.sumocfg"]
     try:
         traci.start(sumocmd, label=label, port=port, numRetries=2)
     except:
@@ -358,7 +357,7 @@ async def traciStart(websocket, sumocfgFile):
         await resetProgram(websocket)
         await sendErrorToClient(websocket, "Error: Probable corruption in uploaded files. Make sure you have uploaded the correct files.", 10000)
         return
-    msg = xmlnetToNetwork(f"../sumo/{sumocfgFile}/{sumocfgFile}.net.xml")
+    msg = xmlnetToNetwork(f"../sumo/{folder}/{sumocfgFile}.net.xml")
 
     await websocket.send(json.dumps(msg))
 
