@@ -4,7 +4,6 @@ class Vehicle {
 		this.width = 2.5;
 		this.height = 6;
 		this.typeId = typeId;
-		console.log(typeId);
 
 		let car = two.makeRoundedRectangle(x, y, this.width, this.height, this.width - 2);
 		let window = two.makeRectangle(x, y, this.width, this.height - 2);

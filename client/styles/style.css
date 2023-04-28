@@ -127,9 +127,9 @@ body {
 	display: flex;
 }
 
-#startButton {
+/* #startButton {
 	display: inline-block;
-}
+} */
 
 #sideMenu {
 	width: 19%;
@@ -363,7 +363,7 @@ p {
 }
 
 .hidden {
-	display: none;
+	display: none !important;
 }
 
 #uploadInputs div {

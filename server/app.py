@@ -27,10 +27,8 @@ import chardet
 # TODO
 # diakritika street names
 # nicer code - refacotr if else
-# multiple scenarios
 # play / stop switching
 # tlight state too long
-# set traffic scale on scenario change
 # traffic lights save, add, remove state check handler and actuated buttons handler
 
 PARSER = argparse.ArgumentParser()
@@ -158,10 +156,9 @@ async def handler(websocket):
 
             elif event["type"] == "setScale":
                 if webClients[port].STATUS != "finished":
-                    traci.getConnection(port).simulation.setScale(
-                        int(event["value"]))
+                    traci.getConnection(port).simulation.setScale(int(event["value"]))
                     if webClients[port].STATUS != "finished":
-                        TRAFFIC_SCALE = int(event["value"])
+                        webClients[port].TRAFFIC_SCALE = int(event["value"])
 
             elif event["type"] == "trafficLight":
                 if webClients[port].STATUS != "finished":

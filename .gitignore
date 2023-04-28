@@ -2,3 +2,4 @@
 sumo/randomTrips.py
 sumo/_tripinfo.xml
 node_modules
+server/__pycache__

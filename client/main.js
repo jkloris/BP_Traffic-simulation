@@ -5,12 +5,13 @@ class Main {
 		this.vehicleMng = new VehicleMng();
 		this.tLightMng = new TLightMng();
 		this.pathMng = new PathMng();
+		this.stateMng = new StateMng();
 
 		this.receiveMsgs(websocket);
 		this.sendButtonMsgs(buttons, websocket);
 
 		this.follow = false;
-		this.selectPath = true;
+		// this.selectPath = true;
 
 		this.upload = { net: false, trips: false };
 	}
@@ -209,7 +210,7 @@ class Main {
 					break;
 				case 'reset':
 					loadingOff();
-					this.swichToPresimulationScreen();
+					this.stateMng.swichToPresimulationScreen();
 				case 'error':
 					openToast(event['text'], event['duration']);
 				default:
@@ -218,25 +219,10 @@ class Main {
 		});
 	}
 
-	swichToSimulationScreen() {
-		document.querySelector('#scenarioBlock').style.display = 'none';
-		document.querySelector('#uploadInputs').style.display = 'none';
-		[...document.querySelectorAll('.menuButton, .slider')].map((e) => {
-			e.classList.remove('hidden');
-		});
-	}
-
-	swichToPresimulationScreen() {
-		document.querySelector('#scenarioBlock').style.display = 'inline-block';
-		document.querySelector('#uploadInputs').style.display = 'inline-block';
-		[...document.querySelectorAll('.menuButton, .slider')].map((e) => {
-			e.classList.add('hidden');
-		});
-	}
-
 	async changeScenario(websocket) {
 		await websocket.send(JSON.stringify({ type: 'end' }));
-		this.swichToPresimulationScreen();
+		this.stateMng.swichToPresimulationScreen();
+		this.follow = false;
 
 		network?.clearAll();
 		network = null;
@@ -254,7 +240,7 @@ class Main {
 					return;
 				}
 			}
-			this.swichToSimulationScreen();
+			this.stateMng.swichToSimulationScreen();
 
 			const event = {
 				type: 'start',
@@ -270,6 +256,7 @@ class Main {
 				type: 'pause',
 			};
 			await websocket.send(JSON.stringify(event));
+			this.stateMng.pause();
 		};
 
 		buttons['play'].onclick = async () => {
@@ -279,6 +266,7 @@ class Main {
 				type: 'play',
 			};
 			await websocket.send(JSON.stringify(event));
+			this.stateMng.play();
 		};
 		//end button
 		buttons['end'].onclick = async () => {
@@ -288,6 +276,7 @@ class Main {
 				type: 'end',
 			};
 			await websocket.send(JSON.stringify(event));
+			this.stateMng.end();
 		};
 
 		// setSpeed button
@@ -317,11 +306,9 @@ class Main {
 		buttons['resumeVehicle'].onclick = () => this.resumeVehicle();
 		buttons['centerVehicle'].onclick = () => this.center(this.vehicleMng.selectedVehicle.obj.car);
 		buttons['followVehicle'].onclick = () => {
-			if (this.follow) {
-				buttons['followVehicle'].innerHTML = 'Follow';
-			} else {
-				buttons['followVehicle'].innerHTML = 'Unfollow';
-			}
+			this.follow
+				? (buttons['followVehicle'].innerHTML = 'Follow')
+				: (buttons['followVehicle'].innerHTML = 'Unfollow');
 			this.follow = !this.follow;
 		};
 		buttons['deselectVehicle'].onclick = () => {
