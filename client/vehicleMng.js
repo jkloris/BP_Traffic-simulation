@@ -66,9 +66,11 @@ class VehicleMng {
 		document.querySelector('#vehicleOptions').style.display = 'block';
 		document.querySelector('#vehicleOptionId').innerHTML = vehicle.id;
 		document.querySelector('#vehicleOptionType').innerHTML = vehicle.typeId;
+		document.querySelector('#vehicleOptionsPath').innerHTML = 'None';
+		document.querySelector('#newDestVehicleBtn').classList.add('hidden');
 		if (pathId) {
 			document.querySelector('#vehicleOptionsPath').innerHTML = pathId;
-			document.querySelector('#newDestVehicleBtn').classList = [];
+			document.querySelector('#newDestVehicleBtn').classList.remove('hidden');
 		}
 	}
 }

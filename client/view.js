@@ -146,7 +146,10 @@ function pointerdown(e) {
 		// selecting of traffic lights
 		for (const [id, tl] of Object.entries(network.trafficLights)) {
 			//  magic formula, DONT TOUCH
-			dist = Math.sqrt((tl.position.x * stage.scale + stage.position.x - x) ** 2 + (tl.position.y * stage.scale + stage.position.y - y) ** 2);
+			dist = Math.sqrt(
+				(tl.position.x * stage.scale + stage.position.x - x) ** 2 +
+					(tl.position.y * stage.scale + stage.position.y - y) ** 2
+			);
 
 			if (dist <= tl.radius * stage.scale) {
 				console.log(id);
@@ -159,7 +162,8 @@ function pointerdown(e) {
 		for (const [id, v] of Object.entries(main.vehicleMng.vehicles)) {
 			//  magic formula, DONT TOUCH
 			dist = Math.sqrt(
-				(v.obj.car.position.x * stage.scale + stage.position.x - x) ** 2 + (v.obj.car.position.y * stage.scale + stage.position.y - y) ** 2
+				(v.obj.car.position.x * stage.scale + stage.position.x - x) ** 2 +
+					(v.obj.car.position.y * stage.scale + stage.position.y - y) ** 2
 			);
 
 			if (dist <= v.width * stage.scale) {
@@ -178,7 +182,10 @@ function pointerdown(e) {
 				dv;
 
 			let distanceFromPointToLine = (pa, lb, lc) => {
-				return Math.abs((lb.x - pa.x) * (lc.y - pa.y) - (lb.y - pa.y) * (lc.x - pa.x)) / Math.sqrt(Math.pow(lc.x - lb.x, 2) + Math.pow(lc.y - lb.y, 2));
+				return (
+					Math.abs((lb.x - pa.x) * (lc.y - pa.y) - (lb.y - pa.y) * (lc.x - pa.x)) /
+					Math.sqrt(Math.pow(lc.x - lb.x, 2) + Math.pow(lc.y - lb.y, 2))
+				);
 			};
 
 			let distancePointToPoint = (p1, p2) => {

@@ -11,7 +11,7 @@ class Main {
 		this.sendButtonMsgs(buttons, websocket);
 
 		this.follow = false;
-		// this.selectPath = true;
+		this.selectPath = true;
 
 		this.upload = { net: false, trips: false };
 	}
@@ -219,13 +219,19 @@ class Main {
 		});
 	}
 
-	async changeScenario(websocket) {
-		await websocket.send(JSON.stringify({ type: 'end' }));
+	async changeScenario() {
+		this.end();
 		this.stateMng.swichToPresimulationScreen();
-		this.follow = false;
 
 		network?.clearAll();
 		network = null;
+	}
+
+	end() {
+		this.websocket.send(JSON.stringify({ type: 'end' }));
+		this.stateMng.end();
+		this.pathMng.deselect();
+		this.follow = false;
 	}
 
 	sendButtonMsgs(buttons, websocket) {
@@ -269,15 +275,7 @@ class Main {
 			this.stateMng.play();
 		};
 		//end button
-		buttons['end'].onclick = async () => {
-			console.log('Click end');
-
-			const event = {
-				type: 'end',
-			};
-			await websocket.send(JSON.stringify(event));
-			this.stateMng.end();
-		};
+		buttons['end'].onclick = async () => this.end();
 
 		// setSpeed button
 		buttons['setSpeed'].oninput = async () => {

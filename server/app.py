@@ -27,7 +27,6 @@ import chardet
 # TODO
 # diakritika street names
 # nicer code - refacotr if else
-# play / stop switching
 # tlight state too long
 # traffic lights save, add, remove state check handler and actuated buttons handler
 
