@@ -12,6 +12,7 @@ class SocketSim:
         self.TRAFFIC_SCALE = 1
         self.trafficLight = TrafficLight()
         self.scenario = None
+        self.uploading = False
         # self.thread = None
 
     # tmp debug

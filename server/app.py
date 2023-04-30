@@ -29,6 +29,7 @@ import chardet
 # nicer code - refacotr if else
 # tlight state too long
 # traffic lights save, add, remove state check handler and actuated buttons handler
+# update edge options on change
 
 PARSER = argparse.ArgumentParser()
 
@@ -87,20 +88,213 @@ async def sendErrorToClient(websocket, text, duration=5000):
     await websocket.send(json.dumps(msg))
 
 
+# -------Controlling Functions------
+async def start(websocket, port, event, conn):
+    if webClients[port].STATUS == "finished":
+        webClients[port].RUNNING = True
+        webClients[port].STATUS = "running"
+        webClients[port].VEHICLES = None
+        webClients[port].scenario = event["scenario"]
+        loop = asyncio.get_event_loop()
+        loop.create_task(traciStart(websocket, event["scenario"]))
+
+
+async def pause(websocket, port, event, conn):
+    if webClients[port].STATUS == "running":
+        webClients[port].STATUS = "paused"
+        webClients[port].RUNNING = False
+
+
+async def play(websocket, port, event, conn):
+    if webClients[port].STATUS == "paused":
+        webClients[port].STATUS = "played"
+        webClients[port].RUNNING = True
+        traci.getConnection(port).simulation.subscribe()
+        loop = asyncio.get_event_loop()
+        loop.create_task(run(websocket, conn))
+
+
+async def end(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+        webClients[port].RUNNING = False
+        webClients[port].STATUS = "finished"
+        webClients[port].trafficLight.clearState()
+        await confirmEnd(websocket)
+        await simulationFinished(websocket, conn)
+        conn.close()
+
+
+async def setSpeed(websocket, port, event, conn):
+    webClients[port].SIMULATION_SPEED = int(event["value"])
+
+
+async def setScale(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+        conn.simulation.setScale(int(event["value"]))
+        if webClients[port].STATUS != "finished":
+            webClients[port].TRAFFIC_SCALE = int(event["value"])
+
+
+async def trafficLight(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+        tlightObj = webClients[port].trafficLight
+        tlightObj.findIDs(conn)
+
+        if event["id"] in tlightObj.ids.keys():
+            tlightId = tlightObj.ids[event["id"]]
+            tlightObj.extractStates(conn, tlightId)
+
+            msg = tlightObj.getTrafficLightMsg(conn, tlightId)
+            await websocket.send(json.dumps(msg))
+
+
+async def trafficLightState(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+        tlightId = webClients[port].trafficLight.ids[event["id"]]
+        conn.trafficlight.setRedYellowGreenState(tlightId, event["state"])
+
+
+async def trafficLightReset(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+        tlightId = webClients[port].trafficLight.ids[event["id"]]
+        conn.trafficlight.setProgram(tlightId, 0)
+
+
+async def trafficLightStateUpdate(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+        tlightObj = webClients[port].trafficLight
+        tlightId = tlightObj.ids[event["id"]]
+        webClients[port].trafficLight.setPhase(
+            conn, tlightId, event["state"], event["duration"], event["index"])
+
+        msg = msg = tlightObj.getTrafficLightMsg(conn, tlightId)
+        await websocket.send(json.dumps(msg))
+
+
+async def trafficLightStateAdd(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+        tlightObj = webClients[port].trafficLight
+        tlightId = tlightObj.ids[event["id"]]
+        webClients[port].trafficLight.addPhase(
+            conn, tlightId, event["state"], event["duration"])
+
+        msg = tlightObj.getTrafficLightMsg(conn, tlightId)
+        await websocket.send(json.dumps(msg))
+
+
+async def trafficLightStateDel(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+
+        tlightObj = webClients[port].trafficLight
+        tlightId = tlightObj.ids[event["id"]]
+        webClients[port].trafficLight.deletePhase(
+            conn, tlightId, event["index"])
+
+        msg = tlightObj.getTrafficLightMsg(conn, tlightId)
+        await websocket.send(json.dumps(msg))
+
+
+async def vehicleRoute(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+
+        await sendVehicleRoute(websocket, conn, event["id"])
+
+
+async def stopVehicle(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+        if not checkValidVehicleID(conn, id):
+            return
+        conn.vehicle.setSpeed(id, 0)
+
+
+async def resumeVehicle(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+        if not checkValidVehicleID(conn, id):
+            return
+        conn.vehicle.setSpeed(id, -1)
+
+
+async def path(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+
+        edgeID = conn.lane.getEdgeID(event["id"])
+
+        msg = {
+            "type": "path",
+            "id": event["id"],
+            "maxSpeed": math.floor(float(conn.lane.getMaxSpeed(event["id"])) * 360) / 100.0,
+            "averageSpeed": math.floor(float(conn.lane.getLastStepMeanSpeed(event["id"])) * 360) / 100.0,
+            "streetName": conn.edge.getStreetName(edgeID),
+            "allowed": conn.lane.getAllowed(event["id"])
+        }
+        await websocket.send(json.dumps(msg))
+
+
+async def pathMaxSpeed(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+        conn.lane.setMaxSpeed(event["id"], float(event["value"])/3.6)
+
+
+async def vehicleDestination(websocket, port, event, conn):
+    if webClients[port].STATUS != "finished":
+        edgeID = conn.lane.getEdgeID(event["pathId"])
+        try:
+            conn.vehicle.changeTarget(event["vehId"], edgeID)
+            await sendVehicleRoute(websocket, conn, event["vehId"])
+        except:
+            await sendErrorToClient(websocket, "ERROR: Non existing route or prohibited destination.")
+            print("ERROR: Route not found")
+
+
+async def upload(websocket, port, event, conn):
+    if webClients[port].STATUS == "finished":
+        webClients[port].uploading = True
+        FILE_HANDLER.handleNewFile(port, event["format"])
+
+
+async def uploadFin(websocket, port, event, conn):
+    if webClients[port].STATUS == "finished":
+        webClients[port].uploading = False
+        FILE_HANDLER.closeFile(port, event["format"])
+    # ------------
+
+
 async def handler(websocket):
-    # TODO mozno pouzit id(websocket) miesto portu
     port = websocket.remote_address[1]
     webClients[port] = SocketSim()
     print(f'\nNew connection from: {port} ({len(webClients)} total)\n')
 
-    uploading = False
+    webClients[port].uploading = False
+
+    controlFunctions = {
+        "start": start,
+        "pause": pause,
+        "play": play,
+        "end": end,
+        "setSpeed": setSpeed,
+        "setScale": setScale,
+        "trafficLight": trafficLight,
+        "trafficLightState": trafficLightState,
+        "trafficLightReset": trafficLightReset,
+        "trafficLightStateUpdate": trafficLightStateUpdate,
+        "trafficLightStateAdd": trafficLightStateAdd,
+        "trafficLightStateDel": trafficLightStateDel,
+        "vehicleRoute": vehicleRoute,
+        "stopVehicle": stopVehicle,
+        "resumeVehicle": resumeVehicle,
+        "path": path,
+        "pathMaxSpeed": pathMaxSpeed,
+        "vehicleDestination": vehicleDestination,
+        "upload": upload,
+        "uploadFin": uploadFin,
+    }
 
     try:
         async for message in websocket:
 
             # File upload handling
             if type(message) == bytes:
-                if uploading:
+                if webClients[port].uploading:
                     FILE_HANDLER.appendToFile(port, message)
                 continue
 
@@ -111,164 +305,12 @@ async def handler(websocket):
                 continue
             print("--------------------\n", event)
 
-            if event["type"] == "start":
-                if webClients[port].STATUS == "finished":
-                    webClients[port].RUNNING = True
-                    webClients[port].STATUS = "running"
-                    webClients[port].VEHICLES = None
-                    webClients[port].scenario = event["scenario"]
-                    print(PARSER.parse_args())
-                    loop = asyncio.get_event_loop()
-                    loop.create_task(traciStart(websocket, event["scenario"]))
-
-            elif event["type"] == "pause":
-
-                if webClients[port].STATUS == "running":
-                    webClients[port].STATUS = "paused"
-                    webClients[port].RUNNING = False
-                    print(traci.getConnection(
-                        port).simulation.getSubscriptionResults())
-
-            elif event["type"] == "play":
-                if webClients[port].STATUS == "paused":
-                    webClients[port].STATUS = "played"
-                    webClients[port].RUNNING = True
-                    traci.getConnection(port).simulation.subscribe()
-                    loop.create_task(run(websocket, traci.getConnection(port)))
-
-            elif event["type"] == "end":
-                if webClients[port].STATUS != "finished":
-
-                    webClients[port].RUNNING = False
-                    webClients[port].STATUS = "finished"
-                    webClients[port].trafficLight.clearState()
-
-                    await confirmEnd(websocket)
-
-                    conn = traci.getConnection(port)
-                    await simulationFinished(websocket, conn)
-
-                    conn.close()
-
-            elif event["type"] == "setSpeed":
-                webClients[port].SIMULATION_SPEED = int(event["value"])
-
-            elif event["type"] == "setScale":
-                if webClients[port].STATUS != "finished":
-                    traci.getConnection(port).simulation.setScale(int(event["value"]))
-                    if webClients[port].STATUS != "finished":
-                        webClients[port].TRAFFIC_SCALE = int(event["value"])
-
-            elif event["type"] == "trafficLight":
-                if webClients[port].STATUS != "finished":
-                    conn = traci.getConnection(port)
-                    tlightObj = webClients[port].trafficLight
-                    tlightObj.findIDs(conn)
-
-                    if event["id"] in tlightObj.ids.keys():
-                        tlightId = tlightObj.ids[event["id"]]
-
-                        # if tlightObj.getState(tlightId) == None:
-                        tlightObj.extractStates(conn, tlightId)
-
-                        msg = tlightObj.getTrafficLightMsg(conn, tlightId)
-                        await websocket.send(json.dumps(msg))
-
-            elif event["type"] == "trafficLightState":
-                if webClients[port].STATUS != "finished":
-                    conn = traci.getConnection(port)
-                    tlightId = tlightObj.ids[event["id"]]
-
-                    conn.trafficlight.setRedYellowGreenState(
-                        tlightId, event["state"])
-
-            elif event["type"] == "trafficLightReset":
-                if webClients[port].STATUS != "finished":
-                    conn = traci.getConnection(port)
-                    tlightId = tlightObj.ids[event["id"]]
-                    conn.trafficlight.setProgram(tlightId, 0)
-
-            elif event["type"] == "trafficLightStateUpdate":
-                if webClients[port].STATUS != "finished":
-                    conn = traci.getConnection(port)
-                    tlightId = tlightObj.ids[event["id"]]
-                    webClients[port].trafficLight.setPhase(
-                        conn, tlightId, event["state"], event["duration"], event["index"])
-
-                    msg = msg = tlightObj.getTrafficLightMsg(conn, tlightId)
-                    await websocket.send(json.dumps(msg))
-
-            elif event["type"] == "trafficLightStateAdd":
-                if webClients[port].STATUS != "finished":
-                    conn = traci.getConnection(port)
-                    tlightId = tlightObj.ids[event["id"]]
-                    webClients[port].trafficLight.addPhase(
-                        conn, tlightId, event["state"], event["duration"])
-
-                    msg = tlightObj.getTrafficLightMsg(conn, tlightId)
-                    await websocket.send(json.dumps(msg))
-
-            elif event["type"] == "trafficLightStateDel":
-                if webClients[port].STATUS != "finished":
-                    conn = traci.getConnection(port)
-                    tlightId = tlightObj.ids[event["id"]]
-                    webClients[port].trafficLight.deletePhase(
-                        conn, tlightId, event["index"])
-
-                    msg = tlightObj.getTrafficLightMsg(conn, tlightId)
-                    await websocket.send(json.dumps(msg))
-
-            elif event["type"] == "vehicleRoute":
-                if webClients[port].STATUS != "finished":
-                    await sendVehicleRoute(websocket, traci.getConnection(port), event["id"])
-
-            elif event["type"] == "stopVehicle":
-                if webClients[port].STATUS != "finished":
-                    setVehicleStop(traci.getConnection(port), event["id"])
-
-            elif event["type"] == "resumeVehicle":
-                if webClients[port].STATUS != "finished":
-                    resumeVehicleStop(traci.getConnection(port), event["id"])
-
-            elif event["type"] == "path":
-                if webClients[port].STATUS != "finished":
-                    conn = traci.getConnection(port)
-                    edgeID = conn.lane.getEdgeID(event["id"])
-
-                    msg = {"type": "path",
-                           "id": event["id"],
-                           "maxSpeed": math.floor(float(conn.lane.getMaxSpeed(event["id"])) * 360) / 100.0,
-                           "averageSpeed": math.floor(float(conn.lane.getLastStepMeanSpeed(event["id"])) * 360) / 100.0,
-                           "streetName": conn.edge.getStreetName(edgeID),
-                           "allowed": conn.lane.getAllowed(event["id"])
-                           }
-                    await websocket.send(json.dumps(msg))
-
-            elif event["type"] == "pathMaxSpeed":
-                if webClients[port].STATUS != "finished":
-                    conn = traci.getConnection(port)
-                    conn.lane.setMaxSpeed(
-                        event["id"], float(event["value"])/3.6)
-
-            elif event["type"] == "vehicleDestination":
-                if webClients[port].STATUS != "finished":
-                    conn = traci.getConnection(port)
-                    edgeID = conn.lane.getEdgeID(event["pathId"])
-                    try:
-                        conn.vehicle.changeTarget(event["vehId"], edgeID)
-                        await sendVehicleRoute(websocket, conn, event["vehId"])
-                    except:
-                        await sendErrorToClient(websocket, "ERROR: Non existing route or prohibited destination.")
-                        print("ERROR: Route not found")
-
-            elif event["type"] == "upload":
-                if webClients[port].STATUS == "finished":
-                    uploading = True
-                    FILE_HANDLER.handleNewFile(port, event["format"])
-            elif event["type"] == "uploadFin":
-                if webClients[port].STATUS == "finished":
-                    uploading = False
-                    FILE_HANDLER.closeFile(port, event["format"])
+            try:
+                conn = traci.getConnection(port)
+            except:
+                conn = None
+            finally:
+                await controlFunctions[event["type"]](websocket, port, event, conn)
 
     except websockets.ConnectionClosedOK:
         print(f"{websocket} ConnectionClosed OK\n")
@@ -279,7 +321,7 @@ async def handler(websocket):
         webClients[port].RUNNING = False
         webClients[port].STATUS = "finished"
         try:
-            conn = traci.getConnection(port)
+            # conn = traci.getConnection(port)
             conn.close()
         except:
             pass
@@ -289,23 +331,10 @@ async def handler(websocket):
 
 
 def checkValidVehicleID(conn, id):
-    print(conn.vehicle.getIDList())
     if id not in conn.vehicle.getIDList():
         print("ERROR: no id in vehicle ID List")
         return False
     return True
-
-
-def resumeVehicleStop(conn, id):
-    if not checkValidVehicleID(conn, id):
-        return
-    conn.vehicle.setSpeed(id, -1)
-
-
-def setVehicleStop(conn, id):
-    if not checkValidVehicleID(conn, id):
-        return
-    conn.vehicle.setSpeed(id, 0)
 
 
 async def confirmEnd(websocket):
@@ -346,6 +375,7 @@ async def traciStart(websocket, sumocfgFile):
 
     sumoBinary = checkBinary('sumo')
     sumocmd = [sumoBinary, "-c", f"../sumo/{folder}/{sumocfgFile}.sumocfg"]
+
     try:
         traci.start(sumocmd, label=label, port=port, numRetries=2)
     except:
@@ -353,6 +383,7 @@ async def traciStart(websocket, sumocfgFile):
         await resetProgram(websocket)
         await sendErrorToClient(websocket, "Error: Probable corruption in uploaded files. Make sure you have uploaded the correct files.", 10000)
         return
+
     msg = xmlnetToNetwork(f"../sumo/{folder}/{sumocfgFile}.net.xml")
 
     await websocket.send(json.dumps(msg))
@@ -494,15 +525,7 @@ async def sendVehicleRoute(websocket, conn, id):
 def getTrafficLights(conn):
     tlights = {}
     for id in conn.trafficlight.getIDList():
-        # state = webClients[label].trafficLight.getState(id)
-        # if state is not None:
-        #     conn.trafficlight.setPhase(id, state)
-        #     print(conn.trafficlight.getRedYellowGreenState(id))
-
-        # conn.trafficlight.setRedYellowGreenState(id, len(signal)*'G')
         signal = conn.trafficlight.getRedYellowGreenState(id)
-
-        # print(conn.trafficlight.getAllProgramLogics(id), '\n')
 
         lanes = conn.trafficlight.getControlledLanes(id)
         for i in range(len(lanes)):
@@ -515,12 +538,9 @@ async def traciSimStep(websocket, vehicleData):
     conn = traci.getConnection(websocket.remote_address[1])
     tlights = getTrafficLights(conn)
     vehicleData = updateVehicles(vehicleData, conn)
-    # await testVehicle(websocket, conn)  # test
     conn.simulationStep()
 
-    # time = traci.simulation.getTime()
     msg = {"type": "step", "data": vehicleData, "trafficLights": tlights}
-    # print("_______________________\n", msg)
     await websocket.send(json.dumps(msg))
 
 

@@ -180,7 +180,7 @@ class Main {
 		websocket.addEventListener('message', ({ data }) => {
 			const event = JSON.parse(data);
 
-			// console.log(event);
+			console.log(event);
 			switch (event.type) {
 				case 'step':
 					this.step(event);
@@ -198,7 +198,6 @@ class Main {
 					network.markRoute(event['data']);
 					break;
 				case 'trafficLight':
-					// this.selected = event['id'];
 					clearOptions();
 					this.tLightMng.fillOptions(event['states'], event['logicType']);
 					openOptions();
