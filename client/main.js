@@ -218,7 +218,7 @@ class Main {
 		});
 	}
 
-	async changeScenario() {
+	changeScenario() {
 		this.end();
 		this.stateMng.swichToPresimulationScreen();
 
@@ -343,40 +343,23 @@ class Main {
 		buttons['scenarioChange'].onclick = () => this.changeScenario(websocket);
 	}
 }
-// let main = null;
 
 window.addEventListener('DOMContentLoaded', () => {
-	// Initialize the UI.
-	const startButton = document.getElementById('startButton');
-	const pauseButton = document.getElementById('pauseButton');
-	const playButton = document.getElementById('playButton');
-	const endButton = document.getElementById('endButton');
-	const setSpeedSlider = document.getElementById('speedSlider');
-	const setScaleSlider = document.getElementById('scaleSlider');
-	const followVehicleBtn = document.getElementById('followVehicleBtn');
-	const centerVehicleBtn = document.getElementById('centerVehicleBtn');
-	const stopVehicleBtn = document.getElementById('stopVehicleBtn');
-	const resumeVehicleBtn = document.getElementById('resumeVehicleBtn');
-	const deselectVehicleBtn = document.getElementById('deselectVehicleBtn');
-	const tlightCenterBtn = document.getElementById('tlightCenterBtn');
-	const setStateTLightBtn = document.getElementById('setStateTLightBtn');
-	const resetTLightBtn = document.getElementById('resetTLightBtn');
-
 	const buttons = {
-		start: startButton,
-		pause: pauseButton,
-		play: playButton,
-		setSpeed: setSpeedSlider,
-		setScale: setScaleSlider,
-		end: endButton,
-		followVehicle: followVehicleBtn,
-		centerVehicle: centerVehicleBtn,
-		stopVehicle: stopVehicleBtn,
-		resumeVehicle: resumeVehicleBtn,
-		deselectVehicle: deselectVehicleBtn,
-		tlightCenter: tlightCenterBtn,
-		setStateTLight: setStateTLightBtn,
-		resetTLight: resetTLightBtn,
+		start: document.getElementById('startButton'),
+		pause: document.getElementById('pauseButton'),
+		play: document.getElementById('playButton'),
+		end: document.getElementById('endButton'),
+		setSpeed: document.getElementById('speedSlider'),
+		setScale: document.getElementById('scaleSlider'),
+		followVehicle: document.getElementById('followVehicleBtn'),
+		centerVehicle: document.getElementById('centerVehicleBtn'),
+		stopVehicle: document.getElementById('stopVehicleBtn'),
+		resumeVehicle: document.getElementById('resumeVehicleBtn'),
+		deselectVehicle: document.getElementById('deselectVehicleBtn'),
+		tlightCenter: document.getElementById('tlightCenterBtn'),
+		setStateTLight: document.getElementById('setStateTLightBtn'),
+		resetTLight: document.getElementById('resetTLightBtn'),
 		saveStateTLight: document.getElementById('saveStateTLightBtn'),
 		addStateTLight: document.getElementById('addStateTLightBtn'),
 		removeStatusTLight: document.getElementById('removeStatusTLightBtn'),
@@ -389,6 +372,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		uploadnet: document.querySelector('#uploadnetInput'),
 		uploadtrips: document.querySelector('#uploadtripsInput'),
 	};
+
 	// Open the WebSocket connection and register event handlers.
 	const websocket = new WebSocket('ws://localhost:8001'); ///ws://147.175.161.232:8001/
 	websocket.addEventListener('open', () => {

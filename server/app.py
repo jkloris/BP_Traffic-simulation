@@ -29,7 +29,7 @@ import chardet
 # nicer code - refacotr if else
 # tlight state too long
 # traffic lights save, add, remove state check handler and actuated buttons handler
-# update edge options on change
+# 
 
 PARSER = argparse.ArgumentParser()
 
@@ -233,6 +233,7 @@ async def path(websocket, port, event, conn):
 async def pathMaxSpeed(websocket, port, event, conn):
     if webClients[port].STATUS != "finished":
         conn.lane.setMaxSpeed(event["id"], float(event["value"])/3.6)
+        await path(websocket, port, event, conn)
 
 
 async def vehicleDestination(websocket, port, event, conn):
@@ -256,7 +257,8 @@ async def uploadFin(websocket, port, event, conn):
     if webClients[port].STATUS == "finished":
         webClients[port].uploading = False
         FILE_HANDLER.closeFile(port, event["format"])
-    # ------------
+
+# ------------------------------------
 
 
 async def handler(websocket):
