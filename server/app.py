@@ -26,7 +26,6 @@ import chardet
 
 # TODO
 # diakritika street names
-# nicer code - refacotr if else
 # tlight state too long
 # traffic lights save, add, remove state check handler and actuated buttons handler
 # 
@@ -557,7 +556,6 @@ async def main():
     PARSER.add_argument("-p", "--port", type=int,
                         help="port number for Traci simulation")
     args = PARSER.parse_args()
-    print(args)
 
     print(args.port, "app")
     async with websockets.serve(handler, "", args.port):
