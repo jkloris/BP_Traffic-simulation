@@ -193,6 +193,7 @@ class Main {
 				case 'finish':
 					closeOptions();
 					createStatPopup(event['data']);
+					this.stateMng.end();
 					break;
 				case 'route':
 					network.markRoute(event['data']);
