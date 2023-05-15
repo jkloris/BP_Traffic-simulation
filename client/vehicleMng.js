@@ -30,6 +30,7 @@ class VehicleMng {
 				this.selectedVehicle = null;
 				document.querySelector('#vehicleOptions').style.display = 'none';
 				network.resetMark();
+				closeOptions();
 			}
 
 			this.vehicles[id].removeFrom(stage);

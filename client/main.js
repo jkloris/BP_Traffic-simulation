@@ -51,6 +51,7 @@ class Main {
 			for (let i = 0; i < rawData.byteLength; i += 1024 * 512) {
 				chunk = rawData.slice(i, i + 1024 * 512);
 				ws.send(chunk);
+				console.log(i);
 			}
 
 			ws.send(JSON.stringify({ type: 'uploadFin', format: format }));
@@ -180,7 +181,6 @@ class Main {
 		websocket.addEventListener('message', ({ data }) => {
 			const event = JSON.parse(data);
 
-			console.log(event);
 			switch (event.type) {
 				case 'step':
 					this.step(event);
@@ -315,6 +315,7 @@ class Main {
 			network.resetMark();
 			this.follow = false;
 			clearOptions();
+			closeOptions();
 			document.querySelector('#vehicleOptionsPath').innerHTML = '';
 			document.querySelector('#newDestVehicleBtn').classList = ['hidden'];
 		};
@@ -346,6 +347,8 @@ class Main {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+	disableDevOptions();
+
 	const buttons = {
 		start: document.getElementById('startButton'),
 		pause: document.getElementById('pauseButton'),
@@ -401,3 +404,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	// main = new Main(websocket2, buttons);
 });
+
+function disableDevOptions() {
+	document.addEventListener('contextmenu', (e) => e.preventDefault(), false);
+
+	document.addEventListener('keydown', (e) => {
+		if (e.ctrlKey || e.key == 'F12') {
+			e.stopPropagation();
+			e.preventDefault();
+		}
+	});
+}

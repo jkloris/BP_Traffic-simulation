@@ -25,19 +25,13 @@ async def start_subprocess(port, websocket):
 
 
 async def handler(websocket):
-    # connections.append(websocket)
 
     try:
         async for message in websocket:
             event = json.loads(message)
-            print(event)
             if event["type"] == "connected":
-                # port = 8001+len(connections)
                 port = find_available_port()
-                connections.append(port)
                 asyncio.create_task(start_subprocess(port, websocket))
-                print(connections, "....")
-
     except:
         pass
 

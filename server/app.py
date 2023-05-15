@@ -28,7 +28,7 @@ import chardet
 # diakritika street names
 # tlight state too long
 # traffic lights save, add, remove state check handler and actuated buttons handler
-# 
+#
 
 PARSER = argparse.ArgumentParser()
 
@@ -201,16 +201,16 @@ async def vehicleRoute(websocket, port, event, conn):
 
 async def stopVehicle(websocket, port, event, conn):
     if webClients[port].STATUS != "finished":
-        if not checkValidVehicleID(conn, id):
+        if not checkValidVehicleID(conn, event["id"]):
             return
-        conn.vehicle.setSpeed(id, 0)
+        conn.vehicle.setSpeed(event["id"], 0)
 
 
 async def resumeVehicle(websocket, port, event, conn):
     if webClients[port].STATUS != "finished":
-        if not checkValidVehicleID(conn, id):
+        if not checkValidVehicleID(conn, event["id"]):
             return
-        conn.vehicle.setSpeed(id, -1)
+        conn.vehicle.setSpeed(event["id"], -1)
 
 
 async def path(websocket, port, event, conn):
@@ -333,7 +333,7 @@ async def handler(websocket):
 
 def checkValidVehicleID(conn, id):
     if id not in conn.vehicle.getIDList():
-        print("ERROR: no id in vehicle ID List")
+        print("ERROR: no id in vehicle ID List", conn.vehicle.getIDList())
         return False
     return True
 
@@ -362,11 +362,10 @@ def find_available_port():
         s.bind(('localhost', 0))
         return s.getsockname()[1]
 
-
+# In app.py
 async def traciStart(websocket, sumocfgFile):
     label = websocket.remote_address[1]
     port = find_available_port()
-    print(port, "tracistart", sumocfgFile)
     folder = sumocfgFile
 
     if sumocfgFile == "upload":
@@ -550,14 +549,13 @@ async def startWebsocket(port):
         print(f"Websocket opened of {port}")
         await asyncio.Future()
 
-
+# App.py
 async def main():
 
     PARSER.add_argument("-p", "--port", type=int,
                         help="port number for Traci simulation")
     args = PARSER.parse_args()
 
-    print(args.port, "app")
     async with websockets.serve(handler, "", args.port):
         await asyncio.Future()  # run forever
 

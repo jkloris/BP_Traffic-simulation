@@ -5,8 +5,9 @@ class TLightMng {
 	fillOptions(states, logicType) {
 		document.querySelector('#tLightOptions').style.display = 'block';
 		document.querySelector('#logicType').innerHTML = logicType;
-
+		document.querySelector('#statusInput').maxLength = states[0].state.length;
 		let tbody = document.querySelector('#tlightTableBody');
+
 		tbody.innerHTML = '';
 		for (const [i, s] of Object.entries(states)) {
 			let tr = document.createElement('tr');
@@ -63,7 +64,13 @@ class TLightMng {
 		}
 		if (ri == rows.length) return null;
 
-		const msg = { type: 'trafficLightStateUpdate', id: this.selected, state: state.value, duration: dur.value, index: ri };
+		const msg = {
+			type: 'trafficLightStateUpdate',
+			id: this.selected,
+			state: state.value,
+			duration: dur.value,
+			index: ri,
+		};
 		if (state && dur) return msg;
 
 		return null;
