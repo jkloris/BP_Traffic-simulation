@@ -43,6 +43,7 @@ class Vehicle {
 		two.update();
 	}
 
+    //deletes vehicle from the stage (view)
 	removeFrom(stage) {
 		stage.remove(this.obj.car);
 		stage.remove(this.obj.roof);

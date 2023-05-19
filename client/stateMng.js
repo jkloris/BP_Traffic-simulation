@@ -1,3 +1,5 @@
+
+// manage states of the simulation for correct view to be shown
 class StateMng {
 	constructor() {
 		this.state = 'finished';

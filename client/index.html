@@ -5,9 +5,6 @@
 <head>
     <meta charset="utf-8">
   <title>Network Simulation</title>
-  <!-- <script type="text/javascript" src="../paper/dist/paper-full.js"></script> -->
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/two.js/0.6.0/two.min.js" integrity="sha512-aynD23S+9Gh4yQTSbLc7cNripGLEs2YEuc9+XaOM+wKgt7q/1D4G0aXFSNAZ/xAsTOZB+YLrzLthy/g80c9Gqw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/two.js/0.6.0/two.clean.js" integrity="sha512-JM6XffVbM+wuepAehrD72xhZy6YhOcacUrLD6sJCGg9oknROkI/+NN+zsqNg1cnllkvFlqFC5QXbMHEZfynywQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
 
     <script src="two.js/build/two.min.js"></script>
     <script src="two.js/extras/js/zui.js"></script>
@@ -27,7 +24,6 @@
                 <p>Choose Simulation Scenario</p>
                 <select name="" id="scenarios">
                     <option value="pezinok">Pezinok</option>
-                    <!-- <option value="demoAAA">demoAAA</option> -->
                     <option value="sancova">Šancová, BA</option>
                     <option value="fourway">Unhandled Fourway</option>
                     <option value="trafficlight_static">Static traffic lights</option>
@@ -59,8 +55,6 @@
 
                 <div class="block"> Simulation Speed</div>
                 <input id="speedSlider" type="range" value="65" min="1" max="100">
-                <!-- <button title="Set simulation speed. Higher number mean simulation is slower." id="setSpeedButton"><span
-                        class="material-symbols-outlined"> check</span> </button> -->
                 <div>
                     <output id="speedSliderOut"> 65</output> 
                 </div>
@@ -71,8 +65,6 @@
             <div class="verticalCenter">
                 <div class="block"> Traffic scaling</div>
                 <input id="scaleSlider" type="range" value="1" min="1" max="5">
-                <!-- <button title="Scale traffic density in the network." id="setScaleButton"><span
-                                        class="material-symbols-outlined">check</span></button> -->
                 <div>
                     <output id="scaleSliderOut">1</output>&times;
                 </div>
@@ -146,7 +138,6 @@
             <button id="saveStateTLightBtn">Save Edit</button>
             <button id="addStateTLightBtn" title="Does not work with 'Actuated' type">Add State</button>
             <button id="removeStatusTLightBtn" title="Does not work with 'Actuated'">Remove State</button>
-            <!-- <button id="deselectTLightBtn">Deselect</button> -->
 
         </div>
 

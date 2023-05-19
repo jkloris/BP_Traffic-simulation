@@ -16,6 +16,7 @@ class PathMng {
 		two.update();
 	}
 
+	//fills path options with the corret values
 	fillOptions(event) {
 		document.querySelector('#pathOptions').style.display = 'block';
 
@@ -30,7 +31,6 @@ class PathMng {
 		maxSpeed.innerHTML = event['maxSpeed'];
 		avgSpeed.innerHTML = event['averageSpeed'];
 
-		console.log(event);
 		allowed.innerHTML = '';
 
 		allowed.innerHTML = '';

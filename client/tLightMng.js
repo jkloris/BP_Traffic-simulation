@@ -2,6 +2,7 @@ class TLightMng {
 	selected = null;
 	constructor() {}
 
+    // fill traffic lights options with correct values
 	fillOptions(states, logicType) {
 		document.querySelector('#tLightOptions').style.display = 'block';
 		document.querySelector('#logicType').innerHTML = logicType;
@@ -23,7 +24,7 @@ class TLightMng {
 		}
 		this.selectableTable();
 	}
-
+    // creates table in with the selectable rows in the option tab
 	selectableTable() {
 		let rows = document.querySelectorAll('#tlightTable > tbody > tr');
 		let statusInput = document.querySelector('#statusInput');

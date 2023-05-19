@@ -7,28 +7,28 @@ import asyncio
 import itertools
 import json
 import math
-import subprocess
+# import subprocess
 from time import sleep
 from turtle import position
-import sumolib
+# import sumolib
 from sumolib import checkBinary
 import traci
 import websockets
 import xml.etree.ElementTree as ET
-from aiohttp import web
-import threading
+# from aiohttp import web
+# import threading
 from multiprocessing import Process
 from socketSim import SocketSim
 from fileHandler import FileHandler
 import argparse
 import socket
-import chardet
+# import chardet
 
 # TODO
 # diakritika street names
-# tlight state too long
+
 # traffic lights save, add, remove state check handler and actuated buttons handler
-#
+
 
 PARSER = argparse.ArgumentParser()
 
@@ -42,7 +42,9 @@ else:
     sys.exit("please declare environment variable 'SUMO_HOME'")
 
 
-def xmlnetToNetwork(path="../sumo/demoAAA/demoAAA.net.xml"):
+# Creates object containing structure of the network
+# @path {string} path to the file contaning network
+def xmlnetToNetwork(path="../sumo/fourway/fourway.net.xml"):
     tree = ET.parse(path)
     root = tree.getroot()
     network = {}
@@ -80,6 +82,8 @@ def xmlnetToNetwork(path="../sumo/demoAAA/demoAAA.net.xml"):
 
 
 webClients = {}
+
+# Informs client about error that happened on the server
 
 
 async def sendErrorToClient(websocket, text, duration=5000):
@@ -259,13 +263,13 @@ async def uploadFin(websocket, port, event, conn):
 
 # ------------------------------------
 
+# Handling of incoming messages and connections
+
 
 async def handler(websocket):
     port = websocket.remote_address[1]
     webClients[port] = SocketSim()
     print(f'\nNew connection from: {port} ({len(webClients)} total)\n')
-
-    webClients[port].uploading = False
 
     controlFunctions = {
         "start": start,
@@ -322,7 +326,6 @@ async def handler(websocket):
         webClients[port].RUNNING = False
         webClients[port].STATUS = "finished"
         try:
-            # conn = traci.getConnection(port)
             conn.close()
         except:
             pass
@@ -343,6 +346,7 @@ async def confirmEnd(websocket):
     await websocket.send(json.dumps(msg))
 
 
+# Program reset (to default state) in case of error
 async def resetProgram(websocket):
     port = websocket.remote_address[1]
 
@@ -362,7 +366,10 @@ def find_available_port():
         s.bind(('localhost', 0))
         return s.getsockname()[1]
 
-# In app.py
+
+# Starting of the simulation
+# @param websocket - websocket of the client
+# @param sumocfgFile - string, name of the file with the scenario
 async def traciStart(websocket, sumocfgFile):
     label = websocket.remote_address[1]
     port = find_available_port()
@@ -394,7 +401,7 @@ async def traciStart(websocket, sumocfgFile):
 
     await run(websocket, conn)
 
-
+# Runs the simulation. Contains main loop with steps
 async def run(websocket, conn):
     port = websocket.remote_address[1]
 
@@ -432,7 +439,7 @@ async def run(websocket, conn):
         await simulationFinished(websocket, conn)
         conn.close()
 
-
+# Sends statistics of the simulation to the client
 async def simulationFinished(websocket, conn):
 
     stats = {'Average statistics': {
@@ -472,7 +479,7 @@ async def simulationFinished(websocket, conn):
     await websocket.send(json.dumps(msg))
     print(f"Simulation ended!")
 
-
+# Creates object containing all vehicles within the simulation. Called at the start of the simulation. 
 def getVehicles(conn):
     vehicleIDs = conn.vehicle.getIDList()
     vehicleData = {"removed": [], "added": vehicleIDs,
@@ -490,7 +497,7 @@ def getVehicles(conn):
 
     return vehicleData
 
-
+# Updates object with vehicles. Called during the simulation run
 def updateVehicles(vehicleData, conn):
     vehicleIDs = conn.vehicle.getIDList()
     vehicleData["removed"] = conn.simulation.getArrivedIDList()
@@ -513,7 +520,8 @@ def updateVehicles(vehicleData, conn):
 
     return vehicleData
 
-
+# Sends ids of edges of planned route of vehicle to the client
+# @param id - id of the vehicle 
 async def sendVehicleRoute(websocket, conn, id):
     if not checkValidVehicleID(conn, id):
         return
@@ -521,7 +529,7 @@ async def sendVehicleRoute(websocket, conn, id):
     msg = {"type": "route", "data": conn.vehicle.getRoute(id)}
     await websocket.send(json.dumps(msg))
 
-
+# Returns current state of traffic lights in object
 def getTrafficLights(conn):
     tlights = {}
     for id in conn.trafficlight.getIDList():
@@ -532,7 +540,7 @@ def getTrafficLights(conn):
             tlights[lanes[i]] = signal[i]
     return tlights
 
-
+# Sends new data containing data for current step in the simulation to the client
 async def traciSimStep(websocket, vehicleData):
 
     conn = traci.getConnection(websocket.remote_address[1])
@@ -549,7 +557,9 @@ async def startWebsocket(port):
         print(f"Websocket opened of {port}")
         await asyncio.Future()
 
-# App.py
+
+
+
 async def main():
 
     PARSER.add_argument("-p", "--port", type=int,

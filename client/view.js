@@ -11,6 +11,8 @@ two.add(stage);
 let zui = new Two.ZUI(stage);
 addZUI();
 
+// ZUI is responsible for zooming and mooving in the stage
+// Code used from https://codepen.io/jonobr1/pen/PobMKwb
 function addZUI() {
 	var domElement = two.renderer.domElement;
 	// var zui = new Two.ZUI(stage, elem);
@@ -132,8 +134,6 @@ function addZUI() {
 	}
 }
 
-// document.addEventListener('click', function (event) {});
-
 //Selecting object in network
 elem.addEventListener('pointerdown', pointerdown, false);
 
@@ -152,7 +152,6 @@ function pointerdown(e) {
 			);
 
 			if (dist <= tl.radius * stage.scale) {
-				console.log(id);
 				main.tLightClicked(id);
 				return;
 			}
@@ -167,7 +166,6 @@ function pointerdown(e) {
 			);
 
 			if (dist <= v.width * stage.scale) {
-				console.log(id);
 				main.vehicleClicked(v);
 				return;
 			}

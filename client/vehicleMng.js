@@ -58,7 +58,7 @@ class VehicleMng {
 		}
 		two.update();
 	}
-
+     // fill vehicle options with correct values
 	drawOptions(vehicle, pathId) {
 		if (this.selectedVehicle) this.selectedVehicle.deselect();
 		vehicle.select();

@@ -15,6 +15,6 @@ class SocketSim:
         self.uploading = False
         # self.thread = None
 
-    # tmp debug
+    #  debug
     def print(self):
         print(self.STATUS, self.RUNNING, self.SIMULATION_SPEED)

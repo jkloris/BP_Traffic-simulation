@@ -130,7 +130,7 @@ class Network {
 		this.markedRoute = route;
 		this.two.update();
 	}
-
+    // clears marked route in the network
 	resetMark() {
 		if (!this.markedRoute) return;
 

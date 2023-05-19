@@ -16,10 +16,14 @@ class Main {
 		this.upload = { net: false, trips: false };
 	}
 
+	/**
+	 * Sends uploaded scenario to the server
+	 * @param {string} format - flag for file format. Must be "trips" or "net"
+	 */
 	sendFile(format) {
 		//tmp format
 		if (format != 'trips' && format != 'net') {
-			console.log('Wrong format');
+			// console.log('Wrong format');
 
 			return false;
 		}
@@ -28,7 +32,7 @@ class Main {
 		let file = input?.files[0];
 
 		if (!file || file.type != 'text/xml') {
-			console.log('Wrong file format. Acceptable is only XML');
+			// console.log('Wrong file format. Acceptable is only XML');
 			openToast('Error: Wrong file format! Acceptable is only XML.', 5000);
 			return false;
 		}
@@ -51,17 +55,19 @@ class Main {
 			for (let i = 0; i < rawData.byteLength; i += 1024 * 512) {
 				chunk = rawData.slice(i, i + 1024 * 512);
 				ws.send(chunk);
-				console.log(i);
 			}
 
 			ws.send(JSON.stringify({ type: 'uploadFin', format: format }));
-			console.log('the File has been transferred.');
+			// console.log('the File has been transferred.');
 		};
 
 		reader.readAsArrayBuffer(file);
 		return true;
 	}
 
+	/**
+	 * sends request for change of the destination for selected vehicle
+	 */
 	sendVehicleDestination() {
 		const msg = {
 			type: 'vehicleDestination',
@@ -98,6 +104,10 @@ class Main {
 		if (msg) this.websocket.send(JSON.stringify(msg));
 	}
 
+	/**
+	 * Centers view on the selected element
+	 * @param {*} twoElement - element in the scene to where the view is centered
+	 */
 	center(twoElement) {
 		if (!twoElement) return;
 
@@ -111,6 +121,10 @@ class Main {
 		two.update();
 	}
 
+	/**
+	 * Updates scene base on the incoming event
+	 * @param {object} event - containts all data from server for current step
+	 */
 	step(event) {
 		this.vehicleMng.updateVehicleObjects(event.data);
 		this.vehicleMng.drawVehicles(event.data);
@@ -165,7 +179,7 @@ class Main {
 		};
 		this.websocket.send(JSON.stringify(event));
 	}
-
+	// begin the simulation
 	start(event) {
 		if (network == null) {
 			network = new Network(event.data, event.trafficLights, event.boundary, two);
@@ -177,6 +191,7 @@ class Main {
 		this.selectedVehicle = null;
 	}
 
+	// Handling of incomming messages
 	receiveMsgs(websocket) {
 		websocket.addEventListener('message', ({ data }) => {
 			const event = JSON.parse(data);
@@ -233,7 +248,7 @@ class Main {
 		this.pathMng.deselect();
 		this.follow = false;
 	}
-
+	// assigning functions to buttons
 	sendButtonMsgs(buttons, websocket) {
 		buttons['start'].onclick = async () => {
 			loadingOn();
@@ -242,7 +257,7 @@ class Main {
 			if (scenario == 'upload') {
 				if (!this.upload.trips || !this.upload.net) {
 					loadingOff();
-					console.log(this.upload);
+					// console.log(this.upload);
 					return;
 				}
 			}
@@ -256,8 +271,6 @@ class Main {
 		};
 
 		buttons['pause'].onclick = async () => {
-			console.log('Click pause');
-
 			const event = {
 				type: 'pause',
 			};
@@ -266,8 +279,6 @@ class Main {
 		};
 
 		buttons['play'].onclick = async () => {
-			console.log('Click play');
-
 			const event = {
 				type: 'play',
 			};
@@ -372,7 +383,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		pathCenter: document.getElementById('pathCenterBtn'),
 		newDestVehicle: document.getElementById('newDestVehicleBtn'),
 		scenarioChange: document.getElementById('scenarioChangeButton'),
-
+		//inputs (in a way also buttons)
 		uploadnet: document.querySelector('#uploadnetInput'),
 		uploadtrips: document.querySelector('#uploadtripsInput'),
 	};
@@ -389,7 +400,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 		switch (event['type']) {
 			case 'newPort':
-				console.log(event);
 				websocket2 = new WebSocket(`ws://localhost:${event['port']}`);
 				main = new Main(websocket2, buttons);
 				websocket2.addEventListener('open', () => {
@@ -401,10 +411,9 @@ window.addEventListener('DOMContentLoaded', () => {
 				break;
 		}
 	});
-
-	// main = new Main(websocket2, buttons);
 });
 
+// prevents from righclicking, f12 and ctrl
 function disableDevOptions() {
 	document.addEventListener('contextmenu', (e) => e.preventDefault(), false);
 

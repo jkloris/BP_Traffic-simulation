@@ -1,3 +1,4 @@
+// builds modal tab with statistics base on incomming stats object
 function createStatPopup(stats) {
 	modal = document.querySelector('#modal');
 	modal.className = 'modal'; // ???
@@ -31,7 +32,6 @@ function createStatPopup(stats) {
 		h3.innerHTML = header;
 
 		for (const [head, val] of Object.entries(vals)) {
-			console.log(val);
 			let th = document.createElement('th');
 			let td = document.createElement('td');
 			th.innerHTML = head + ' &#9432;';
@@ -51,6 +51,7 @@ function createStatPopup(stats) {
 	// document.querySelector('body').appendChild(modal);
 }
 
+//opens loading modal
 function loadingOn(text = 'Loading Simulation..') {
 	document.querySelector('#modal').style.display = 'block';
 	let loading = document.querySelector('#loading');
@@ -58,6 +59,7 @@ function loadingOn(text = 'Loading Simulation..') {
 	loading.innerHTML = text;
 }
 
+//closes loading modal
 function loadingOff() {
 	modal = document.querySelector('#modal');
 	modal.style.display = 'none';
@@ -82,6 +84,11 @@ function clearOptions() {
 const toast = document.getElementById('toast');
 const closeToastBtn = document.getElementById('close');
 
+/**
+ * open window that signals some type of warning.
+ * @param {string} text  text of the message
+ * @param {int} time for how long will be window visible
+ */
 function openToast(text, time) {
 	toast.classList.add('active');
 	document.getElementById('toastText').innerHTML = text;
