@@ -7,27 +7,17 @@ import asyncio
 import itertools
 import json
 import math
-# import subprocess
 from time import sleep
 from turtle import position
-# import sumolib
 from sumolib import checkBinary
 import traci
 import websockets
 import xml.etree.ElementTree as ET
-# from aiohttp import web
-# import threading
 from multiprocessing import Process
 from socketSim import SocketSim
 from fileHandler import FileHandler
 import argparse
 import socket
-# import chardet
-
-# TODO
-# diakritika street names
-
-# traffic lights save, add, remove state check handler and actuated buttons handler
 
 
 PARSER = argparse.ArgumentParser()
@@ -217,6 +207,14 @@ async def resumeVehicle(websocket, port, event, conn):
         conn.vehicle.setSpeed(event["id"], -1)
 
 
+def getStreetName(id, path):
+    tree = ET.parse(path)
+    root = tree.getroot()
+    for edge in root.iter("edge"):
+        if edge.get("id") == id:
+            return edge.get("name")
+
+
 async def path(websocket, port, event, conn):
     if webClients[port].STATUS != "finished":
 
@@ -227,7 +225,7 @@ async def path(websocket, port, event, conn):
             "id": event["id"],
             "maxSpeed": math.floor(float(conn.lane.getMaxSpeed(event["id"])) * 360) / 100.0,
             "averageSpeed": math.floor(float(conn.lane.getLastStepMeanSpeed(event["id"])) * 360) / 100.0,
-            "streetName": conn.edge.getStreetName(edgeID),
+            "streetName": getStreetName(edgeID, f"{buildScenarioPath(webClients[port].scenario, port)}.net.xml"),
             "allowed": conn.lane.getAllowed(event["id"])
         }
         await websocket.send(json.dumps(msg))
@@ -264,8 +262,6 @@ async def uploadFin(websocket, port, event, conn):
 # ------------------------------------
 
 # Handling of incoming messages and connections
-
-
 async def handler(websocket):
     port = websocket.remote_address[1]
     webClients[port] = SocketSim()
@@ -367,21 +363,28 @@ def find_available_port():
         return s.getsockname()[1]
 
 
+def buildScenarioPath(scenario, label):
+    folder = scenario
+
+    if scenario == "upload":
+        if not FILE_HANDLER.setupConfig(label):
+            return None
+        scenario += str(label)
+    return f"../sumo/{folder}/{scenario}"
+
 # Starting of the simulation
 # @param websocket - websocket of the client
 # @param sumocfgFile - string, name of the file with the scenario
 async def traciStart(websocket, sumocfgFile):
     label = websocket.remote_address[1]
     port = find_available_port()
-    folder = sumocfgFile
 
-    if sumocfgFile == "upload":
-        if not FILE_HANDLER.setupConfig(label):
-            return
-        sumocfgFile += str(label)
+    scenario = buildScenarioPath(sumocfgFile, label)
+    if (not scenario):
+        return
 
     sumoBinary = checkBinary('sumo')
-    sumocmd = [sumoBinary, "-c", f"../sumo/{folder}/{sumocfgFile}.sumocfg"]
+    sumocmd = [sumoBinary, "-c", f"{scenario}.sumocfg"]
 
     try:
         traci.start(sumocmd, label=label, port=port, numRetries=2)
@@ -391,7 +394,7 @@ async def traciStart(websocket, sumocfgFile):
         await sendErrorToClient(websocket, "Error: Probable corruption in uploaded files. Make sure you have uploaded the correct files.", 10000)
         return
 
-    msg = xmlnetToNetwork(f"../sumo/{folder}/{sumocfgFile}.net.xml")
+    msg = xmlnetToNetwork(f"{scenario}.net.xml")
 
     await websocket.send(json.dumps(msg))
 
@@ -479,7 +482,7 @@ async def simulationFinished(websocket, conn):
     await websocket.send(json.dumps(msg))
     print(f"Simulation ended!")
 
-# Creates object containing all vehicles within the simulation. Called at the start of the simulation. 
+# Creates object containing all vehicles within the simulation. Called at the start of the simulation.
 def getVehicles(conn):
     vehicleIDs = conn.vehicle.getIDList()
     vehicleData = {"removed": [], "added": vehicleIDs,
@@ -521,7 +524,7 @@ def updateVehicles(vehicleData, conn):
     return vehicleData
 
 # Sends ids of edges of planned route of vehicle to the client
-# @param id - id of the vehicle 
+# @param id - id of the vehicle
 async def sendVehicleRoute(websocket, conn, id):
     if not checkValidVehicleID(conn, id):
         return
@@ -556,8 +559,6 @@ async def startWebsocket(port):
     async with websockets.serve(handler, "", port):
         print(f"Websocket opened of {port}")
         await asyncio.Future()
-
-
 
 
 async def main():
