@@ -6540,7 +6540,7 @@
         </lane>
     </edge>
 
-    <tlLogic id="cluster_2222547174_392448145_83056879_83404688_#3more" type="actuated" programID="0" offset="0">
+    <tlLogic id="cluster_2222547174_392448145_83056879_83404688_#3more" type="static" programID="0" offset="0">
         <phase duration="24" state="GGGrGGgr" minDur="13" maxDur="50"/>
         <phase duration="6"  state="yyyryyyr"/>
         <phase duration="24" state="rrrGrrrr" minDur="5" maxDur="50"/>
@@ -6548,7 +6548,7 @@
         <phase duration="24" state="rrrrGGrG" minDur="5" maxDur="50"/>
         <phase duration="6"  state="rrrryyry"/>
     </tlLogic>
-    <tlLogic id="joinedS_463255962_463255963_463255969_822813422_#2more" type="actuated" programID="0" offset="0">
+    <tlLogic id="joinedS_463255962_463255963_463255969_822813422_#2more" type="static" programID="0" offset="0">
         <phase duration="31" state="Grrrrrrrrrrrrrr" minDur="5" maxDur="50"/>
         <phase duration="3"  state="yrrrrrrrrrrrrrr"/>
         <phase duration="31" state="rGGrrrrrrrrrrrr" minDur="5" maxDur="50"/>
@@ -6566,7 +6566,7 @@
         <phase duration="31" state="rrrrrrrrrrrrrGG" minDur="5" maxDur="50"/>
         <phase duration="3"  state="rrrrrrrrrrrrryy"/>
     </tlLogic>
-    <tlLogic id="joinedS_7342328_cluster_18049796_18049797_2397518060_32030342_#3more" type="actuated" programID="0" offset="0">
+    <tlLogic id="joinedS_7342328_cluster_18049796_18049797_2397518060_32030342_#3more" type="delay_based" programID="0" offset="0">
         <phase duration="37" state="GGGGggrrGGGGG" minDur="5" maxDur="50"/>
         <phase duration="3"  state="yyyyggrryyyyy"/>
         <phase duration="6"  state="rrGGGGrrrrrrr" minDur="5" maxDur="50"/>
@@ -6575,7 +6575,7 @@
         <phase duration="37" state="GGGGrrGGGGrrr" minDur="5" maxDur="50"/>
         <phase duration="3"  state="yyyyrryyyyrrr"/>
     </tlLogic>
-    <tlLogic id="joinedS_901543399_cluster_2397027387_27044081_27044082" type="actuated" programID="0" offset="0">
+    <tlLogic id="joinedS_901543399_cluster_2397027387_27044081_27044082" type="delay_based" programID="0" offset="0">
         <phase duration="82" state="GGGG" minDur="5" maxDur="50"/>
         <phase duration="3"  state="yyyy"/>
         <phase duration="5"  state="rrrr"/>

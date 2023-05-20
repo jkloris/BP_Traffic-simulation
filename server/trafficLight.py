@@ -25,6 +25,9 @@ class TrafficLight:
         self.__state = {}
         self.__stateCounter = {}
 
+    def resetIds(self):
+        self.ids = {}
+
     def statePlusOne(self, id):
         if (id not in self.__stateCounter.keys()):
             self.setStateCounter(id, 0)

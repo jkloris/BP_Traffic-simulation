@@ -112,6 +112,7 @@ async def end(websocket, port, event, conn):
         webClients[port].RUNNING = False
         webClients[port].STATUS = "finished"
         webClients[port].trafficLight.clearState()
+        webClients[port].trafficLight.resetIds()
         await confirmEnd(websocket)
         await simulationFinished(websocket, conn)
         conn.close()
@@ -132,7 +133,7 @@ async def trafficLight(websocket, port, event, conn):
     if webClients[port].STATUS != "finished":
         tlightObj = webClients[port].trafficLight
         tlightObj.findIDs(conn)
-
+        print(tlightObj.ids)
         if event["id"] in tlightObj.ids.keys():
             tlightId = tlightObj.ids[event["id"]]
             tlightObj.extractStates(conn, tlightId)
@@ -262,6 +263,8 @@ async def uploadFin(websocket, port, event, conn):
 # ------------------------------------
 
 # Handling of incoming messages and connections
+
+
 async def handler(websocket):
     port = websocket.remote_address[1]
     webClients[port] = SocketSim()
@@ -375,6 +378,8 @@ def buildScenarioPath(scenario, label):
 # Starting of the simulation
 # @param websocket - websocket of the client
 # @param sumocfgFile - string, name of the file with the scenario
+
+
 async def traciStart(websocket, sumocfgFile):
     label = websocket.remote_address[1]
     port = find_available_port()
@@ -405,6 +410,8 @@ async def traciStart(websocket, sumocfgFile):
     await run(websocket, conn)
 
 # Runs the simulation. Contains main loop with steps
+
+
 async def run(websocket, conn):
     port = websocket.remote_address[1]
 
@@ -443,6 +450,8 @@ async def run(websocket, conn):
         conn.close()
 
 # Sends statistics of the simulation to the client
+
+
 async def simulationFinished(websocket, conn):
 
     stats = {'Average statistics': {
@@ -483,6 +492,8 @@ async def simulationFinished(websocket, conn):
     print(f"Simulation ended!")
 
 # Creates object containing all vehicles within the simulation. Called at the start of the simulation.
+
+
 def getVehicles(conn):
     vehicleIDs = conn.vehicle.getIDList()
     vehicleData = {"removed": [], "added": vehicleIDs,
@@ -501,6 +512,8 @@ def getVehicles(conn):
     return vehicleData
 
 # Updates object with vehicles. Called during the simulation run
+
+
 def updateVehicles(vehicleData, conn):
     vehicleIDs = conn.vehicle.getIDList()
     vehicleData["removed"] = conn.simulation.getArrivedIDList()
@@ -525,6 +538,8 @@ def updateVehicles(vehicleData, conn):
 
 # Sends ids of edges of planned route of vehicle to the client
 # @param id - id of the vehicle
+
+
 async def sendVehicleRoute(websocket, conn, id):
     if not checkValidVehicleID(conn, id):
         return
@@ -533,6 +548,8 @@ async def sendVehicleRoute(websocket, conn, id):
     await websocket.send(json.dumps(msg))
 
 # Returns current state of traffic lights in object
+
+
 def getTrafficLights(conn):
     tlights = {}
     for id in conn.trafficlight.getIDList():
@@ -544,6 +561,8 @@ def getTrafficLights(conn):
     return tlights
 
 # Sends new data containing data for current step in the simulation to the client
+
+
 async def traciSimStep(websocket, vehicleData):
 
     conn = traci.getConnection(websocket.remote_address[1])
